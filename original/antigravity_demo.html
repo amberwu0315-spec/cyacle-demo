@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anti-Gravity Demo</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #0f172a;
+            /* Dark background for better contrast */
+            font-family: 'Inter', system-ui, sans-serif;
+            overflow: hidden;
+            color: #fff;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 3rem;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* --- Button Styles --- */
+        .gravity-btn {
+            position: relative;
+            padding: 1rem 3rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 9999px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            box-shadow:
+                0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                0 2px 4px -1px rgba(0, 0, 0, 0.06),
+                0 0 15px rgba(56, 189, 248, 0.2);
+            /* Glow */
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: visible;
+            user-select: none;
+            outline: none;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .gravity-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow:
+                0 20px 25px -5px rgba(0, 0, 0, 0.2),
+                0 8px 10px -6px rgba(0, 0, 0, 0.1),
+                0 0 25px rgba(56, 189, 248, 0.4);
+            border-color: rgba(56, 189, 248, 0.5);
+        }
+
+        .gravity-btn:active {
+            transform: translateY(2px) scale(0.98);
+        }
+
+        /* --- Input Styles --- */
+        .input-wrapper {
+            position: relative;
+            width: 320px;
+        }
+
+        .gravity-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            font-size: 1.1rem;
+            color: #e2e8f0;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            outline: none;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-sizing: border-box;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+            font-family: inherit;
+        }
+
+        .gravity-input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .gravity-input:focus {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(56, 189, 248, 0.5);
+            box-shadow:
+                inset 0 2px 4px rgba(0, 0, 0, 0.2),
+                0 0 20px rgba(56, 189, 248, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* --- Particle & Animation Styles --- */
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            border-radius: 50%;
+            background: white;
+            opacity: 0;
+            z-index: 0;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-3px);
+            }
+        }
+
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- Button Section -->
+        <button class="gravity-btn floating" id="antiGravityBtn">
+            Click to Float
+        </button>
+
+        <!-- Input Section -->
+        <div class="input-wrapper">
+            <input type="text" class="gravity-input" placeholder="Type specific gravity..." id="gravityInput">
+        </div>
+    </div>
+
+    <script>
+        const btn = document.getElementById('antiGravityBtn');
+        const input = document.getElementById('gravityInput');
+
+        // --- Shared Particle Function ---
+        function createParticles(options) {
+            const {
+                x, y,
+                count = 10,
+                spreadX = 100,
+                spreadY = 150,
+                minSize = 4,
+                maxSize = 8,
+                colors = ['#38bdf8', '#818cf8', '#ffffff']
+            } = options;
+
+            for (let i = 0; i < count; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                document.body.appendChild(particle);
+
+                const size = Math.random() * (maxSize - minSize) + minSize;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.background = color;
+                particle.style.left = `${x}px`;
+                particle.style.top = `${y}px`;
+
+                // Destination coordinates (relative to start)
+                // "Anti-gravity" means moving UP (negative Y) prominently
+                const moveX = (Math.random() - 0.5) * spreadX;
+                const moveY = -(Math.random() * spreadY + 50); // Ensure upward movement
+
+                const animation = particle.animate([
+                    {
+                        opacity: 1,
+                        transform: `translate(-50%, -50%) scale(0)`
+                    },
+                    {
+                        opacity: 0.8,
+                        offset: 0.1,
+                        transform: `translate(-50%, -50%) scale(1)`
+                    },
+                    {
+                        opacity: 0,
+                        transform: `translate(calc(-50% + ${moveX}px), calc(-50% + ${moveY}px)) scale(0.5)`
+                    }
+                ], {
+                    duration: Math.random() * 800 + 600,
+                    easing: 'cubic-bezier(0, .9, .57, 1)',
+                });
+
+                animation.onfinish = () => particle.remove();
+            }
+        }
+
+        // --- Button Logic ---
+        btn.addEventListener('click', () => {
+            const rect = btn.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+
+            createParticles({
+                x: centerX,
+                y: centerY,
+                count: 20,
+                spreadX: 200,
+                spreadY: 250
+            });
+
+            btn.animate([
+                { transform: 'translateY(0) scale(1)' },
+                { transform: 'translateY(20px) scale(0.9)', offset: 0.1 },
+                { transform: 'translateY(-10px) scale(1.02)', offset: 0.4 },
+                { transform: 'translateY(0) scale(1)' }
+            ], { duration: 600, easing: 'ease-out' });
+        });
+
+        // Button Magnetic Effect
+        btn.addEventListener('mousemove', (e) => {
+            const rect = btn.getBoundingClientRect();
+            const x = (e.clientX - rect.left - rect.width / 2) / 5;
+            const y = (e.clientY - rect.top - rect.height / 2) / 5;
+            btn.style.transform = `translate(${x}px, ${y}px) scale(1.05)`;
+            btn.classList.remove('floating');
+        });
+
+        btn.addEventListener('mouseleave', () => {
+            btn.style.transform = '';
+            setTimeout(() => btn.classList.add('floating'), 400);
+        });
+
+        // --- Input Logic ---
+        input.addEventListener('input', () => {
+            const rect = input.getBoundingClientRect();
+
+            // Randomly spawn particles near the input area
+            // Ideally we track the caret, but random placement horizontally
+            // gives a nice "entire field activating" feel
+            const randomX = rect.left + Math.random() * rect.width;
+            const topY = rect.top;
+
+            createParticles({
+                x: randomX,
+                y: topY + 20, // Start slightly inside
+                count: 3, // Small burst per keystroke
+                spreadX: 30, // Tight spread
+                spreadY: 80, // Moderate upward float
+                minSize: 2,
+                maxSize: 5,
+                colors: ['#38bdf8', '#ffffff'] // Lighter theme for text input
+            });
+
+            // Input Recoil
+            input.animate([
+                { transform: 'translateY(-2px)' }, // Focus state base is -2px
+                { transform: 'translateY(0px)', offset: 0.1 },
+                { transform: 'translateY(-3px)', offset: 0.5 },
+                { transform: 'translateY(-2px)' }
+            ], { duration: 150, easing: 'ease-out' });
+        });
+    </script>
+</body>
+
+</html>

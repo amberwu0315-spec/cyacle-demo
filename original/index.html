@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon SPA</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Custom Scrollbar for L3 Menu */
+        #l3-sidebar .flex-1::-webkit-scrollbar {
+            width: 2px;
+        }
+
+        #l3-sidebar .flex-1::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        #l3-sidebar .flex-1::-webkit-scrollbar-thumb {
+            background: #D1D5DB;
+            border-radius: 1px;
+        }
+
+        #l3-sidebar .flex-1::-webkit-scrollbar-thumb:hover {
+            background: #9CA3AF;
+        }
+    </style>
+</head>
+
+<body id="app-root" class="bg-[#1E2A32] h-screen w-screen overflow-hidden text-[#4D4D4D]">
+
+    <!-- ==============================
+         L1 Global Sidebar (Layer 1)
+         ============================== -->
+    <nav id="l1-sidebar" class="fixed left-0 top-0 bottom-0 w-[74px] flex flex-col items-center py-6 z-50">
+        <!-- Group 1: Workspace & General -->
+        <div class="flex flex-col gap-[14px] w-full items-center">
+            <button class="l1-btn group relative p-3 rounded-xl hover:bg-white/10 transition-colors"
+                data-action="NAV_L1" data-value="home">
+                <i data-lucide="user-circle-2"
+                    class="w-6 h-6 text-white/70 group-hover:text-white transition-colors"></i>
+            </button>
+            <button class="l1-btn group relative p-3 rounded-xl hover:bg-white/10 transition-colors"
+                data-action="NAV_L1" data-value="background_data">
+                <i data-lucide="database" class="w-6 h-6 text-white/70 group-hover:text-white transition-colors"></i>
+            </button>
+            <button class="l1-btn group relative p-3 rounded-xl hover:bg-white/10 transition-colors"
+                data-action="NAV_L1" data-value="project_mgmt">
+                <i data-lucide="folder-kanban"
+                    class="w-6 h-6 text-white/70 group-hover:text-white transition-colors"></i>
+            </button>
+            <button class="l1-btn group relative p-3 rounded-xl hover:bg-white/10 transition-colors"
+                data-action="NAV_L1" data-value="enterprise">
+                <i data-lucide="building-2" class="w-6 h-6 text-white/70 group-hover:text-white transition-colors"></i>
+            </button>
+            <div class="h-px bg-white/10 w-8 mx-auto my-[8px]"></div>
+            <!-- Project File Tag -->
+            <button class="l1-btn group relative p-3 rounded-xl hover:bg-white/10 transition-colors"
+                data-action="NAV_L1" data-value="project_tag">
+                <i data-lucide="file-code"
+                    class="w-6 h-6 text-[#10B981] group-hover:text-[#34D399] transition-colors"></i>
+            </button>
+        </div>
+        <!-- Group 3: Bottom Actions -->
+        <div class="mt-auto flex flex-col gap-6 w-full items-center">
+            <button class="group relative p-3 hover:text-white transition-colors"><i data-lucide="bell"
+                    class="w-6 h-6 text-white/70"></i></button>
+            <button class="group relative p-3 hover:text-white transition-colors"><i data-lucide="settings"
+                    class="w-6 h-6 text-white/70"></i></button>
+        </div>
+    </nav>
+
+    <!-- ==============================
+         Layer 2: The Floating Workbench
+         ============================== -->
+    <div id="workbench"
+        class="absolute left-[78px] top-1 bottom-1 right-1 bg-white rounded-[12px] overflow-hidden shadow-2xl z-0 flex flex-row">
+
+        <!-- Col 1: L2 Sidebar (Controlled Visibility) -->
+        <div id="l2-sidebar"
+            class="hidden w-[50px] h-full bg-[#F8FAFB] border-r border-[#D6D9DC] flex flex-col py-2 shrink-0 items-center gap-[4px]">
+            <!-- Group 1 -->
+            <button class="l2-btn group w-full flex flex-col items-center gap-1" data-action="NAV_L2"
+                data-value="navigation">
+                <div
+                    class="l2-icon-box w-10 h-10 rounded-lg flex items-center justify-center text-gray-500 transition-transform hover:scale-105">
+                    <i data-lucide="compass" class="w-5 h-5"></i>
+                </div>
+                <span class="l2-label text-[14px] text-gray-500 font-medium whitespace-nowrap">导航</span>
+            </button>
+            <button class="l2-btn group w-full flex flex-col items-center gap-1" data-action="NAV_L2"
+                data-value="basis">
+                <div
+                    class="l2-icon-box w-10 h-10 rounded-lg flex items-center justify-center text-gray-500 transition-transform hover:scale-105">
+                    <i data-lucide="server" class="w-5 h-5"></i>
+                </div>
+                <span class="l2-label text-[14px] text-gray-500 font-medium whitespace-nowrap">基础</span>
+            </button>
+            <button class="l2-btn group w-full flex flex-col items-center gap-1" data-action="NAV_L2"
+                data-value="allocation">
+                <div
+                    class="l2-icon-box w-10 h-10 rounded-lg flex items-center justify-center text-gray-500 transition-transform hover:scale-105">
+                    <i data-lucide="git-branch" class="w-5 h-5"></i>
+                </div>
+                <span class="l2-label text-[14px] text-gray-500 font-medium whitespace-nowrap">分配</span>
+            </button>
+
+            <div class="border-b border-gray-200 w-6 mx-auto my-[4px]"></div>
+
+            <!-- Group 2 -->
+            <button class="l2-btn group w-full flex flex-col items-center gap-1" data-action="NAV_L2"
+                data-value="model">
+                <div
+                    class="l2-icon-box w-10 h-10 rounded-lg flex items-center justify-center text-gray-500 transition-transform hover:scale-105">
+                    <i data-lucide="box" class="w-5 h-5"></i>
+                </div>
+                <span class="l2-label text-[14px] text-gray-500 font-medium whitespace-nowrap">模型</span>
+            </button>
+            <button class="l2-btn group w-full flex flex-col items-center gap-1" data-action="NAV_L2"
+                data-value="accounting">
+                <div
+                    class="l2-icon-box w-10 h-10 rounded-lg flex items-center justify-center text-gray-500 transition-transform hover:scale-105">
+                    <i data-lucide="calculator" class="w-5 h-5"></i>
+                </div>
+                <span class="l2-label text-[14px] text-gray-500 font-medium whitespace-nowrap">核算</span>
+            </button>
+        </div>
+
+        <!-- Col 1b: Business Sidebar (New Location for Full Height) -->
+        <div id="business-sidebar"
+            class="hidden w-[200px] h-full bg-[#FAFAFA] border-r border-gray-200 shrink-0 flex flex-col overflow-y-auto">
+            <!-- Content will be injected by renderBusinessSidebar -->
+        </div>
+
+        <!-- Col 2: Right Content Column (Permanent Header + Viewport + Footer) -->
+        <div class="flex-1 flex flex-col h-full overflow-hidden relative">
+
+            <!-- Row 1: Header (Permanent) -->
+            <!-- Row 1: Header (Permanent) -->
+            <header id="main-header"
+                class="hidden h-[46px] bg-white border-b border-gray-200 shadow-sm z-10 flex items-center px-4 justify-between shrink-0">
+                <div class="flex items-center gap-2">
+                    <!-- Breadcrumbs or Title -->
+                    <div id="header-breadcrumb" class="flex items-center gap-2 hidden">
+                        <span class="text-[#6B7280] text-sm">Project</span>
+                        <span class="text-gray-300">/</span>
+                    </div>
+                    <span id="header-title" class="text-[16px] font-bold text-[#1F2937]">Carbon Footprint Analysis
+                        v1.0</span>
+                </div>
+            </header>
+
+            <!-- Row 2: Viewport Core (Dynamic Swapping Area) -->
+            <div id="main-view-container" class="flex-1 flex flex-row overflow-hidden relative">
+
+                <!-- 1. Dashboard Content (Default) -->
+                <div id="dashboard-view" class="w-full h-full flex flex-col p-8 overflow-y-auto bg-[#F5F6F8]">
+                    <div class="flex items-center justify-between mb-6">
+                        <h1 class="text-[16px] font-bold text-[#1F2937]">仪表盘 (Dashboard)</h1>
+                    </div>
+                    <div class="grid grid-cols-3 gap-6">
+                        <div class="bg-[#F5F6F8] p-6 rounded-lg h-48 border border-gray-100"></div>
+                        <div class="bg-[#F5F6F8] p-6 rounded-lg h-48 border border-gray-100"></div>
+                        <div class="bg-[#F5F6F8] p-6 rounded-lg h-48 border border-gray-100"></div>
+                    </div>
+                </div>
+
+                <!-- 2. Project Layout Wrapper (L3 + Main Canvas) -->
+                <div id="project-view-wrapper" class="hidden w-full h-full flex flex-row">
+                    <!-- L3 Sidebar -->
+                    <div id="l3-sidebar"
+                        class="hidden w-[200px] h-full bg-white border-r border-gray-200 shrink-0 flex flex-col relative">
+
+                        <!-- Scrollable Content -->
+                        <div class="flex-1 overflow-y-auto px-4 py-6">
+
+                            <!-- Section 1: Top Divider (Icon) -->
+                            <div class="flex items-center gap-2 mb-5 opacity-30">
+                                <i data-lucide="box" class="w-4 h-4 text-gray-500"></i>
+                                <div class="h-px bg-gray-400 flex-1"></div>
+                            </div>
+
+                            <h3 class="text-xs text-gray-500 mb-1 pl-2">核算</h3>
+                            <ul class="flex flex-col gap-1 mb-4">
+                                <li>
+                                    <button
+                                        class="l3-btn w-full h-[30px] flex items-center gap-2 px-2 text-sm rounded text-gray-600 hover:bg-gray-100 transition-colors text-left"
+                                        data-action="NAV_L3" data-value="acct_basic">
+                                        <i data-lucide="file-text" class="w-4 h-4"></i> 基本信息
+                                    </button>
+                                </li>
+                                <li>
+                                    <button
+                                        class="l3-btn w-full h-[30px] flex items-center gap-2 px-2 text-sm rounded text-gray-600 hover:bg-gray-100 transition-colors text-left"
+                                        data-action="NAV_L3" data-value="acct_config">
+                                        <i data-lucide="file-text" class="w-4 h-4"></i> 模型配置与结果
+                                    </button>
+                                </li>
+                                <li>
+                                    <button
+                                        class="l3-btn w-full h-[30px] flex items-center gap-2 px-2 text-sm rounded text-gray-600 hover:bg-gray-100 transition-colors text-left"
+                                        data-action="NAV_L3" data-value="acct_tools">
+                                        <i data-lucide="file-text" class="w-4 h-4"></i> 分析工具
+                                    </button>
+                                </li>
+                                <li>
+                                    <button
+                                        class="l3-btn w-full h-[30px] flex items-center gap-2 px-2 text-sm rounded text-gray-600 hover:bg-gray-100 transition-colors text-left"
+                                        data-action="NAV_L3" data-value="acct_calc">
+                                        <i data-lucide="file-text" class="w-4 h-4"></i> 计算与分析
+                                    </button>
+                                </li>
+                            </ul>
+
+                            <h3 class="text-xs text-gray-500 mb-1 pl-2">透视</h3>
+                            <ul class="flex flex-col gap-1 mb-4">
+                                <li>
+                                    <button
+                                        class="l3-btn w-full h-[30px] flex items-center gap-2 px-2 text-sm rounded text-gray-600 hover:bg-gray-100 transition-colors text-left"
+                                        data-action="NAV_L3" data-value="pers_activity">
+                                        <i data-lucide="database" class="w-4 h-4"></i> 活动数据
+                                    </button>
+                                </li>
+                                <li>
+                                    <button
+                                        class="l3-btn w-full h-[30px] flex items-center gap-2 px-2 text-sm rounded text-gray-600 hover:bg-gray-100 transition-colors text-left"
+                                        data-action="NAV_L3" data-value="pers_factor">
+                                        <i data-lucide="share-2" class="w-4 h-4"></i> 因子数据
+                                    </button>
+                                </li>
+                            </ul>
+
+                            <!-- Section 2: Middle Divider (Clipboard) -->
+                            <div class="flex items-center gap-2 mb-5 opacity-30">
+                                <i data-lucide="clipboard-list" class="w-4 h-4 text-gray-500"></i>
+                                <div class="h-px bg-gray-400 flex-1"></div>
+                            </div>
+
+                            <h3 class="text-xs text-gray-500 mb-1 pl-2">生成报告</h3>
+                            <ul class="flex flex-col gap-1 mb-4">
+                                <li>
+                                    <button
+                                        class="l3-btn w-full h-[30px] flex items-center gap-2 px-2 text-sm rounded text-gray-600 hover:bg-gray-100 transition-colors text-left"
+                                        data-action="NAV_L3" data-value="rpt_info">
+                                        <i data-lucide="file-text" class="w-4 h-4"></i> 报告信息
+                                    </button>
+                                </li>
+                                <li>
+                                    <button
+                                        class="l3-btn w-full h-[30px] flex items-center gap-2 px-2 text-sm rounded text-gray-600 hover:bg-gray-100 transition-colors text-left"
+                                        data-action="NAV_L3" data-value="rpt_export">
+                                        <i data-lucide="file-text" class="w-4 h-4"></i> 导出数值
+                                    </button>
+                                </li>
+                                <li>
+                                    <button
+                                        class="l3-btn w-full h-[30px] flex items-center gap-2 px-2 text-sm rounded text-gray-600 hover:bg-gray-100 transition-colors text-left"
+                                        data-action="NAV_L3" data-value="rpt_main">
+                                        <i data-lucide="file-text" class="w-4 h-4"></i> 报告
+                                    </button>
+                                </li>
+                                <li>
+                                    <button
+                                        class="l3-btn w-full h-[30px] flex items-center gap-2 px-2 text-sm rounded text-gray-600 hover:bg-gray-100 transition-colors text-left"
+                                        data-action="NAV_L3" data-value="rpt_vouchers">
+                                        <i data-lucide="file-text" class="w-4 h-4"></i> 凭证管理
+                                    </button>
+                                </li>
+                                <li>
+                                    <button
+                                        class="l3-btn w-full h-[30px] flex items-center gap-2 px-2 text-sm rounded text-gray-600 hover:bg-gray-100 transition-colors text-left"
+                                        data-action="NAV_L3" data-value="rpt_sheet">
+                                        <i data-lucide="file-text" class="w-4 h-4"></i> 计算表
+                                    </button>
+                                </li>
+                            </ul>
+
+                            <h3 class="text-xs text-gray-500 mb-1 pl-2">对外申请</h3>
+                            <ul class="flex flex-col gap-1 mb-4">
+                                <li>
+                                    <button
+                                        class="l3-btn w-full h-[30px] flex items-center gap-2 px-2 text-sm rounded text-gray-600 hover:bg-gray-100 transition-colors text-left"
+                                        data-action="NAV_L3" data-value="app_cpcd">
+                                        <i data-lucide="file-text" class="w-4 h-4"></i> CPCD信息
+                                    </button>
+                                </li>
+                            </ul>
+
+                            <!-- Section 3: Bottom Divider (Clipboard) -->
+                            <div class="flex items-center gap-2 mb-5 opacity-30">
+                                <i data-lucide="clipboard-list" class="w-4 h-4 text-gray-500"></i>
+                                <div class="h-px bg-gray-400 flex-1"></div>
+                            </div>
+
+                            <h3 class="text-xs text-gray-500 mb-1 pl-2">对比</h3>
+                            <ul class="flex flex-col gap-1 mb-4">
+                                <li>
+                                    <button
+                                        class="l3-btn w-full h-[30px] flex items-center gap-2 px-2 text-sm rounded text-gray-600 hover:bg-gray-100 transition-colors text-left"
+                                        data-action="NAV_L3" data-value="cmp_list">
+                                        <i data-lucide="file-text" class="w-4 h-4"></i> 对比核算列表
+                                    </button>
+                                </li>
+                                <li>
+                                    <button
+                                        class="l3-btn w-full h-[30px] flex items-center gap-2 px-2 text-sm rounded text-gray-600 hover:bg-gray-100 transition-colors text-left"
+                                        data-action="NAV_L3" data-value="cmp_config">
+                                        <i data-lucide="file-text" class="w-4 h-4"></i> 对比配置调整
+                                    </button>
+                                </li>
+                                <li>
+                                    <button
+                                        class="l3-btn w-full h-[30px] flex items-center gap-2 px-2 text-sm rounded text-gray-600 hover:bg-gray-100 transition-colors text-left"
+                                        data-action="NAV_L3" data-value="cmp_detail">
+                                        <i data-lucide="file-text" class="w-4 h-4"></i> 对比标识详情
+                                    </button>
+                                </li>
+                                <li>
+                                    <button
+                                        class="l3-btn w-full h-[30px] flex items-center gap-2 px-2 text-sm rounded text-gray-600 hover:bg-gray-100 transition-colors text-left"
+                                        data-action="NAV_L3" data-value="cmp_result">
+                                        <i data-lucide="file-text" class="w-4 h-4"></i> 对比分析结果
+                                    </button>
+                                </li>
+                            </ul>
+
+                        </div>
+                    </div>
+
+                    <!-- Main Canvas -->
+                    <main id="main-content" class="flex-1 bg-[#F5F6F8] relative overflow-auto p-3">
+                        <!-- Status Variants Showcase: 3-Column Grid -->
+                        <div class="grid grid-cols-3 gap-6">
+
+                            <!-- Card 1: Default Status (Standard) -->
+                            <div class="bg-white rounded-md shadow-[0_1px_3px_0_rgba(0,0,0,0.06)] overflow-hidden">
+                                <div class="p-6 flex flex-col gap-4">
+                                    <!-- Header -->
+                                    <div class="border-b border-gray-100 pb-3">
+                                        <h2 class="text-lg font-medium text-gray-800">标准模块</h2>
+                                    </div>
+                                    <!-- Content -->
+                                    <div class="flex-1 text-sm text-gray-600">
+                                        <p>这是默认状态的内容模块,无特殊标识。</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Card 2: Added Status -->
+                            <div class="bg-white rounded-md shadow-[0_1px_3px_0_rgba(0,0,0,0.06)] overflow-hidden border-l-4 border-[#29AC68]"
+                                data-status="added">
+                                <div class="p-6 flex flex-col gap-4">
+                                    <!-- Header -->
+                                    <div class="border-b border-gray-100 pb-3">
+                                        <h2 class="text-lg font-medium text-[#29AC68]">新增模块</h2>
+                                    </div>
+                                    <!-- Content -->
+                                    <div class="flex-1 text-sm text-gray-600">
+                                        <p>这是新增状态的内容模块,左侧有 4px 绿色边框。</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Card 3: Deleted Status -->
+                            <div class="bg-white rounded-md shadow-[0_1px_3px_0_rgba(0,0,0,0.06)] overflow-hidden border-l-4 border-[#E38585]"
+                                data-status="deleted">
+                                <div class="p-6 flex flex-col gap-4">
+                                    <!-- Header -->
+                                    <div class="border-b border-gray-100 pb-3">
+                                        <h2 class="text-lg font-medium text-[#C6C6C6] line-through">删除模块</h2>
+                                    </div>
+                                    <!-- Content -->
+                                    <div class="flex-1 text-sm text-gray-600">
+                                        <p>这是删除状态的内容模块,左侧有 4px 红色边框,标题带删除线。</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </main>
+                </div>
+
+                <!-- 3. Business Layout Wrapper (Content Only) -->
+                <div id="business-view-wrapper" class="hidden w-full h-full flex flex-col">
+                    <!-- Business Content Canvas -->
+                    <div id="business-content" class="flex-1 bg-[#F5F6F8] relative overflow-auto p-8">
+                        <!-- Content placeholder -->
+                        <div class="flex items-center justify-center h-full text-gray-400">
+                            Select an item from the menu
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 3: Footer (Permanent) -->
+            <footer id="main-footer"
+                class="hidden h-[38px] bg-[#F8FAFB] border-t border-[#D6D9DC] shrink-0 flex items-center justify-between">
+                <!-- Left Group -->
+                <div class="flex items-center h-full">
+                    <button data-action="OPEN_MODAL" data-value="info" data-title="信息详情"
+                        class="footer-btn h-full px-2 flex items-center gap-2 text-xs text-gray-700 hover:bg-gray-50 transition-colors">
+                        <i data-lucide="info" class="w-3.5 h-3.5"></i> 信息
+                    </button>
+                    <button data-action="OPEN_MODAL" data-value="product" data-title="产品管理"
+                        class="footer-btn h-full px-2 flex items-center gap-2 text-xs text-gray-700 hover:bg-gray-50 transition-colors">
+                        <i data-lucide="package" class="w-3.5 h-3.5"></i> 产品
+                    </button>
+                    <button data-action="OPEN_MODAL" data-value="data" data-title="数据中心"
+                        class="footer-btn h-full px-2 flex items-center gap-2 text-xs text-gray-700 hover:bg-gray-50 transition-colors">
+                        <i data-lucide="database" class="w-3.5 h-3.5"></i> 数据
+                    </button>
+                    <button data-action="OPEN_MODAL" data-value="datasource" data-title="数据源"
+                        class="footer-btn h-full px-2 flex items-center gap-2 text-xs text-gray-700 hover:bg-gray-50 transition-colors">
+                        <i data-lucide="server" class="w-3.5 h-3.5"></i> 数据源
+                    </button>
+                    <button data-action="OPEN_MODAL" data-value="docs" data-title="文档"
+                        class="footer-btn h-full px-2 flex items-center gap-2 text-xs text-gray-700 hover:bg-gray-50 transition-colors">
+                        <i data-lucide="file-text" class="w-3.5 h-3.5"></i> 文档
+                    </button>
+                    <button data-action="OPEN_MODAL" data-value="location" data-title="地点"
+                        class="footer-btn h-full px-2 flex items-center gap-2 text-xs text-gray-700 hover:bg-gray-50 transition-colors">
+                        <i data-lucide="map-pin" class="w-3.5 h-3.5"></i> 地点
+                    </button>
+                </div>
+
+                <!-- Right Group -->
+                <div class="flex items-center h-full">
+                    <button data-action="OPEN_MODAL" data-value="factors" data-title="文献因子"
+                        class="footer-btn h-full px-2 flex items-center gap-2 text-xs text-gray-700 hover:bg-gray-50 transition-colors">
+                        <i data-lucide="flask-conical" class="w-3.5 h-3.5"></i> 文献因子
+                    </button>
+                    <button data-action="OPEN_MODAL" data-value="baseflow" data-title="基本流"
+                        class="footer-btn h-full px-2 flex items-center gap-2 text-xs text-gray-700 hover:bg-gray-50 transition-colors">
+                        <i data-lucide="activity" class="w-3.5 h-3.5"></i> 基本流
+                    </button>
+                    <button data-action="OPEN_MODAL" data-value="composite" data-title="复合因子"
+                        class="footer-btn h-full px-2 flex items-center gap-2 text-xs text-gray-700 hover:bg-gray-50 transition-colors">
+                        <i data-lucide="layers" class="w-3.5 h-3.5"></i> 复合因子
+                    </button>
+                    <button data-action="OPEN_MODAL" data-value="literature" data-title="文献"
+                        class="footer-btn h-full px-2 flex items-center gap-2 text-xs text-gray-700 hover:bg-gray-50 transition-colors">
+                        <i data-lucide="book-open" class="w-3.5 h-3.5"></i> 文献
+                    </button>
+                    <button data-action="OPEN_MODAL" data-value="component" data-title="元件"
+                        class="footer-btn h-full px-2 flex items-center gap-2 text-xs text-gray-700 hover:bg-gray-50 transition-colors">
+                        <i data-lucide="cpu" class="w-3.5 h-3.5"></i> 元件
+                    </button>
+                </div>
+            </footer>
+
+            <!-- Modal -->
+            <div id="footer-modal"
+                class="hidden absolute top-0 right-0 bottom-[40px] left-0 bg-white/95 backdrop-blur-sm z-50 flex flex-col shadow-2xl border-4 border-[#087F9C] rounded-t-lg animate-in fade-in duration-200">
+                <div
+                    class="flex items-center justify-between px-6 border-b border-gray-200 h-[46px] shrink-0 shadow-sm z-10 bg-white rounded-t-[inherit]">
+                    <h2 id="modal-title" class="text-[16px] font-bold text-[#1F2937] flex items-center gap-2">
+                        <i data-lucide="layers" class="w-5 h-5 text-[#087F9C]"></i>
+                        <span id="modal-title-text">属性详情</span>
+                    </h2>
+                    <button data-action="CLOSE_MODAL"
+                        class="p-2 hover:bg-gray-100 rounded-full text-gray-500 transition-colors"><i data-lucide="x"
+                            class="w-5 h-5"></i></button>
+                </div>
+                <div class="flex-1 p-8 overflow-y-auto bg-[#F5F6F8]">
+                    <div class="max-w-3xl mx-auto">
+                        <p class="text-gray-500">Placeholder</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- JavaScript Modules (Load in dependency order) -->
+    <script src="js/core/dom.js"></script>
+    <script src="js/module-factory.js"></script>
+    <script src="js/layout-system.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/content-renderer.js"></script>
+    <script src="js/core/app.js"></script>
+    <script>lucide.createIcons();</script>
+</body>
+
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>JS Module Test</title>
+</head>
+
+<body>
+    <h1>JavaScript Module Loading Test</h1>
+    <div id="test-output"></div>
+
+    <script src="js/core/dom.js"></script>
+    <script src="js/module-factory.js"></script>
+    <script src="js/layout-system.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/content-renderer.js"></script>
+    <script src="js/core/app.js"></script>
+
+    <script>
+        const output = document.getElementById('test-output');
+        const tests = [];
+
+        // Test 1: DOM object exists
+        tests.push(`DOM object: ${typeof DOM !== 'undefined' ? '✅' : '❌'}`);
+
+        // Test 2: createModule function exists
+        tests.push(`createModule function: ${typeof createModule === 'function' ? '✅' : '❌'}`);
+
+        // Test 3: renderLayout function exists
+        tests.push(`renderLayout function: ${typeof renderLayout === 'function' ? '✅' : '❌'}`);
+
+        // Test 4: renderLayoutA function exists
+        tests.push(`renderLayoutA function: ${typeof renderLayoutA === 'function' ? '✅' : '❌'}`);
+
+        // Test 5: renderLayoutB function exists
+        tests.push(`renderLayoutB function: ${typeof renderLayoutB === 'function' ? '✅' : '❌'}`);
+
+        // Test 6: renderLayoutC function exists
+        tests.push(`renderLayoutC function: ${typeof renderLayoutC === 'function' ? '✅' : '❌'}`);
+
+        // Test 7: renderLayoutD function exists
+        tests.push(`renderLayoutD function: ${typeof renderLayoutD === 'function' ? '✅' : '❌'}`);
+
+        // Test 8: MODES object exists
+        tests.push(`MODES object: ${typeof MODES !== 'undefined' ? '✅' : '❌'}`);
+
+        // Test 9: appState object exists
+        tests.push(`appState object: ${typeof appState !== 'undefined' ? '✅' : '❌'}`);
+
+        // Test 10: syncUI function exists
+        tests.push(`syncUI function: ${typeof syncUI === 'function' ? '✅' : '❌'}`);
+
+        output.innerHTML = '<ul>' + tests.map(t => `<li>${t}</li>`).join('') + '</ul>';
+
+        // Test createModule
+        try {
+            const testModule = createModule('Test', '<p>Content</p>');
+            tests.push(`createModule execution: ${testModule.includes('Test') ? '✅' : '❌'}`);
+        } catch (e) {
+            tests.push(`createModule execution: ❌ ${e.message}`);
+        }
+
+        // Test renderLayout
+        try {
+            const testLayout = renderLayout('layout-b', [createModule('Test', 'Content')]);
+            tests.push(`renderLayout execution: ${testLayout.includes('flex-col') ? '✅' : '❌'}`);
+        } catch (e) {
+            tests.push(`renderLayout execution: ❌ ${e.message}`);
+        }
+
+        output.innerHTML = '<ul>' + tests.map(t => `<li>${t}</li>`).join('') + '</ul>';
+    </script>
+</body>
+
+</html>

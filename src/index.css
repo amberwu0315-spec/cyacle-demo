@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-sans antialiased text-[#4D4D4D];
+  }
+
+  /* 统一表单控件主题色 - 使用 accent-color */
+  input[type='checkbox'],
+  input[type='radio'] {
+    accent-color: #087F9C;
+  }
+}
+
+/* Custom Scrollbar for L3 Menu */
+#l3-sidebar .flex-1::-webkit-scrollbar,
+.overflow-y-auto::-webkit-scrollbar {
+  width: 2px;
+}
+
+#l3-sidebar .flex-1::-webkit-scrollbar-track,
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#l3-sidebar .flex-1::-webkit-scrollbar-thumb,
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: #D1D5DB;
+  border-radius: 1px;
+}
+
+#l3-sidebar .flex-1::-webkit-scrollbar-thumb:hover,
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: #9CA3AF;
+}
