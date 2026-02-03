@@ -134,11 +134,12 @@
 | **侧边栏菜单项** | 导航类 | `uk-nav-default` (Nav) | 选中态：左侧 `border-l-2` 实色边条，背景色 `#F5F6F8`。 |
 | **顶部面包屑** | 导航类 | `uk-breadcrumb` | **[已废弃]** 此组件不再使用。Header 仅展示一级标题。 |
 | **分栏页签** | 导航类 | `uk-tab` + `uk-switcher` | 极简线框模式；选中项下方 `2px` 高亮；无背景色。 |
-| **标准输入框** | 数据输入 | `uk-input` | 高度 `h-8` (32px)；圆角 `Radius-SM` (4px)。 |
+| **标准输入框** | 数据输入 | `uk-input` | 高度 `h-9` (36px)；圆角 `Radius-SM` (4px)。 |
 | **下拉选择器** | 数据输入 | `uk-select` | 弹出层需遵循 `Z-Index-Nav`；悬浮态背景变深。 |
 | **复选/单选框** | 数据输入 | `uk-checkbox` / `uk-radio` | 选中色使用 `Success` (#3BAA6D) 或品牌色。 |
 | **日期选择器** | 数据输入 | `input[type="date"]` (或 `uk-form-custom`) | 弹出层阴影使用 `Shadow-MD`；对齐方式固定。 |
 | **核心数据表格** | 数据展示 | `uk-table` (`uk-table-divider`) | 表头 `#EDF7FA` 底色；行高 `36px`；文字 `14px`。 |
+| **表单字段间距** | 布局规则 | N/A | 字段标题(Key)与内容(Value)之间水平间距为 **0px**。<br>标题宽度规则：<br>≤4字: 80px<br>≤6字: 100px<br>≤10字: 140px<br>标点符号：统一使用**中文冒号** (：)。 |
 | **状态标签 (Tag)** | 数据展示 | `uk-label` | 圆角 `Radius-SM` (2px)；不同语义色背景透明度 10%。 |
 | **树形折叠结构** | 数据展示 | `uk-accordion` | 嵌套层级内缩 `Spacing-LG` (16px)；移除默认外边框。 |
 | **属性展示卡片** | 数据展示 | `uk-card` (`uk-card-default`) | 背景色 `#FAFAFA`；阴影 `Shadow-SM`；Padding `16px`。 |
@@ -386,11 +387,11 @@
       <h3 class="text-sm font-medium text-gray-700 mb-3">基本信息</h3>
       <div class="space-y-2">
         <div class="flex items-center">
-          <span class="text-xs text-gray-500 w-20">名称:</span>
+          <span class="text-sm text-gray-500 w-20">名称:</span>
           <span class="text-sm text-gray-900">示例对象</span>
         </div>
         <div class="flex items-center">
-          <span class="text-xs text-gray-500 w-20">类型:</span>
+          <span class="text-sm text-gray-500 w-20">类型:</span>
           <span class="text-sm text-gray-900">产品</span>
         </div>
       </div>

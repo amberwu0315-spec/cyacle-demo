@@ -87,40 +87,51 @@ The application has 3 primary view modes. JavaScript must toggle `hidden` classe
     *   `settings` **设置** (Settings)
 
 ### B. L2 业务功能条 (Project Navigation)
+### B. L2 业务功能条 (Project Navigation)
 *   `compass` **导航** (Nav)
 *   `server` **基础** (Basis)
 *   `git-branch` **分配** (Alloc)
-*   `box` **模型** (Model)
-*   `calculator` **核算** (Acct) - *Triggers L3 Sidebar*
+*   `box` **模型** (Model) - *Triggers Model Level Sidemenu (Dimension B)*
+*   `calculator` **核算** (Acct) - *Triggers Accounting Level Sidemenu (Dimension A)*
 
-### C. L3 核算树形菜单 (Accounting Tree)
-*仅在 L2="核算" 时显示。*
+### C. L3 多维树形菜单 (Multi-Level Tree)
 
-#### **Group 1: 核算 (Accounting)**
+> **New Logic:** The menu structure now depends on the Active L2 Item (Dimension) and Content Mode.
+
+#### **Dimension A: 核算层级 (Accounting Level)**
+*Triggered when L2 = "Accounting"*
+
+**Group 1: 核算 (Accounting)**
 *   `file-text` **基本信息** (Basic Info) `key: acct_basic`
-*   `settings` **模型配置与结果** (Config) `key: acct_config`
+*   `settings` **模型配置与结果** (Model Config & Results) `key: acct_model_config`
 *   `calculator` **分析工具** (Tools) `key: acct_tools`
 *   `bar-chart-3` **计算与分析** (Calc) `key: acct_calc`
+*   `database` **透视-活动数据** (Pers: Activity) `key: acct_pers_activity` *Shared Component*
+*   `share-2` **透视-因子数据** (Pers: Factor) `key: acct_pers_factor` *Shared Component*
 
-#### **Group 2: 透视 (Perspective)**
-*   `database` **活动数据** (Activity Data) `key: pers_activity`
-*   `share-2` **因子数据** (Factor Data) `key: pers_factor`
-
-#### **Group 3: 生成报告 (Report)**
+**Group 2: 产出 (Output)**
 *   `file-text` **报告信息** (Info) `key: rpt_info`
 *   `upload` **导出数值** (Export) `key: rpt_export`
-*   `file-box` **报告** (Main Report) `key: rpt_main`
 *   `book-open` **凭证管理** (Vouchers) `key: rpt_voucher`
 *   `file-text` **计算表** (Sheet) `key: rpt_sheet`
+*   `share-2` **申请单-CPCD** (CPCD) `key: app_cpcd`
 
-#### **Group 4: 对外申请 (Application)**
-*   `share-2` **CPCD信息** (CPCD Info) `key: app_cpcd`
+**Group 3: 附加 (Additional)**
+*   `file-text` **对比列表** (Comparison List) `key: cmp_list`
+*   `settings` **配置调整** (Config) `key: cmp_config`
+*   `file-box` **标识详情** (Detail) `key: cmp_detail`
+*   `bar-chart-3` **分析结果** (Result) `key: cmp_result`
 
-#### **Group 5: 对比 (Comparison)**
-*   `file-text` **对比核算列表** (List) `key: cmp_list`
-*   `settings` **对比配置调整** (Config) `key: cmp_config`
-*   `file-box` **对比标识详情** (Detail) `key: cmp_detail`
-*   `bar-chart-3` **对比分析结果** (Result) `key: cmp_result`
+#### **Dimension B: 模型层级 (Model Level)**
+*Triggered when L2 = "Model"*
+
+**Group 1: 核算 (Accounting)**
+*   `file-text` **基本信息** (Basic Info) `key: mod_basic`
+*   `settings` **模型配置** (Model Config) `key: mod_model_config` *Distinct from Accounting Level*
+
+**Group 2: 透视 (Perspective)**
+*   `database` **活动数据** (Activity Data) `key: mod_pers_activity` *Shared Component*
+*   `share-2` **因子数据** (Factor Data) `key: mod_pers_factor` *Shared Component*
 
 ### D. Footer 底部功能表 (Entity Properties)
 *点击触发底部 Modal 弹窗。*
@@ -139,3 +150,18 @@ The application has 3 primary view modes. JavaScript must toggle `hidden` classe
 *   `layers` **复合因子** (Comp Factor)
 *   `book-open` **文献** (Literature)
 *   `cpu` **元件** (Component)
+
+---
+
+## 04. 业务逻辑规则 (Business Rules)
+
+### A. 表单字段逻辑 (Form Field Logic)
+
+#### 1. 分析设置 (Analysis Settings)
+*   **强制启用字段 (Mandatory Fields)**:
+    *   **数据质量打分 (Data Quality Score)**: 必须始终开启 (`Checked`) 且不可更改 (`Disabled`)。
+        *   *业务原因*: 系统核心算法依赖，不可关闭。
+        *   *Tooltip*: "作用：根据参数的数据评分，计算出整体产品碳排放计算质量评分的方法；"
+    *   **重要问题识别 (Important Issue Identification)**: 必须始终开启 (`Checked`) 且不可更改 (`Disabled`)。
+        *   *业务原因*: 报告合规性要求，必须展示。
+        *   *Tooltip*: "作用：展示并说明对产品碳足迹排放影响最大的模块的方法；"

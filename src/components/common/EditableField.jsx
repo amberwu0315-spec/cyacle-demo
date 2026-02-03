@@ -94,7 +94,7 @@ const EditableField = ({
 
         if (type === 'number' && unit) {
             return (
-                <span className="text-sm text-gray-800">
+                <span className="text-sm text-gray-900">
                     {value} <span className="text-gray-500 ml-1">{unit}</span>
                 </span>
             );
@@ -102,13 +102,13 @@ const EditableField = ({
 
         if (type === 'textarea') {
             return (
-                <span className="text-sm text-gray-800 whitespace-pre-wrap line-clamp-2">
+                <span className="text-sm text-gray-900 whitespace-pre-wrap line-clamp-2">
                     {value || '未填写'}
                 </span>
             );
         }
 
-        return <span className="text-sm text-gray-800">{value}</span>;
+        return <span className="text-sm text-gray-900">{value}</span>;
     };
 
     // Render edit input based on type
@@ -216,7 +216,7 @@ const EditableField = ({
 
     const renderKeyArea = () => (
         <React.Fragment>
-            <span>{label}:</span>
+            <span>{label}：</span>
             {helpIcon && <div className="ml-1 text-gray-400"><IconInfoCircle size={14} /></div>}
         </React.Fragment>
     );
@@ -227,15 +227,15 @@ const EditableField = ({
         return (
             <div className={`flex items-center px-3 min-h-9 rounded transition-all duration-200 ease-in-out relative ${isHovered && !isEditing ? 'bg-gray-50' : ''}`}>
                 {isEditing ? renderEditInput() : (
-                    <div className="flex items-center flex-1 w-full overflow-hidden relative">
-                        <div className="flex-1 truncate pr-6">
+                    <div className="relative flex-1 w-full flex items-center group overflow-hidden">
+                        <div className="truncate pr-12 w-full">
                             {renderDisplayValue()}
                         </div>
                         {isHovered && (
-                            <div className="absolute right-0 top-1/2 -translate-y-1/2 pl-4 bg-gradient-to-l from-gray-50 via-gray-50 to-transparent flex items-center">
+                            <div className="absolute right-0 top-1/2 -translate-y-1/2 pl-4 bg-gradient-to-l from-gray-50 via-gray-50 to-transparent flex items-center h-full">
                                 <button
                                     onClick={handleEdit}
-                                    className="flex items-center gap-1 px-2 h-6 bg-white border border-gray-200 text-xs text-gray-600 hover:text-[#087F9C] hover:border-[#087F9C] rounded shadow-sm transition-all"
+                                    className="flex items-center gap-1 px-2 h-6 bg-white border border-gray-200 text-xs text-gray-600 hover:text-[#087F9C] hover:border-[#087F9C] rounded shadow-sm transition-all whitespace-nowrap"
                                     title="编辑"
                                 >
                                     <IconPencil size={12} />
@@ -255,8 +255,8 @@ const EditableField = ({
     if (layout === 'table') {
         return (
             <tr ref={containerRef} className="group">
-                {/* Key Cell: Shrink to fit content (w-px + whitespace-nowrap) */}
-                <td className="w-px whitespace-nowrap align-middle">
+                {/* Key Cell: Controlled by FormBlock's colgroup */}
+                <td className="align-middle pr-0">
                     <div className="flex items-center h-9 text-sm text-gray-500 font-normal">
                         {renderKeyArea()}
                     </div>
@@ -269,7 +269,9 @@ const EditableField = ({
                     onMouseEnter={() => !children && setIsHovered(true)}
                     onMouseLeave={() => !children && setIsHovered(false)}
                 >
-                    {renderValueAreaContent()}
+                    <div className={children ? "px-3" : ""}>
+                        {renderValueAreaContent()}
+                    </div>
 
                     {/* Floating Toolbar (only for standard editable fields) */}
                     {!children && isEditing && (

@@ -8,13 +8,19 @@ import Checkbox from '../../common/Checkbox';
 const AccountingBasic = () => {
     const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
 
-    // State for Basic Info fields
+    // State for Basic Info fields (Left Column: Product Settings)
+    const [outputProduct, setOutputProduct] = useState('示例门窗系统');
+    const [declaringUnit, setDeclaringUnit] = useState('1 平方米');
+    const [productCount, setProductCount] = useState('100');
+    const [productWeight, setProductWeight] = useState('25.5');
+    const [weightUnit, setWeightUnit] = useState('kg');
+
+    // State for Basic Info fields (Right Column: Metadata)
     const [modelName, setModelName] = useState('示例门窗');
     const [systemBoundary, setSystemBoundary] = useState('从摇篮到大门');
     const [accountingPeriod, setAccountingPeriod] = useState('2024-01-01');
     const [geoBoundary, setGeoBoundary] = useState({ id: 'loc1', name: '演示门窗生产地' });
     const [description, setDescription] = useState('这是一个用于演示的门窗产品模型，主要用于展示碳足迹核算的完整流程和数据结构。');
-    const [productWeight, setProductWeight] = useState('25.5');
 
     // State for Accounting Settings fields
     const [projectStandard, setProjectStandard] = useState('ISO 14067');
@@ -25,9 +31,9 @@ const AccountingBasic = () => {
     // State for Analysis Settings
     const [analysisMethod, setAnalysisMethod] = useState({
         exclusion: true,
-        dataQuality: false,
+        dataQuality: true, // Changed to true for demo
         sensitivity: true,
-        issues: false
+        issues: true // Changed to true for demo
     });
     const [exclusionThreshold1, setExclusionThreshold1] = useState('1');
     const [exclusionThreshold2, setExclusionThreshold2] = useState('3');
@@ -55,8 +61,33 @@ const AccountingBasic = () => {
                 {/* Module 1: 输出产品设置 (Output Product Settings) */}
                 <ContentModule>
                     <ModuleHeader title="输出产品设置" />
-                    {/* Placeholder - will be implemented later */}
-                    <div className="px-3 py-4 bg-white text-sm text-gray-400">待实现内容</div>
+                    <FormBlock>
+                        <EditableField
+                            label="输出产品"
+                            value={outputProduct}
+                            onSave={setOutputProduct}
+                            type="text"
+                        />
+                        <EditableField
+                            label="申报单位"
+                            value={declaringUnit}
+                            onSave={setDeclaringUnit}
+                            type="text"
+                        />
+                        <EditableField
+                            label="产品数量"
+                            value={productCount}
+                            onSave={setProductCount}
+                            type="number"
+                        />
+                        <EditableField
+                            label="产品重量"
+                            value={productWeight}
+                            onSave={setProductWeight}
+                            type="number"
+                            unit={weightUnit}
+                        />
+                    </FormBlock>
                 </ContentModule>
 
                 {/* Module 2: 分析设置 (Analysis Settings) */}
@@ -64,7 +95,7 @@ const AccountingBasic = () => {
                     <ModuleHeader title="分析设置" />
                     <FormBlock>
                         <EditableField label="设置分析方法">
-                            <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-4 min-h-9 flex-wrap">
                                 <Checkbox
                                     checked={analysisMethod.exclusion}
                                     onChange={(e) => setAnalysisMethod({ ...analysisMethod, exclusion: e.target.checked })}
@@ -74,6 +105,8 @@ const AccountingBasic = () => {
                                     checked={analysisMethod.dataQuality}
                                     onChange={(e) => setAnalysisMethod({ ...analysisMethod, dataQuality: e.target.checked })}
                                     label="数据质量打分"
+                                    disabled
+                                    tooltip="作用：根据参数的数据评分，计算出整体产品碳排放计算质量评分的方法；"
                                 />
                                 <Checkbox
                                     checked={analysisMethod.sensitivity}
@@ -84,58 +117,65 @@ const AccountingBasic = () => {
                                     checked={analysisMethod.issues}
                                     onChange={(e) => setAnalysisMethod({ ...analysisMethod, issues: e.target.checked })}
                                     label="重要问题识别"
+                                    disabled
+                                    tooltip="作用：展示并说明对产品碳足迹排放影响最大的模块的方法；"
                                 />
                             </div>
                         </EditableField>
 
-                        <EditableField
-                            label="排除计算-重要性阈值"
-                            value={exclusionThreshold1}
-                            onSave={setExclusionThreshold1}
-                            type="number"
-                            unit="%"
-                            min={0}
-                            max={100}
-                            step={1}
-                        />
-                        <EditableField
-                            label="排除计算-排除性阈值"
-                            value={exclusionThreshold2}
-                            onSave={setExclusionThreshold2}
-                            type="number"
-                            unit="%"
-                            min={0}
-                            max={100}
-                            step={1}
-                        />
-                        <EditableField
-                            label="敏感性分析-灵敏区间"
-                            value={sensitivityThreshold}
-                            onSave={setSensitivityThreshold}
-                            type="number"
-                            unit="%"
-                            min={0}
-                            max={100}
-                            step={1}
-                        />
+                        {analysisMethod.exclusion && (
+                            <>
+                                <EditableField
+                                    label="排除计算-重要性阈值"
+                                    value={exclusionThreshold1}
+                                    onSave={setExclusionThreshold1}
+                                    type="number"
+                                    unit="%"
+                                    min={0}
+                                    max={100}
+                                />
+                                <EditableField
+                                    label="排除计算-排除性阈值"
+                                    value={exclusionThreshold2}
+                                    onSave={setExclusionThreshold2}
+                                    type="number"
+                                    unit="%"
+                                    min={0}
+                                    max={100}
+                                />
+                            </>
+                        )}
 
-                        <EditableField label="敏感性分析方法">
-                            <div className="flex items-center gap-4">
-                                <Checkbox
-                                    checked={sensitivityApproach.gradeDataChange}
-                                    onChange={(e) => setSensitivityApproach({ ...sensitivityApproach, gradeDataChange: e.target.checked })}
-                                    label="按重要数据波动区间分析"
+                        {analysisMethod.sensitivity && (
+                            <>
+                                <EditableField
+                                    label="敏感性分析-灵敏区间"
+                                    value={sensitivityThreshold}
+                                    onSave={setSensitivityThreshold}
+                                    type="number"
+                                    unit="%"
+                                    min={0}
+                                    max={100}
                                 />
-                                <Checkbox
-                                    checked={sensitivityApproach.gradeDataUncertainty}
-                                    onChange={(e) => setSensitivityApproach({ ...sensitivityApproach, gradeDataUncertainty: e.target.checked })}
-                                    label="按重要数据不确定性分析"
-                                />
-                            </div>
-                        </EditableField>
+                                <EditableField label="敏感性分析方法">
+                                    <div className="flex flex-col gap-2 py-2">
+                                        <Checkbox
+                                            checked={sensitivityApproach.gradeDataChange}
+                                            onChange={(e) => setSensitivityApproach({ ...sensitivityApproach, gradeDataChange: e.target.checked })}
+                                            label="按重要数据波动区间分析"
+                                        />
+                                        <Checkbox
+                                            checked={sensitivityApproach.gradeDataUncertainty}
+                                            onChange={(e) => setSensitivityApproach({ ...sensitivityApproach, gradeDataUncertainty: e.target.checked })}
+                                            label="按重要数据不确定性分析"
+                                        />
+                                    </div>
+                                </EditableField>
+                            </>
+                        )}
 
                         <EditableField label="建立气体量化方法">
-                            <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-4 min-h-9 flex-wrap">
                                 <Checkbox
                                     checked={buildingMethod.excludeMethod}
                                     onChange={(e) => setBuildingMethod({ ...buildingMethod, excludeMethod: e.target.checked })}
@@ -254,8 +294,19 @@ const AccountingBasic = () => {
                     />
 
                     {isAdvancedOpen && (
-                        <div className="px-3 py-4 bg-gray-50 border-t border-gray-100 text-sm text-gray-400">
-                            待实现内容
+                        <div className="p-3 bg-gray-50 border-t border-gray-100 flex flex-col gap-2">
+                            <button className="flex items-center justify-between px-3 py-2 bg-white border border-gray-200 rounded text-sm text-gray-700 hover:border-[#087F9C] hover:text-[#087F9C] transition-all group">
+                                <span>复制当前核算</span>
+                                <span className="text-[10px] text-gray-400 group-hover:text-[#087F9C]">快速创建副本</span>
+                            </button>
+                            <button className="flex items-center justify-between px-3 py-2 bg-white border border-gray-200 rounded text-sm text-gray-700 hover:border-[#087F9C] hover:text-[#087F9C] transition-all group">
+                                <span>批量同步模型数据</span>
+                                <span className="text-[10px] text-gray-400 group-hover:text-[#087F9C]">同步 5 个子项</span>
+                            </button>
+                            <button className="flex items-center justify-between px-3 py-2 bg-white border border-gray-200 rounded text-sm text-red-500 hover:bg-red-50 hover:border-red-200 transition-all group">
+                                <span>删除此核算</span>
+                                <span className="text-[10px] text-red-300 group-hover:text-red-400">不可撤销</span>
+                            </button>
                         </div>
                     )}
                 </ContentModule>

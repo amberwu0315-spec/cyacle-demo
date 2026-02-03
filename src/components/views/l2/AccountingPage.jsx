@@ -1,160 +1,92 @@
 import React, { useEffect, useState } from 'react';
 import { useHeaderContext } from '../../../context/HeaderContext';
-import { IconSettings, IconFileText } from '@tabler/icons-react';
+import { useNavigation } from '../../../context/NavigationContext';
 import L3Sidebar from '../../layout/L3Sidebar';
 import AccountingBasic from '../l3/AccountingBasic';
-import AccountingConfig from '../l3/AccountingConfig';
-import AccountingCalc from '../l3/AccountingCalc';
-import AccountingTools from '../l3/AccountingTools';
-import ActivityData from '../l3/ActivityData';
-import FactorData from '../l3/FactorData';
+import AccountingModelConfig from '../accounting/AccountingModelConfig';
+import ActivityDataView from '../shared/ActivityDataView';
+import FactorDataView from '../shared/FactorDataView';
 import ReportInfo from '../l3/ReportInfo';
 import ReportExport from '../l3/ReportExport';
-import PerspectiveData from '../l3/PerspectiveData';
 import InnerDrawer from '../../common/InnerDrawer';
-import Tooltip from '../../common/Tooltip';
 
-// Wrapper for L3 Routing Logic (Extracted from ProjectLayout)
+// Wrapper for L3 Routing Logic
 const AccountingPage = ({ activeL3, onL3Change }) => {
-    const { setActions, setLayoutConfig, setBreadcrumbData } = useHeaderContext();
-    const [selectedMethod, setSelectedMethod] = useState('GWP100');
+    const { setActions, setLayoutConfig } = useHeaderContext(); // Removed setBreadcrumbData logic as it's now in Header Widget
+    const { activeMode } = useNavigation();
 
-    // Drawer State: 'method' | 'overview' | null
-    const [activeDrawer, setActiveDrawer] = useState(null);
-
-    const toggleDrawer = (drawerName) => {
-        if (activeDrawer === drawerName) {
-            setActiveDrawer(null); // Close if clicking same
-        } else {
-            setActiveDrawer(drawerName); // Open new
+    // Default Selection Logic
+    useEffect(() => {
+        if (!activeL3 && onL3Change) {
+            onL3Change('acct_basic');
         }
-    };
+    }, [activeL3, onL3Change]);
 
+    const [activeDrawer, setActiveDrawer] = useState(null);
     const closeDrawer = () => setActiveDrawer(null);
 
-    // Close logic when clicking outside is now handled by the main container's onClick
-    const handleContentClick = (e) => {
-        // Only close if a drawer is open
-        if (activeDrawer) {
-            setActiveDrawer(null);
-        }
-    };
-
     useEffect(() => {
-        // 1. Set Layout to Breadcrumb
-        setLayoutConfig('breadcrumb');
+        // Since BreadcrumbWidget handles its own data via Context,
+        // and Header Widgets handle logic, we just clear legacy actions.
+        setActions(null);
+        return () => setActions(null);
+    }, [setActions]);
 
-        // 2. Set Breadcrumb Data
-        setBreadcrumbData([
-            { label: 'My Model A', onClick: () => console.log('Go Model'), isLeaf: false },
-            { label: 'Accounting V1', isLeaf: true }
-        ]);
-
-        // 3. Set Actions
-        setActions(
-            <div className="flex items-center gap-2">
-                <Tooltip content="方法学设置">
-                    <button
-                        className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-md transition-colors ${activeDrawer === 'method'
-                            ? 'bg-[#087F9C] text-white shadow-sm'
-                            : 'text-gray-700 hover:bg-gray-100' // Removed bg-gray-100 default
-                            }`}
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            toggleDrawer('method');
-                        }}
-                    >
-                        <IconSettings size={14} />
-                        <span>{selectedMethod}</span>
-                    </button>
-                </Tooltip>
-
-                {/* Divider Removed */}
-
-                <Tooltip content="核算概览">
-                    <button
-                        className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-md transition-colors ${activeDrawer === 'overview'
-                            ? 'bg-[#087F9C] text-white shadow-sm'
-                            : 'text-gray-700 hover:bg-gray-100'
-                            }`}
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            toggleDrawer('overview');
-                        }}
-                    >
-                        <IconFileText size={16} />
-                        <span>概览</span>
-                    </button>
-                </Tooltip>
-            </div>
-        );
-
-        return () => {
-            setActions(null);
-            setLayoutConfig('title-only'); // Reset to default
-            setBreadcrumbData([]);
-        };
-    }, [setActions, setLayoutConfig, setBreadcrumbData, selectedMethod, activeDrawer]);
-
-    // Dynamic Render Logic for L3 Content (Reused)
+    // Dynamic Render Logic for L3 Content
     const renderL3Content = () => {
         switch (activeL3) {
             case 'acct_basic': return <AccountingBasic />;
-            case 'acct_config': return <AccountingConfig />;
-            case 'acct_calc': return <AccountingCalc />;
-            case 'acct_tools': return <AccountingTools />;
-            case 'pers_activity': return <ActivityData />;
-            case 'pers_factor': return <FactorData />;
+            case 'acct_model_config': return <AccountingModelConfig />;
+            case 'acct_calc': return <div className="p-10 text-gray-400">计算与分析 Placeholder</div>;
+            case 'acct_tools': return <div className="p-10 text-gray-400">分析工具 Placeholder</div>;
+            case 'acct_pers_activity': return <ActivityDataView />;
+            case 'acct_pers_factor': return <FactorDataView />;
             case 'rpt_info': return <ReportInfo />;
             case 'rpt_export': return <ReportExport />;
-            case 'app_cpcd': return <AccountingBasic />; // Reuse
-            default: return <AccountingBasic />; // Default fallback
+            case 'rpt_voucher': return <div className="p-10 text-gray-400">凭证管理 Placeholder</div>;
+            case 'rpt_sheet': return <div className="p-10 text-gray-400">计算表 Placeholder</div>;
+            case 'app_cpcd': return <div className="p-10 text-gray-400">CPCD 申请单 Placeholder</div>;
+            case 'cmp_list': return <div className="p-10 text-gray-400">对比列表 Placeholder</div>;
+            case 'cmp_config': return <div className="p-10 text-gray-400">对比配置 Placeholder</div>;
+            case 'cmp_detail': return <div className="p-10 text-gray-400">对比详情 Placeholder</div>;
+            case 'cmp_result': return <div className="p-10 text-gray-400">对比结果 Placeholder</div>;
+            default: return <AccountingBasic />;
         }
     };
 
+    const isVersionMode = activeMode === 'version';
+
     return (
         <div className="w-full h-full flex flex-row relative overflow-hidden">
-            {/* L3 Sidebar */}
-            <L3Sidebar activeL2="accounting" activeL3={activeL3} onSelect={onL3Change} />
+            {!isVersionMode && (
+                <L3Sidebar activeL2="accounting" activeL3={activeL3 || 'acct_basic'} onSelect={onL3Change} />
+            )}
 
-            {/* Main Canvas + Drawers Container */}
-            <main className="flex-1 bg-[#F5F6F8] relative flex flex-col overflow-hidden" onClick={handleContentClick}>
-                {renderL3Content()}
+            <main className="flex-1 bg-[#F5F6F8] relative flex flex-col overflow-hidden">
+                {isVersionMode ? (
+                    <div className="flex-1 flex flex-col items-center justify-center text-gray-400">
+                        <div className="text-2xl font-semibold mb-2">版本模式 (Version Mode)</div>
+                        <p>此处显示版本快照内容，不可编辑。</p>
+                    </div>
+                ) : (
+                    renderL3Content()
+                )}
 
-                {/* Non-blocking Drawers (Inside Main) */}
+                {/* Legacy Drawers */}
                 <InnerDrawer
                     isOpen={activeDrawer === 'method'}
                     onClose={closeDrawer}
-                    title="方法学设置 (Methodology)"
+                    title="方法学设置"
                 >
-                    <div className="space-y-4" onClick={(e) => e.stopPropagation()}>
-                        <div className="space-y-1">
-                            <label className="text-sm font-medium text-gray-700">选择默认方法</label>
-                            <select
-                                value={selectedMethod}
-                                onChange={(e) => setSelectedMethod(e.target.value)}
-                                className="w-full border border-gray-300 rounded px-2 py-1.5 text-sm"
-                            >
-                                <option value="GWP100">GWP100 - 温室气体</option>
-                                <option value="CML2001">CML2001 - 基准</option>
-                                <option value="ReCiPe">ReCiPe - Endpoint</option>
-                            </select>
-                        </div>
-                    </div>
+                    <div className="p-4">Methodology Content</div>
                 </InnerDrawer>
 
                 <InnerDrawer
                     isOpen={activeDrawer === 'overview'}
                     onClose={closeDrawer}
-                    title="核算概览 (Overview)"
+                    title="核算概览"
                 >
-                    <div className="space-y-4 text-sm text-gray-600" onClick={(e) => e.stopPropagation()}>
-                        <p>当前核算任务的摘要信息...</p>
-                        <div className="bg-gray-50 p-3 rounded border border-gray-100">
-                            <span className="text-xs text-gray-400">Total Status</span>
-                            <div className="font-bold text-green-600">Calculated</div>
-                        </div>
-                    </div>
+                    <div className="p-4">Overview Content</div>
                 </InnerDrawer>
             </main>
         </div>

@@ -1,31 +1,63 @@
 import React, { useState, useEffect } from 'react';
-import { IconArrowLeft, IconChevronDown, IconBell, IconSettings } from '@tabler/icons-react';
 import { useHeaderContext } from '../../context/HeaderContext';
+import { useNavigation } from '../../context/NavigationContext';
+import { NAV_SCHEME } from '../../config/navigationConfig';
+
+// Import Widgets
+import ViewActionGroup from './ViewActionGroup';
+import BreadcrumbWidget from './header_widgets/BreadcrumbWidget';
+import ModeSwitchWidget from './header_widgets/ModeSwitchWidget';
+import MethodologyWidget from './header_widgets/MethodologyWidget';
+import OverviewWidget from './header_widgets/OverviewWidget';
+import TitleWidget from './header_widgets/TitleWidget';
+import BusinessActionsWidget from './header_widgets/BusinessActionsWidget';
 
 const Header = ({
-    layoutConfig = 'title-only', // 'title-only' | 'breadcrumb'
-    title = 'Cyacle Dashboard',
-    breadcrumbData = [], // Array of { label, onClick, isLeaf }
-    defaultActions = []
+    title = 'Cyacle',
+    defaultActions = [] // For legacy pages or fallback
 }) => {
-    const { actions, titleOverride, layoutConfig: ctxLayoutConfig, breadcrumbData: ctxBreadcrumbData } = useHeaderContext();
     const [isScrolled, setIsScrolled] = useState(false);
+    const { activeDimension, activeMode } = useNavigation();
+    const { titleOverride, actions } = useHeaderContext();
 
-    // Context takes precedence over props if set (though here we default context to initial values, so we might need check)
-    // Actually, usually context is the source of truth for dynamic pages. Props can be initial defaults.
-    const activeLayout = ctxLayoutConfig || layoutConfig;
-    const activeBreadcrumbs = ctxBreadcrumbData.length > 0 ? ctxBreadcrumbData : breadcrumbData;
+    // Now ALL configured dimensions use widget layout.
+    // If activeDimension is not in NAV_SCHEME, we fall back to generic layout.
+    const isWidgetLayout = activeDimension && NAV_SCHEME[activeDimension];
 
-    // Monitor Scroll for Shadow Effect
+    const targetWidgets = isWidgetLayout
+        ? (NAV_SCHEME[activeDimension]?.modes[activeMode]?.headerWidgets || [])
+        : [];
+
     useEffect(() => {
-        const handleScroll = () => {
-            setIsScrolled(window.scrollY > 0);
-        };
+        const handleScroll = () => setIsScrolled(window.scrollY > 0);
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const displayTitle = titleOverride || title;
+    const renderWidget = (widgetId) => {
+        switch (widgetId) {
+            case 'breadcrumb': return <BreadcrumbWidget key="bread" />;
+            case 'title': return <TitleWidget key="title" />;
+
+            case 'mode_switch': return <ModeSwitchWidget key="mode" />;
+            case 'methodology': return <MethodologyWidget key="meth" />;
+            case 'overview': return <OverviewWidget key="over" />;
+
+            case 'business_actions': return <BusinessActionsWidget key="biz" />;
+
+            case 'view_actions':
+                return ( // Container for default view actions
+                    <div key="view" className="flex items-center gap-0">
+                        {defaultActions}
+                    </div>
+                );
+            default: return null;
+        }
+    };
+
+    // Rule: Breadcrumb OR Title is Left. Everything else is Right.
+    const leftWidgets = targetWidgets.filter(wId => wId === 'breadcrumb' || wId === 'title');
+    const rightWidgets = targetWidgets.filter(wId => wId !== 'breadcrumb' && wId !== 'title');
 
     return (
         <header
@@ -33,60 +65,52 @@ const Header = ({
                 }`}
             style={{ height: '46px' }}
         >
-            {/* Left Zone */}
-            <div className="flex items-center gap-3">
-                {activeLayout === 'title-only' && (
-                    <h1 className="text-base font-medium text-gray-800 tracking-tight">
-                        {displayTitle}
-                    </h1>
-                )}
-
-                {activeLayout === 'breadcrumb' && (
-                    <nav className="flex items-center gap-1 text-sm">
-                        {/* Back Arrow Removed as per user request */}
-                        {activeBreadcrumbs.map((item, index) => (
-                            <div key={index} className="flex items-center gap-1">
-                                {index > 0 && <span className="text-gray-300">/</span>}
-
-                                {item.isLeaf ? (
-                                    <span className="font-medium text-gray-900 px-1">
-                                        {item.label}
-                                    </span>
-                                ) : (
-                                    <button
-                                        onClick={item.onClick}
-                                        className="text-gray-500 hover:text-gray-800 px-1 py-0.5 rounded hover:bg-gray-50 transition-colors"
-                                    >
-                                        {item.label}
-                                    </button>
-                                )}
-                            </div>
-                        ))}
-
-                        {/* Sibling Dropdown Trigger Example */}
-                        {activeBreadcrumbs.length > 0 && (
-                            <button className="text-gray-400 hover:text-gray-700 p-0.5 rounded ml-1">
-                                <IconChevronDown size={14} />
-                            </button>
-                        )}
-                    </nav>
-                )}
-            </div>
-
-            {/* Right Zone: Actions */}
-            <div className="flex items-center gap-3">
-                {/* Dynamic Actions Injected from Page */}
-                {actions && (
-                    <div className="flex items-center gap-2 border-r border-gray-200 pr-3 mr-1">
-                        {actions}
+            {isWidgetLayout ? (
+                // --- Universal Widget Layout ---
+                <>
+                    {/* LEFT ZONE */}
+                    <div className="flex items-center gap-3">
+                        {leftWidgets.map(wId => renderWidget(wId))}
                     </div>
-                )}
 
-                {/* Default / Global Actions */}
-                <div className="flex items-center gap-1">
-                    {defaultActions}
-                </div>
-            </div>
+                    {/* RIGHT ZONE */}
+                    <div className="flex items-center gap-4">
+                        {rightWidgets.map((wId, index) => {
+                            // Special Divider Logic: 
+                            // If this widget is 'view_actions', AND it is NOT the first/only item on the right
+                            // (i.e. there are business items before it), put a divider.
+                            if (wId === 'view_actions' && index > 0) {
+                                return (
+                                    <React.Fragment key={wId}>
+                                        <div className="w-[1px] h-4 bg-gray-200 mx-1"></div>
+                                        {renderWidget(wId)}
+                                    </React.Fragment>
+                                );
+                            }
+                            return renderWidget(wId);
+                        })}
+
+                        {/* Fallback: If config didn't specify business_actions but they exist in Context, 
+                            and we didn't render them via widget, assume legacy 'actions' injection?
+                            NO, we enforce config. If you want actions, add 'business_actions' to config.
+                            BUT, for safety during migration, we can append if not configured.
+                         */}
+                    </div>
+                </>
+            ) : (
+                // --- Fallback Legacy Layout (For Dashboard / Unknown L1) ---
+                <>
+                    <div className="flex items-center gap-3">
+                        <h1 className="text-base font-medium text-gray-800 tracking-tight">
+                            {titleOverride || title}
+                        </h1>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        {actions}
+                        {defaultActions}
+                    </div>
+                </>
+            )}
         </header>
     );
 };

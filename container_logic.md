@@ -7,17 +7,22 @@
 
 ### A. 逻辑维度定义的 (Logic Dimensions)
 
-| 维度 (Dimension) | 定义逻辑 (Definition) | 具体业务规则 (Business Rules) | React Props / State 映射 |
-| :--- | :--- | :--- | :--- |
-| **1. 静态配置 (Static)** | **物理布局** | 高度固定 `46px` (Token: `Header-Height`)，背景色 #FFFFFF，底部带 `Shadow-SM`。 | `className`, `style={{ height: theme.headerHeight }}` |
-| | **基础结构配置** | 决定左侧区域显示模式 (Logo / 标题 / 面包屑)。**原 `headerSkeleton` 重命名为 `layoutConfig`**。 | `prop: layoutConfig` ('title-only', 'breadcrumb', 'custom') |
-| | **右侧区域预设** | 默认占位区，支持挂载通用功能 (如通知/设置) 或业务按钮。 | `prop: defaultActions` (Array) |
-| **2. 驱动显示 (Driven)** | **标题动态化** | **Priority Rule**: 优先显示 Props 传入的 `title`；若为空，则回退显示当前 Route 的 `meta.title`；若加载中，显示 Loading Skeleton。 | `prop: title` ?? `route.meta.title` |
-| | **模式切换** | 监听全局 `EditMode` 状态。编辑模式下，Header 可能变为特定颜色或显示“未保存”提示。 | `context: { isEditMode }` |
-| | **吸顶状态** | 监听页面滚动 (`useScroll`)。滚动超过 0px 时增加 `border-b` 或阴影层级。 | `state: isScrolled` (Boolean) |
-| **3. 动态加载 (Dynamic)** | **功能区插槽** | **控制反转 (IoC)**: 不由路由静态配置。而是由**当前激活的页面组件 (Page)** 通过 `Portal` 或 `useHeaderActions` 钩子动态注入按钮。 | `Slot: <HeaderActionPortal>` |
-| | | *示例*: 详情页加载完成后，注入 [保存, 取消] 按钮；列表页注入 [新建, 导出] 按钮。 | |
-| | **面包屑/历史** | **明确交互**: 点击面包屑文本 -> 跳转上级路由 (Parent)。**移除最左侧返回箭头** (User Request)。 | `prop: breadcrumbData` (Parent + Siblings) |
+### B. Widget-Based Dynamic Header (Widget 化动态顶部栏)
+
+> **Core Change:** The header is no longer a static layout. It is composed of a list of "Widgets" defined by the current `NavConfig`.
+
+| Widget ID | 描述 (Description) | 动态逻辑 (Dynamic Logic) |
+| :--- | :--- | :--- |
+| **Breadcrumb** | 面包屑导航 | **Left Zone**. 显示 `Model > Accounting`。点击可触发下拉菜单切换上下文。 |
+| **ModeSwitch** | 模式切换器 | **Right Zone**. Tab 样式 (Segmented Control)。切换 [配置模式] / [版本模式]。 |
+| **Methodology** | 方法学设置 | **Right Zone**. 在 Config/Version 模式下均显示 (视配置而定)。 |
+| **Overview** | 概览按钮 | **Right Zone**. 仅在 Accounting Config Mode 下显示。 |
+| **ViewActions** | 视图功能组 | **Right Zone**. 最后显示。与左侧组件有分割线 (`|`)。 |
+| **BusinessActions** | 业务按钮组 | **Right Zone**. (如新建、删除)。 |
+
+*   **Layout Logic:**
+    *   **Left Zone:** Breadcrumb ONLY.
+    *   **Right Zone:** Methodology -> Overview -> ModeSwitch -> | -> ViewActions.
 
 ### B. 交互状态机 (Interaction State Machine)
 *(Refer to original file for details)*
@@ -63,22 +68,18 @@
     *   **Group 2 (View)**: `[Icon] Back`, `[Icon] Forward`, `[Icon] New Window`
 
 ### 4. L2 - 模型 (Model)
-*   **Header Type**: `Title Only`
-*   **Left Title**: "模型管理" (Fixed)
-*   **Right Actions**:
-    *   **Group 1 (Business)**: 
-        *   `[Fill Button] 创建`: Create Modal. (Tooltip: "创建新模型").
-        *   `[Icon] AI 生成`: AI Modal. (Tooltip: "AI 生成").
-    *   **Divider**: `Visible`
-    *   **Group 2 (View)**: `[Icon] Back`, `[Icon] Forward`, `[Icon] New Window`
+*   **Header Type**: `Widget Based`
+*   **Config Mode**: `[Breadcrumb, Methodology, ViewActions]` (Implied Config Mode Only, No Switcher).
+*   **Version Mode**: *Not applicable via Switcher*.
+*   **SideNav Scope**: 
+    *   **Accounting Group**: Basic, ModelConfig.
+    *   **Perspective Group**: Activity Data, Factor Data.
+*   **Defaults**: Auto-selects `Basic (mod_basic)`. No Create/AI Actions.
 
 ### 5. L2 - 核算 (Accounting)
-*   **Header Type**: `Breadcrumb Switcher` (No Back Arrow)
-*   **Left Title**: `Model Name` > `Accounting Name`
-*   **Right Actions**:
-    *   **Group 1 (Business)**:
-        *   **Style**: Clean Text Link style (Transparent bg, hover gray). **No Divider** between buttons.
-        *   `[Icon+Text] 方法学设置`: Tooltip "方法学设置". Open InnerDrawer.
-        *   `[Icon+Text] 概览`: Tooltip "核算概览". Open InnerDrawer.
-    *   **Divider**: `Visible` (Separating Business & View groups)
-    *   **Group 2 (View)**: `[Icon] Back`, `[Icon] Forward`, `[Icon] New Window`
+*   **Header Type**: `Widget Based`
+*   **Config Mode**: `[Breadcrumb, Methodology, Overview, ModeSwitch | ViewActions]`
+    *   *Interaction*: Breadcrumb is interactive (Context Switcher). Sidebar is Visible.
+*   **Version Mode**: `[Breadcrumb, Methodology, ModeSwitch | ViewActions]`
+    *   *Interaction*: Breadcrumb is read-only. **Sidebar is Hidden**. Main Area shows placeholder.
+*   **SideNav Scope**: Accounting Level Tree (Groups: Accounting, Output, Additional).
