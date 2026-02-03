@@ -29,7 +29,7 @@ export const NAV_SCHEME = {
     basis: {
         modes: {
             config: {
-                headerWidgets: ['title', 'view_actions'], // No Business Actions
+                headerWidgets: ['title', 'business_actions', 'view_actions'], // Matches Doc Rule: Simple L2
                 sidebarGroups: []
             },
             version: { headerWidgets: ['title', 'view_actions'], sidebarGroups: [] }
@@ -81,6 +81,81 @@ export const NAV_SCHEME = {
                 headerWidgets: ['breadcrumb', 'view_actions'],
                 sidebarGroups: []
             }
+        }
+    },
+
+    // ==================== Background Data L2 Modules ====================
+    // Simple L2 Rule: Title (Left) | Business Actions (Right)
+
+    // Database Management
+    database_mgmt: {
+        modes: {
+            config: { headerWidgets: ['title', 'business_actions'], sidebarGroups: [] },
+            version: { headerWidgets: ['title'], sidebarGroups: [] }
+        }
+    },
+    // Components
+    components: {
+        modes: {
+            config: { headerWidgets: ['title', 'business_actions'], sidebarGroups: [] },
+            version: { headerWidgets: ['title'], sidebarGroups: [] }
+        }
+    },
+    // Basic Flow
+    factors_baseflow: {
+        modes: {
+            config: { headerWidgets: ['title', 'business_actions'], sidebarGroups: [] },
+            version: { headerWidgets: ['title'], sidebarGroups: [] }
+        }
+    },
+    // Composite Factor
+    factors_composite: {
+        modes: {
+            config: { headerWidgets: ['title', 'business_actions'], sidebarGroups: [] },
+            version: { headerWidgets: ['title'], sidebarGroups: [] }
+        }
+    },
+    // Literature Factor
+    factors_literature: {
+        modes: {
+            config: { headerWidgets: ['title', 'business_actions'], sidebarGroups: [] },
+            version: { headerWidgets: ['title'], sidebarGroups: [] }
+        }
+    },
+    // Literature
+    literature: {
+        modes: {
+            config: { headerWidgets: ['title', 'business_actions'], sidebarGroups: [] },
+            version: { headerWidgets: ['title'], sidebarGroups: [] }
+        }
+    },
+
+    // ==================== L1 Business Modules ====================
+
+    // Project Management
+    all_projects: {
+        modes: {
+            config: { headerWidgets: ['title', 'business_actions'], sidebarGroups: [] },
+            version: { headerWidgets: ['title'], sidebarGroups: [] }
+        }
+    },
+    pcf: {
+        modes: {
+            config: { headerWidgets: ['title', 'business_actions'], sidebarGroups: [] },
+            version: { headerWidgets: ['title'], sidebarGroups: [] }
+        }
+    },
+    ocf: {
+        modes: {
+            config: { headerWidgets: ['title', 'business_actions'], sidebarGroups: [] },
+            version: { headerWidgets: ['title'], sidebarGroups: [] }
+        }
+    },
+    // Research Objects
+    all_objects: {
+        modes: {
+            config: { headerWidgets: ['title', 'business_actions'], sidebarGroups: [] },
+            version: { headerWidgets: ['title'], sidebarGroups: [] }
         }
     }
 };

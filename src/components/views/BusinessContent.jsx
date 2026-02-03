@@ -2,6 +2,11 @@ import React, { useEffect } from 'react';
 import { IconStack2, IconFilter, IconSearch, IconPlus, IconLayoutGrid, IconShield } from '@tabler/icons-react';
 import StandardBusinessLayout from './StandardBusinessLayout';
 import { useHeaderContext } from '../../context/HeaderContext';
+import ComponentPage from './l2/ComponentPage';
+import BasicFlowPage from './l2/BasicFlowPage';
+import CompositeFactorPage from './l2/CompositeFactorPage';
+import LiteratureFactorPage from './l2/LiteratureFactorPage';
+import LiteraturePage from './l2/LiteraturePage';
 
 export default function BusinessContent({ activeL1, target, onOpenTab, openedTabs = [] }) {
     const { setActions } = useHeaderContext();
@@ -113,156 +118,25 @@ export default function BusinessContent({ activeL1, target, onOpenTab, openedTab
         );
     };
 
-    // ==================== 元件页面 ====================
-    const renderComponents = () => {
-        const filterOptions = {
-            types: [
-                { value: 'mechanical', label: '机械元件' },
-                { value: 'electronic', label: '电子元件' },
-                { value: 'structural', label: '结构元件' }
-            ],
-            statuses: [
-                { value: 'in_use', label: '使用中' },
-                { value: 'obsolete', label: '已淘汰' }
-            ]
-        };
-
-        return <StandardBusinessLayout title="元件" filterOptions={filterOptions} setHeaderActions={setActions} />;
-    };
-
-    // ==================== 基本流页面 ====================
-    const renderBasicFlow = () => {
-        const filterOptions = {
-            types: [
-                { value: 'material', label: '物料流' },
-                { value: 'energy', label: '能源流' },
-                { value: 'waste', label: '废物流' }
-            ],
-            statuses: [
-                { value: 'active', label: '已启用' },
-                { value: 'draft', label: '草稿' }
-            ]
-        };
-
-        return <StandardBusinessLayout title="基本流" filterOptions={filterOptions} setHeaderActions={setActions} />;
-    };
-
-    // ==================== 复合因子页面 ====================
-    const renderCompositeFactor = () => {
-        const filterOptions = {
-            types: [
-                { value: 'emission', label: '排放因子' },
-                { value: 'resource', label: '资源因子' },
-                { value: 'impact', label: '影响因子' }
-            ],
-            statuses: [
-                { value: 'published', label: '已发布' },
-                { value: 'draft', label: '草稿' }
-            ]
-        };
-
-        return <StandardBusinessLayout title="复合因子" filterOptions={filterOptions} setHeaderActions={setActions} />;
-    };
-
-    // ==================== 文献因子页面 ====================
-    const renderLiteratureFactor = () => {
-        const filterOptions = {
-            types: [
-                { value: 'gwp', label: 'GWP因子' },
-                { value: 'ap', label: 'AP因子' },
-                { value: 'ep', label: 'EP因子' }
-            ],
-            statuses: [
-                { value: 'verified', label: '已验证' },
-                { value: 'pending', label: '待审核' }
-            ]
-        };
-
-        return <StandardBusinessLayout title="文献因子" filterOptions={filterOptions} setHeaderActions={setActions} />;
-    };
-
-    // ==================== 文献页面 ====================
-    const renderLiterature = () => {
-        const filterOptions = {
-            types: [
-                { value: 'journal', label: '期刊论文' },
-                { value: 'standard', label: '标准文件' },
-                { value: 'report', label: '研究报告' }
-            ],
-            statuses: [
-                { value: 'active', label: '有效' },
-                { value: 'archived', label: '已归档' }
-            ]
-        };
-
-        return <StandardBusinessLayout title="文献" filterOptions={filterOptions} setHeaderActions={setActions} />;
-    };
-
-    // ==================== 项目管理页面 ====================
-    const renderProjectManagement = (defaultType = 'all') => {
-        const filterOptions = {
-            types: [
-                { value: 'all', label: '全部类型' },
-                { value: 'pcf', label: '产品碳足迹' },
-                { value: 'ocf', label: '组织碳足迹' }
-            ],
-            statuses: [
-                { value: 'active', label: '进行中' },
-                { value: 'completed', label: '已完成' },
-                { value: 'archived', label: '已归档' }
-            ]
-        };
-
-        return <StandardBusinessLayout
-            title="全部项目"
-            filterOptions={filterOptions}
-            setHeaderActions={setActions}
-            defaultFilterType={defaultType}
-            onRowClick={onOpenTab}
-        />;
-    };
-
-    // ==================== 研究对象页面 ====================
-    const renderResearchObjects = () => {
-        const filterOptions = {
-            types: [
-                { value: 'product', label: '产品' },
-                { value: 'enterprise', label: '企业' },
-                { value: 'process', label: '工艺' }
-            ],
-            statuses: [
-                { value: 'active', label: '有效' },
-                { value: 'draft', label: '草稿' }
-            ]
-        };
-
-        return <StandardBusinessLayout
-            title="研究对象"
-            filterOptions={filterOptions}
-            setHeaderActions={setActions}
-            onRowClick={onOpenTab}
-        />;
-    };
-
     // ==================== 路由逻辑 ====================
     switch (target) {
         case 'database_mgmt':
             return renderDatabaseManagement();
 
         case 'components':
-            return renderComponents();
+            return <ComponentPage />;
 
         case 'factors_baseflow':
-            return renderBasicFlow();
+            return <BasicFlowPage />;
 
         case 'factors_composite':
-            return renderCompositeFactor();
+            return <CompositeFactorPage />;
 
         case 'factors_literature':
-            return renderLiteratureFactor();
+            return <LiteratureFactorPage />;
 
         case 'literature':
-            return renderLiterature();
+            return <LiteraturePage />;
 
         case 'all_projects':
             return renderProjectManagement('all');

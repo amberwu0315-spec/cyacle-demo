@@ -51,8 +51,9 @@ const WorkbenchContent = ({
             // Reset to config mode whenever L2 page changes via Props (Sidebar click)
             setActiveMode('config');
         } else if (isBusinessLayout && !isDetailView) {
-            // If in Business or Dashboard, clear the dimension so Header uses Legacy Mode (Title Only)
-            setActiveDimension(null);
+            // Apply Widget Layout for Business Pages too (defined in navigationConfig)
+            setActiveDimension(businessTarget);
+            setActiveMode('config');
         }
     }, [activeL2, isProjectLayout, isBusinessLayout, isDetailView, setActiveDimension, setActiveMode]);
 
@@ -90,9 +91,24 @@ const WorkbenchContent = ({
                 'project_mgmt': '全部项目',
                 'enterprise': '研究对象'
             };
-            // Try to set title based on active business target if available, or just L1 Title
-            if (activeL1 === 'background_data' && businessTarget === 'components') setHeaderTitle('元件');
-            else setHeaderTitle(titleMap[activeL1] || '');
+            // Title Mapping based on Target (Priority) or L1
+            const targetTitleMap = {
+                // Background Data
+                'database_mgmt': '数据库管理',
+                'components': '元件',
+                'factors_baseflow': '基本流',
+                'factors_composite': '复合因子',
+                'factors_literature': '文献因子',
+                'literature': '文献',
+                // Projects
+                'all_projects': '全部项目',
+                'pcf': '全部项目',
+                'ocf': '全部项目',
+                // Enterprise
+                'all_objects': '研究对象'
+            };
+
+            setHeaderTitle(targetTitleMap[businessTarget] || titleMap[activeL1] || '');
 
         } else {
             setHeaderTitle('Dashboard');
