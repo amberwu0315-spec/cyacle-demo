@@ -19,22 +19,14 @@ The application has 3 primary view modes. JavaScript must toggle `hidden` classe
 ## 02. 详细交互流程 (Interaction Flows)
 
 ### A. L1 侧边栏联动 (Global Navigation)
-*   **Structure:**
-    *   **Top Group (Dashboard Types):**
-        *   User Profile (Avatar)
-        *   **Background Data (Database):** *Enters Management Mode (L2 Sidebar + Full Content)*
-        *   **Project Management (Folder):** *Enters Management Mode*
-        *   **Enterprise/Objects (Building):** *Enters Management Mode*
-    *   **Middle Group (Project Context):**
-        *   **Project Tag (Green Document Icon):** *Enters Project Mode (L2 + L3 + Footer)*
-    *   **Bottom Group:**
-        *   Notification Center (Bell)
-        *   Settings (Gear)
-        *   *Nothing else permitted here.*
+*   **Structure**: (See `design_system.md` for visual layout)
+    *   **Top Group**: Dashboard Types (Workspace, Background, Project, Enterprise).
+    *   **Middle Group**: Project Context (Project Tag).
+    *   **Bottom Group**: Utilities (Notifications, Settings).
 *   **Interaction Logic:**
-    *   **Mutually Exclusive:** Selection is strictly 1-of-N. Selecting "Project Tag" deselects "Background Data" and vice versa.
-    *   **Dashboard Logic:** Clicking Top Group items switches the Main View to a **Dashboard Layout** (No L2, No L3, No Footer).
-    *   **Project Logic:** Clicking "Project Tag" switches Main View to **Project Layout** (Has L2 bar, Has L3 sidebar, Has Footer).
+    *   **Mutually Exclusive:** Selection is strictly 1-of-N.
+    *   **Dashboard Logic:** Top Group -> Dashboard Layout.
+    *   **Project Logic:** Project Tag -> Project Layout.
 
 ### B. L2 导航体系 (Navigation Systems)
 
@@ -60,12 +52,8 @@ The application has 3 primary view modes. JavaScript must toggle `hidden` classe
     *   **Right Group:** 文献因子 (Lit Factor), 基本流 (Base Flow), 复合因子 (Comp Factor), 文献 (Literature), 元件 (Component).
 *   **Auto-Close:** Switching **L1, L2, or L3** navigation **MUST** automatically close the open modal.
 *   **Trigger:** Click ANY icon in the Footer.
-    *   **Visual Logic:**
-    *   **Layout:** The Modal (`#footer-modal`) floats *above* the Header, L3, and Content. Only the L2 Sidebar and Footer remain visible outside it.
-    *   **Position:** `absolute top-0 left-0 bottom-[40px] right-0` relative to the `#right-zone`.
-    *   **Styling:** Must look like a floating window with a **4px Cyan border** (`border-[#087F9C]`).
+    *   **Visual Logic:** Refer to `PROJECT_RULES.md` (Footer Modal Rules).
     *   **Title:** The Modal Title must **dynamically match** the name of the clicked footer button.
-    *   **L3 Menu:** Background must be pure white (`bg-white`).
 *   **Interaction Logic:**
     *   **Active State:** The clicked footer button must show an active state.
     *   **Toggle:** Clicking active button closes the modal.

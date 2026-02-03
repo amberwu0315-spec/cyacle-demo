@@ -132,7 +132,7 @@
 | 组件名称 (Figma) | 场景 | 🔧 HTML 实现参考 (Franken UI Class) | 🎨 视觉微调指令 (Tailwind) |
 | :--- | :--- | :--- | :--- |
 | **侧边栏菜单项** | 导航类 | `uk-nav-default` (Nav) | 选中态：左侧 `border-l-2` 实色边条，背景色 `#F5F6F8`。 |
-| **顶部面包屑** | 导航类 | `uk-breadcrumb` | 仅在 **Accounting (核算)** 等复杂 L2 模块中使用。 |
+| **顶部面包屑** | 导航类 | `uk-breadcrumb` | 仅在 **复杂 L2 (Complex L2)** 模块中使用 (如多维分析页)。 |
 | **分栏页签** | 导航类 | `uk-tab` + `uk-switcher` | 极简线框模式；选中项下方 `2px` 高亮；无背景色。 |
 | **标准输入框** | 数据输入 | `uk-input` | 高度 `h-9` (36px)；圆角 `Radius-SM` (4px)。 |
 | **下拉选择器** | 数据输入 | `uk-select` | 弹出层需遵循 `Z-Index-Nav`；悬浮态背景变深。 |
@@ -164,7 +164,7 @@
 - **Indentation (缩进):** 每增加一级嵌套 (`ul > li > ul`), `padding-left` 增加 `24px` (`pl-6`)。
 - **Guide Line (引导线):** 左侧必须包含 `1px` 垂直线，颜色 `#D6D9DC`，用于指示层级关系。
 *   **Layout E (Business Menu)**:
-    *   **适用场景**: 背景数据, 项目管理, 企业/对象 (Background, Project Mgmt, Enterprise).
+    *   **适用场景**: 需要双层侧边栏导航的复杂业务模块 (具体配置参考 `DOC_INDEX.md`).
     *   **结构**: L1 Sidebar -> **300px Sidebar** -> Content Area.
     *   **侧边栏 (300px)**:
         *   **Header Card**: 渐变背景, 图标+标题+描述.
@@ -231,7 +231,7 @@
 *   **结构**: 
     - Row 1: `[Icon Tag] + [Name]` (主要信息)
     - Row 2: `[Value] + [Unit] / [Formula]` (关键数值信息)
-*   **场景**: 计算结果、因子库列表.
+*   **场景**: 计算结果、复杂知识库列表.
 
 **Spec 4: 综合模式 (Comprehensive)**
 *   **结构**: 
@@ -539,12 +539,13 @@
 
 
 ### 5. 🦶 Footer Modal (详情弹窗)
-*点击 Footer 按钮触发的覆盖层。*
-
-**⚠️ 覆盖范围 (Coverage Area - Critical):**
-*   **必须覆盖 (Must Cover):** 顶部栏 (Header), L3 菜单 (L3 Sidebar), 主内容区 (Main Content).
-*   **必须显示 (Must Reveal):** L1 全局侧边栏, L2 业务功能条, Footer 底部栏.
-*   **视觉层级 (Z-Index):** 位于 `Header` 之上, 但位于 `L2 Sidebar` 和 `Footer` 之下 (视觉上仿佛从 Footer 延伸出来)。
+> **⚠️ 核心规则 (Core Rules):**
+> Footer Modal 的定位、覆盖范围、层级与交互规则严厉受控于 **[PROJECT_RULES.md](./PROJECT_RULES.md)**。
+> 本处仅作为组件目录的占位引用，**严禁再次定义**以避免真理源冲突。
+> 
+> **视觉特征**:
+> - 看起来像是从底部 Footer Bar 延伸出来的抽屉。
+> - 必须保证 Footer Bar 始终可见。
 
 #### 2. 页面布局模版 (Grid Patterns)
 > **核心原则 (Core Principle):**
@@ -780,9 +781,11 @@
 <nav class="flex items-center gap-2 text-sm">
   <span class="text-gray-500">项目</span>
   <span class="text-gray-400">/</span>
-  <span class="text-gray-500">核算</span>
+  <span class="text-gray-500">模块 A</span>
   <span class="text-gray-400">/</span>
-  <span class="text-gray-900 font-medium">基本信息</span>
+  <span class="text-gray-500">模块 B</span>
+  <span class="text-gray-400">/</span>
+  <span class="text-gray-900 font-medium">详情信息</span>
 </nav>
 ```
 
@@ -913,9 +916,11 @@
   <nav class="flex items-center gap-2 text-sm">
     <span class="text-gray-500">项目</span>
     <span class="text-gray-400">/</span>
-    <span class="text-gray-500">核算</span>
+    <span class="text-gray-500">模块 A</span>
     <span class="text-gray-400">/</span>
-    <span class="text-gray-900 font-medium">基本信息</span>
+    <span class="text-gray-500">模块 B</span>
+    <span class="text-gray-400">/</span>
+    <span class="text-gray-900 font-medium">详情信息</span>
   </nav>
   
   <!-- Right Zone: Business Actions + Mode Switch + View Switcher -->

@@ -41,6 +41,7 @@ AI 会自动加载以上所有文档，无需逐一指定。
 
 ### L2 基础页面 (Basis Page)
 **路径**: `/Users/wuyuhui/Desktop/Cyacle-UX/src/components/views/l2/BasisPage.jsx`  
+**标题模式**: `Context Mode` (显示项目名称)
 **配置内容**:
 - **研究对象模块**: 只读字段(名称、地址、联系人名称、联系人邮箱、介绍)，名称字段带链接功能
 - **类型视图-设置列表模块**: 可编辑表格(来源、一级类型、二级类型)，来源为标签形式，支持点对点编辑，点击添加按钮生成空数据行
@@ -48,6 +49,7 @@ AI 会自动加载以上所有文档，无需逐一指定。
 
 ### L2 模型页面 (Model Page)
 **路径**: `/Users/wuyuhui/Desktop/Cyacle-UX/src/components/views/l2/ModelPage.jsx`  
+**标题模式**: `Functional Mode` (显示菜单名称)
 **顶部栏业务功能**:
 - `[+] 创建模型`
 - `[🪄] AI生成` (紫色高亮)
@@ -61,6 +63,7 @@ AI 会自动加载以上所有文档，无需逐一指定。
 
 ### L2 分配页面 (Allocation Page)
 **路径**: `/Users/wuyuhui/Desktop/Cyacle-UX/src/components/views/l2/AllocationPage.jsx`  
+**标题模式**: `Functional Mode` (显示菜单名称)
 **顶部栏业务功能**:
 - `[+] 创建规则`
 **层级结构**:

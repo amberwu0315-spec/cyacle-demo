@@ -15,17 +15,25 @@
 
 **A. 简单模式 (Simple L2)**  
 **适用模块**: 
-- **项目类 (特殊)**: `Navigation`, `Basis` (显示项目名称)
-- **项目类 (标准)**: `Allocation`, `Model` (显示菜单名称)
-- **背景数据类**: `Database Management`, `Component`, `BasicFlow` 等...
-- **L1业务类**: `Project Management`, `Research Objects`
+所有标准 L2 列表页面（非核算类）。
+
+**标题显示规则 (Title Display Rules)**:
+系统存在三种标题显示模式，具体应用由各模块的业务属性决定：
+
+1.  **Context Mode (上下文模式)**:
+    *   **定义**: 标题显示当前**业务上下文的名称**（即用户当前所处的“空间”名称）。
+    *   **适用场景**: 承载项目级或组织级整体属性的页面，强调“我在哪里”而非“我在用什么功能”。
+
+2.  **Functional Mode (功能模式)**:
+    *   **定义**: 标题显示当前**系统菜单或功能模块的静态名称**。
+    *   **适用场景**: 具体的业务工具、数据列表或管理面板，强调“我在使用什么工具”。
+
+3.  **Detail Mode (详情模式)**:
+    *   **定义**: 标题显示当前**选中数据实体的具体名称**。
+    *   **适用场景**: 所有的详情页 Tab、编辑页。
 
 **组件配置**: 
-*   **左侧**: `Title`.
-    *   **⚠️ 标题来源铁律**: 
-        *   **项目基本页 (Navigation/Basis)**: 必须**显示当前项目名称** (如 "My Green Project")。
-        *   **标准功能页 (Model/Allocation)**: 必须**显示菜单名称** (如 "模型", "分配")。
-        *   **详情页模式**: 必须显示**当前标签页名称**。
+*   **左侧**: `Title` (根据上述模式显示).
 *   **右侧**: `Business Actions`.
     *   **规则**: 业务按钮（如创建、AI生成）的具体内容由各页面(Page)逻辑自行定义，必须通过 `useHeaderContext` 注入。
 *   **禁止**: 禁止出现面包屑、方法学、模式切换。
@@ -34,114 +42,64 @@
 1.  **动作归位**: "创建/添加"等页面级核心操作按钮**严禁**放置在内容区，必须通过 `useHeaderContext` 注入到 Header 右侧区域。
 2.  **全宽布局**: 内容区域必须使用 `w-full` 撑满容器，严禁在右侧预留非必要的空白区域。布局顺序统一为：Header > (Search) > Filter > Table。
 
-**B. 复杂模式 (Complex L2 - Accounting)**  
-**适用模块**: `Accounting` (核算)  
-**组件配置**:
-1.  **Breadcrumb (面包屑)**: 显示完整路径 (e.g. `Model > Accounting`)。
-2.  **Methodology (方法学)**: 必须显示。
-3.  **Overview (概览)**: 仅在 Config 模式下。
-4.  **Mode Switch (模式切换)**: 显示 [配置模式] / [版本模式]。
-5.  **Divider (分割线)**: 区分业务与视图操作。
-6.  **View Actions (视图操作)**: 必须有。
+**B. 复杂模式 (Complex L2 - Multi-View Analysis)**  
+**适用模块**: 具有多维视图切换和复杂层级导航的分析型模块（如核算）。
+**Header 构造规则**:
+此类模块**允许接管**顶部栏的渲染逻辑，以容纳更复杂的操作流：
+1.  **导航增强**: 必须提供面包屑或层级指示器，明确用户在多维数据中的位置。
+2.  **工具栏扩展**: 允许在右侧区域嵌入模块专属的“工具栏组件” (Toolbar Widgets)，如方法学选择器、模式切换器等。
+3.  **视图操作**: 必须保留标准的视图控制能力 (Divider + View Actions)。
 
-#### 核心组件定义 (Widget Definitions)
-以下定义了系统支持的标准 Header 组件：
-
-| Widget ID | 描述 | 行为规范 |
-| :--- | :--- | :--- |
-| **Breadcrumb** | 面包屑 | 点击可触发下拉菜单切换上下文。 |
-| **ModeSwitch** | 模式切换 | Tab 样式，切换 Config/Version。 |
-| **Methodology**| 方法学 | 通常在右侧区域第一个。 |
-| **Overview** | 概览 | 通常紧随方法学之后。 |
-| **ViewActions**| 视图组 | 包含回退/前进/新窗口。前必须有分割线(Divider)如果前面有其他组件。 |
+*(具体组件实现请参考 `design_system.md`)*
 
 ---
 
 ### 🗂️ 标签页与详情视图 (Tabs & Detail Views)
 
-#### 标签页定位 (Tab Location - CRITICAL)
-*   **唯一位置**: 已打开的标签页通过 `Icon` 的形式展示在 **L1 Sidebar (左侧深色导航栏)** 的下半部分。
-*   **严禁**: 严禁在 Business Sidebar (白色侧边栏) 或 Top Bar 展示标签页列表。
-*   **持久化**: 标签页状态必须在 `App.jsx` 提升管理，切换 L1 模块时**不应被清空**。
+### 🗂️ 标签页与详情视图 (Tabs & Detail Views)
+
+#### 标签页定位 (Tab Location)
+*   **架构原则**: 标签页 (Tabs) 属于**全局导航 (L1)** 范畴。
+*   **位置约束**: 必须渲染在 **L1全局侧边栏** 区域内。严禁侵入业务侧边栏或顶部栏。
+*   **状态持久化**: 切换 L1 上下文时，标签页状态应当保留。
 
 #### 详情页视图统一 (Detail View Unification)
-*   **视图复用**: 打开任何详情页（无论是"项目详情"还是"研究对象详情"），都必须渲染完整的 **Project Layout**。
-    *   **L2 Sidebar**: 必须显示项目标准导航 (Navigation, Basis, Allocation, Model, etc.)。
-    *   **Main Content**: 必须渲染 `ProjectLayout` 组件。
-*   **上下文切换**: 点击 L1 侧边栏的标签图标时：
-    1.  自动跳转到该标签所属的 L1 上下文（图标应根据模块区分，如项目显示 Kanban 图标，对象显示 Shield 图标）。
-    2.  L2 Sidebar 默认选中 `Navigation`。
+*   **布局一致性**: 所有详情页（Detail Views）本质上都是标准项目视图的**变体**。
+*   **渲染规则**: 打开详情页时，必须完整加载**标准项目布局 (Standard Project Layout)**：
+    *   **L2 Sidebar**: 显示标准项目菜单配置。
+    *   **Main Content**: 渲染核心业务布局组件。
+*   **上下文映射**: 点击标签时，系统应自动路由至该标签对应的**上下文环境** (Context)。
 
 ---
 
 ### 🦶 Footer Modal 规则 (Footer Modal Rules)
 
-#### 定位铁律 (Position - CRITICAL)
+#### 架构定位 (Architectural Position)
+Footer Modal 是一种**非阻塞式、上下文相关**的辅助操作层。
 
-**⚠️ 绝对定位规则**：
-*   **Position**: `absolute top-0 left-0 bottom-[40px] right-0`
-*   **相对于**: `#right-zone` (Header + Content 的父容器)
-*   **禁止**: 使用 `fixed` 定位或修改 bottom 值
+**⚠️ 定位铁律**:
+*   **层级**: 必须覆盖**主内容区 (Main Content)** 和 **L3 侧边栏**。
+*   **避让**: 必须**避让** L1 全局导航、L2 业务导航和 Footer 底部栏。这创造出“抽屉从底部栏延伸出来”的视觉隐喻。
+*   **容器相对性**: 必须相对于**右侧工作区容器 (Right Zone)** 进行绝对定位，而非全屏 Fixed 定位。
 
-#### 覆盖范围 (Coverage - MUST FOLLOW)
-
-**必须覆盖**:
-*   Header (顶部栏)
-*   L3 Sidebar (侧边菜单，如存在)
-*   Main Content (主内容区)
-
-**必须显示**:
-*   L1 Sidebar (60px 全局侧边栏)
-*   L2 Sidebar (50px 业务功能条)
-*   Footer Bar (38px 底部栏)
-
-**验证标准**: Footer 栏必须始终可见并可点击切换模块。
-
-#### 样式规则 (Styling)
-
-*   **边框**: `border-4 border-[#087F9C]` + `rounded-t-lg`
-*   **背景**: `bg-white/95 backdrop-blur-sm`
-*   **Z-Index**: `z-50` (高于内容，低于全局弹窗)
-
-#### 标准结构 (Structure)
-
-**顶部栏 (40px)**:
-*   左侧：动态标题（匹配 Footer 按钮名称）
-*   右侧：业务功能组 + 分割线 + View 功能组
-    *   Business: 版本历史/删除/添加（根据模块类型）
-    *   View: 打开独立窗口、关闭（所有模块统一）
-
-**内容区**:
-*   背景色: `bg-[#F5F6F8]`
-*   内边距: `p-3` (遵循12px统一间距规则)
-
-#### 交互规则 (Interaction)
-
-*   点击 Footer 按钮打开对应模块
-*   点击已激活按钮关闭 Modal (Toggle)
-*   切换 L1/L2/L3 导航自动关闭 Modal
-*   激活按钮显示 `bg-[#087F9C]` 背景色
+#### 交互原则 (Interaction Principles)
+*   **Toggle 行为**: 点击底部栏按钮触发“开启/关闭”切换。
+*   **排他性**: 同一时间只能打开一个 Footer Modal。
+*   **上下文敏感**: 切换主要导航 (L1/L2) 时，Modal 应当自动关闭。
 
 ---
 
-## 2. 视觉规范 (Visual consistency)
+## 2. 视觉与交互铁律 (Visual & Interaction Core)
 
-### 🟢 颜色 (Colors)
-*   **主色 (Primary)**: `#087F9C` (Deep Cyan)
-*   **选中状态 (Selected)**: 背景色必须使用主色，图标/文字转为白色。
-*   **复选框 (Checkbox)**: 选中时背景必须是 `#087F9C`。
+### 🎨 设计系统一致性 (Design System Compliance)
+*   **单一来源**: 所有视觉样式（颜色、圆角、阴影）必须严格引用 `design_system.md` 中定义的 **Tokens**。
+*   **禁止硬编码**: 严禁在代码中使用未定义的 Magic Numbers 或 HEX 色值。
 
-### 🔘 状态 (States)
-*   **Disabled (禁用)**: 必须有 Tooltip 解释为什么被禁用 (e.g., "无上一步记录")。
+### 📐 布局几何 (Layout Geometry)
+*   **统一间距法则**: 整个系统的内容区域强制执行统一的间距标准（如 `12px` 体系）。所有的 Padding 和 Gap 必须基于此基准倍数。
 
-### 📐 间距 (Spacing)
-*   **内容区统一间距**: 页面内容区的所有间距（Padding, Gap）**必须统一为 12px** (`p-3` / `gap-3`)。禁止使用 `p-4` 或其他数值。
+### 🖱️ 交互模式 (Interaction Patterns)
+*   **原位优先**: 属性编辑应优先采用**原位编辑 (Inline Editing)** 模式，避免过度的弹窗干扰。
+*   **历史作用域**: 前进/后退等历史操作必须限定在**当前上下文 (Scoped History)** 内部，不可跨越项目边界。
 
-## 3. 交互模式 (Interaction)
 
-### 🖱️ 原位编辑 (Inline Editing)
-*   所有属性修改应优先使用原位编辑（悬停显示编辑笔），而非弹窗。
-
-### 📦 容器行为 (Container Behavior)
-*   **View Group (视图功能组)**: 仅在 L1="项目标签" 时出现。
-*   **Scoped History**: `[<]` 和 `[>]` 按钮仅在当前项目上下文内有效。
