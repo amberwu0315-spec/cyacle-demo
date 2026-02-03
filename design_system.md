@@ -124,15 +124,15 @@
 ## 03. 🧩 通用组件语义化 (Common Components)
 
 > **⚠️ 核心转译指令 (CRITICAL INSTRUCTION):**
-> 本项目采用 **HTML + Tailwind** 技术栈。
-> 1.  **严禁** import 任何 React/Vue 组件（如 `import { Button } from "@/components/ui/button"`）。
-> 2.  下表中的 "HTML 实现参考" 列是**强制标准**。请直接使用对应的 **Franken UI (UIkit)** 类名或原生 HTML 标签来构建组件。
+> 本项目采用 **HTML + Tailwind** 技术栈，同时允许引入 **Mantine v7** 等组件库以提高效率。
+> 1.  **优先复用**：尽量使用 Mantine 或其他现成组件，避免重复造轮子。
+> 2.  **HTML基准**：如果手写组件，请参考下表中的 "HTML 实现参考" 直接使用对应的 **Franken UI (UIkit)** 类名或原生 HTML 标签。
 > 3.  **视觉还原：** 必须应用 "视觉微调指令" 中的 Tailwind 类来覆盖默认样式，确保还原 Figma 设计。
 
 | 组件名称 (Figma) | 场景 | 🔧 HTML 实现参考 (Franken UI Class) | 🎨 视觉微调指令 (Tailwind) |
 | :--- | :--- | :--- | :--- |
 | **侧边栏菜单项** | 导航类 | `uk-nav-default` (Nav) | 选中态：左侧 `border-l-2` 实色边条，背景色 `#F5F6F8`。 |
-| **顶部面包屑** | 导航类 | `uk-breadcrumb` | **[已废弃]** 此组件不再使用。Header 仅展示一级标题。 |
+| **顶部面包屑** | 导航类 | `uk-breadcrumb` | 仅在 **Accounting (核算)** 等复杂 L2 模块中使用。 |
 | **分栏页签** | 导航类 | `uk-tab` + `uk-switcher` | 极简线框模式；选中项下方 `2px` 高亮；无背景色。 |
 | **标准输入框** | 数据输入 | `uk-input` | 高度 `h-9` (36px)；圆角 `Radius-SM` (4px)。 |
 | **下拉选择器** | 数据输入 | `uk-select` | 弹出层需遵循 `Z-Index-Nav`；悬浮态背景变深。 |

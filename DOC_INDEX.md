@@ -48,6 +48,9 @@ AI 会自动加载以上所有文档，无需逐一指定。
 
 ### L2 模型页面 (Model Page)
 **路径**: `/Users/wuyuhui/Desktop/Cyacle-UX/src/components/views/l2/ModelPage.jsx`  
+**顶部栏业务功能**:
+- `[+] 创建模型`
+- `[🪄] AI生成` (紫色高亮)
 **层级结构**:
 - **层级1 - 筛选器**: 类型筛选(全部类型/产品模型/部件模型/材料模型)、状态筛选(全部状态/已发布/草稿)
 - **层级2 - 视图切换Tab**: 总览视图(默认选中)、引用视图、继承视图
@@ -58,6 +61,8 @@ AI 会自动加载以上所有文档，无需逐一指定。
 
 ### L2 分配页面 (Allocation Page)
 **路径**: `/Users/wuyuhui/Desktop/Cyacle-UX/src/components/views/l2/AllocationPage.jsx`  
+**顶部栏业务功能**:
+- `[+] 创建规则`
 **层级结构**:
 - **层级1 - 筛选器**: 类型筛选(全部类型/数量分配/经济分配/物理分配)、状态筛选(全部状态/已启用/草稿)
 - **层级2 - 大卡片列表**: 网格布局展示分配规则，包含规则图标、状态、名称、类型、描述等信息
@@ -67,7 +72,7 @@ AI 会自动加载以上所有文档，无需逐一指定。
 ## 🗄️ L2 背景数据页面 (Background Data Pages)
 
 ### L2 数据库管理 (Database Management) ⚠️默认选中
-**路径**: `/Users/wuyuhui/Desktop/Cyacle-UX/src/components/views/BusinessContent.jsx` (renderDatabaseManagement)
+**路径**: `/Users/wuyuhui/Desktop/Cyacle-UX/src/components/views/l2/DatabaseManagementPage.jsx`
 **顶部栏**:
 - 左侧标题: "数据库管理"
 - 右侧业务功能: 创建按钮(⚠️填充样式)

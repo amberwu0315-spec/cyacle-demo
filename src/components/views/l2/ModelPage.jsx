@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useHeaderContext } from '../../../context/HeaderContext';
-import { IconFilter, IconGrid4x4, IconNetwork, IconHierarchy, IconBox, IconPlus } from '@tabler/icons-react';
+import { IconFilter, IconGrid4x4, IconNetwork, IconHierarchy, IconBox, IconPlus, IconWand } from '@tabler/icons-react';
 
 const ModelPage = () => {
     const { setActions, setTitleOverride, setLayoutConfig } = useHeaderContext();
@@ -15,17 +15,22 @@ const ModelPage = () => {
     useEffect(() => {
         // Init Actions
         setActions(
-            <button className="flex items-center gap-1 px-3 py-1.5 bg-[#087F9C] text-white text-sm font-medium rounded hover:bg-[#076F8A] transition-colors shadow-sm">
-                <IconPlus size={16} />
-                <span>创建模型</span>
-            </button>
+            <div className="flex items-center gap-2">
+                <button className="flex items-center gap-1 px-3 py-1.5 bg-[#087F9C] text-white text-sm font-medium rounded hover:bg-[#076F8A] transition-colors shadow-sm">
+                    <IconPlus size={16} />
+                    <span>创建模型</span>
+                </button>
+                <button className="flex items-center gap-1 px-3 py-1.5 bg-purple-600 text-white text-sm font-medium rounded hover:bg-purple-700 transition-colors shadow-sm">
+                    <IconWand size={16} />
+                    <span>AI生成</span>
+                </button>
+            </div>
         );
 
         return () => {
             setActions(null);
-            setTitleOverride(null);
         };
-    }, [setActions, setTitleOverride]);
+    }, [setActions]);
 
     // 模拟数据
     const models = [

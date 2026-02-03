@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useHeaderContext } from '../../../context/HeaderContext';
-import { IconFilter, IconBox, IconCheck } from '@tabler/icons-react';
+import { IconFilter, IconBox, IconCheck, IconPlus } from '@tabler/icons-react';
 
 const AllocationPage = () => {
     const { setActions, setTitleOverride, setLayoutConfig } = useHeaderContext();
@@ -10,15 +10,17 @@ const AllocationPage = () => {
     const [filterStatus, setFilterStatus] = useState('all');
 
     useEffect(() => {
-        setTitleOverride('分配规则');
-        setLayoutConfig('title-only');
-        setActions(null);
+        setActions(
+            <button className="flex items-center gap-1 px-3 py-1.5 bg-[#087F9C] text-white text-sm font-medium rounded hover:bg-[#076F8A] transition-colors shadow-sm">
+                <IconPlus size={16} />
+                <span>创建规则</span>
+            </button>
+        );
 
         return () => {
             setActions(null);
-            setTitleOverride(null);
         };
-    }, [setActions, setTitleOverride, setLayoutConfig]);
+    }, [setActions]);
 
     // 模拟数据
     const allocations = [
@@ -72,8 +74,8 @@ const AllocationPage = () => {
                                 <IconBox size={32} />
                             </div>
                             <div className={`px-2 py-1 rounded text-xs flex items-center gap-1 ${allocation.status === '已启用'
-                                    ? 'bg-green-100 text-green-700'
-                                    : 'bg-yellow-100 text-yellow-700'
+                                ? 'bg-green-100 text-green-700'
+                                : 'bg-yellow-100 text-yellow-700'
                                 }`}>
                                 {allocation.status === '已启用' && <IconCheck size={14} />}
                                 <span>{allocation.status}</span>

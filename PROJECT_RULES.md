@@ -15,17 +15,19 @@
 
 **A. 简单模式 (Simple L2)**  
 **适用模块**: 
-- **项目类**: `Navigation`, `Basis`, `Allocation`, `Model` (列表页)
-- **背景数据类**: `Database Management` (数据库管理), `Component` (元件), `BasicFlow` (基本流), `CompositeFactor` (复合因子), `LiteratureFactor` (文献因子), `Literature` (文献)
-- **L1业务类**: `Project Management` (全部项目/PCF/OCF), `Research Objects` (研究对象)
+- **项目类 (特殊)**: `Navigation`, `Basis` (显示项目名称)
+- **项目类 (标准)**: `Allocation`, `Model` (显示菜单名称)
+- **背景数据类**: `Database Management`, `Component`, `BasicFlow` 等...
+- **L1业务类**: `Project Management`, `Research Objects`
 
 **组件配置**: 
-*   **左侧**: `Title` (仅显示模块标题，无面包屑)。
+*   **左侧**: `Title`.
     *   **⚠️ 标题来源铁律**: 
-        *   **标准项目模式**: L2 Navigation/Basis 等页面标题必须**显示当前项目名称** (如 "My Green Project")，严禁强制显示为 "Navigation" 或 "Basis"。
+        *   **项目基本页 (Navigation/Basis)**: 必须**显示当前项目名称** (如 "My Green Project")。
+        *   **标准功能页 (Model/Allocation)**: 必须**显示菜单名称** (如 "模型", "分配")。
         *   **详情页模式**: 必须显示**当前标签页名称**。
-        *   页面组件 (`NavigationPage.jsx` 等) **严禁**使用 `setTitleOverride` 硬编码标题，标题必须由 `Workbench` 统一托管。
-*   **右侧**: `Business Actions` (必须位于Header右侧)，`View Actions` (仅项目类模块有，背景数据类无)。
+*   **右侧**: `Business Actions`.
+    *   **规则**: 业务按钮（如创建、AI生成）的具体内容由各页面(Page)逻辑自行定义，必须通过 `useHeaderContext` 注入。
 *   **禁止**: 禁止出现面包屑、方法学、模式切换。
 
 **⚠️ 背景数据类特殊铁律 (Background Data Specials)**:
