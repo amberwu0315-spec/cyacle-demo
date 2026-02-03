@@ -227,7 +227,7 @@ const EditableField = ({
         return (
             <div className={`flex items-center px-3 min-h-9 rounded transition-all duration-200 ease-in-out relative ${isHovered && !isEditing ? 'bg-gray-50' : ''}`}>
                 {isEditing ? renderEditInput() : (
-                    <div className="relative flex-1 w-full flex items-center group overflow-hidden">
+                    <div className="relative flex-1 w-full flex items-center group overflow-visible">
                         <div className="truncate pr-12 w-full">
                             {renderDisplayValue()}
                         </div>

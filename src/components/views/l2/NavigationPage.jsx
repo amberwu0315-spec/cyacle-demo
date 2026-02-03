@@ -58,7 +58,7 @@ const NavigationPage = () => {
     }, [setActions, setTitleOverride, setLayoutConfig, isStarred]); // Add isStarred dependency
 
     return (
-        <div className="p-6 relative">
+        <div className="p-3 relative">
             <h2 className="text-xl font-bold mb-4">导航 (Navigation)</h2>
             <p className="text-gray-600">这里是项目导航仪表盘的内容区域。</p>
 

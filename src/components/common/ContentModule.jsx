@@ -5,7 +5,7 @@ import { IconChevronDown, IconChevronRight } from '@tabler/icons-react';
 // Reusable Content Module Wrapper (Component D)
 export const ContentModule = ({ children, className = '' }) => {
     return (
-        <div className={`w-full h-auto bg-white rounded-md shadow-sm overflow-hidden border border-gray-100 ${className}`}>
+        <div className={`w-full h-auto bg-white rounded-md shadow-sm overflow-visible border border-gray-100 ${className}`}>
             {children}
         </div>
     );

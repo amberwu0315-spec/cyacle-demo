@@ -1,36 +1,53 @@
-import { IconX, IconStack2 } from '@tabler/icons-react';
+import React from 'react';
+import InfoFooter from '../footer/InfoFooter';
+import ProductFooter from '../footer/ProductFooter';
+import DataFooter from '../footer/DataFooter';
+import DataSourceFooter from '../footer/DataSourceFooter';
+import LiteratureFactorFooter from '../footer/LiteratureFactorFooter';
+import BasicFlowFooter from '../footer/BasicFlowFooter';
+import CompositeFactorFooter from '../footer/CompositeFactorFooter';
+import LiteratureFooter from '../footer/LiteratureFooter';
+import ComponentFooter from '../footer/ComponentFooter';
+import LocationFooter from '../footer/LocationFooter';
 
-export default function Modal({ isOpen, onClose, title, content }) {
+/**
+ * Modal 组件
+ * 
+ * 根据 Footer 按钮点击的 action 渲染对应的 Footer 模块
+ */
+export default function Modal({ isOpen, onClose, title }) {
     if (!isOpen) return null;
 
-    return (
-        <div className="absolute top-0 right-0 bottom-[40px] left-0 bg-white/95 backdrop-blur-sm z-50 flex flex-col shadow-2xl border-4 border-[#087F9C] rounded-t-lg animate-in fade-in duration-200">
-            <div className="flex items-center justify-between px-6 border-b border-gray-200 h-[46px] shrink-0 shadow-sm z-10 bg-white rounded-t-[inherit]">
-                <h2 className="text-[16px] font-bold text-[#1F2937] flex items-center gap-2">
-                    <IconStack2 className="w-5 h-5 text-[#087F9C]" />
-                    <span>{title}</span>
-                </h2>
-                <button
-                    onClick={onClose}
-                    className="p-2 hover:bg-gray-100 rounded-full text-gray-500 transition-colors"
-                >
-                    <IconX className="w-5 h-5" />
-                </button>
-            </div>
+    // 根据 title 确定渲染哪个 Footer 组件
+    const renderFooterContent = () => {
+        switch (title) {
+            case '信息':
+                return <InfoFooter onClose={onClose} />;
+            case '产品':
+                return <ProductFooter onClose={onClose} />;
+            case '数据':
+                return <DataFooter onClose={onClose} />;
+            case '数据源':
+                return <DataSourceFooter onClose={onClose} />;
+            case '文档':
+                // 文档对应文献
+                return <LiteratureFooter onClose={onClose} />;
+            case '地点':
+                return <LocationFooter onClose={onClose} />;
+            case '文献因子':
+                return <LiteratureFactorFooter onClose={onClose} />;
+            case '基本流':
+                return <BasicFlowFooter onClose={onClose} />;
+            case '复合因子':
+                return <CompositeFactorFooter onClose={onClose} />;
+            case '文献':
+                return <LiteratureFooter onClose={onClose} />;
+            case '元件':
+                return <ComponentFooter onClose={onClose} />;
+            default:
+                return null;
+        }
+    };
 
-            <div className="flex-1 p-8 overflow-y-auto bg-[#F5F6F8]">
-                <div className="max-w-3xl mx-auto">
-                    {content || (
-                        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 flex items-center justify-center min-h-[200px]">
-                            <p className="text-gray-500">
-                                This is the detail view for <span className="font-bold text-gray-700">{title}</span>.
-                                <br />
-                                Content implementation pending.
-                            </p>
-                        </div>
-                    )}
-                </div>
-            </div>
-        </div>
-    );
+    return renderFooterContent();
 }
