@@ -1,26 +1,26 @@
 import { IconShare, IconStack2, IconCpu, IconFlask, IconActivity, IconBook, IconLayoutGrid, IconShield } from '@tabler/icons-react';
-import { useState } from 'react';
+import React from 'react';
 
-export default function BusinessSidebar({ activeL1, onSelectContent }) {
-    const [activeTarget, setActiveTarget] = useState(null);
+// Now a Controlled Component
+export default function BusinessSidebar({ activeL1, onSelectContent, activeTarget }) {
 
     const handleSelect = (target, title) => {
-        setActiveTarget(target);
         onSelectContent(target, title);
     };
 
     const headerClass = "bg-gradient-to-br from-[#087F9C] to-[#065F75] p-4 text-white shrink-0";
 
     // Helper to render buttons
-    const renderBtn = (target, title, Icon) => {
+    // headerTitle is optional. If provided, it will be used for the page header instead of the button label.
+    const renderBtn = (target, title, Icon, headerTitleOverride) => {
         const isActive = activeTarget === target;
-        const baseClass = "w-full flex items-center gap-2 py-1.5 rounded px-2 transition-colors";
+        const baseClass = "w-full flex items-center gap-2 py-1.5 rounded px-2 transition-colors relative group";
         const activeClass = "bg-[#087F9C] text-white shadow-sm";
         const inactiveClass = "text-gray-700 hover:bg-gray-100";
 
         return (
             <button
-                onClick={() => handleSelect(target, title)}
+                onClick={() => handleSelect(target, headerTitleOverride || title)}
                 className={`${baseClass} ${isActive ? activeClass : inactiveClass}`}
             >
                 <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-gray-400'}`} />
@@ -71,14 +71,10 @@ export default function BusinessSidebar({ activeL1, onSelectContent }) {
                     </div>
                 </div>
                 <div className="flex-1 overflow-y-auto py-2">
-                    <div className="px-3 py-2">
-                        <h3 className="text-[10px] text-gray-400 uppercase tracking-wider mb-1">全部</h3>
+                    <div className="px-2 space-y-1">
                         {renderBtn('all_projects', '全部项目', IconLayoutGrid)}
-                    </div>
-                    <div className="px-3 py-2">
-                        <h3 className="text-[10px] text-gray-400 uppercase tracking-wider mb-1">需求类型</h3>
-                        {renderBtn('pcf', '产品碳足迹', IconLayoutGrid)}
-                        {renderBtn('ocf', '组织碳足迹', IconLayoutGrid)}
+                        {renderBtn('pcf', '产品碳足迹', IconLayoutGrid, '全部项目')}
+                        {renderBtn('ocf', '组织碳足迹', IconLayoutGrid, '全部项目')}
                     </div>
                 </div>
             </>

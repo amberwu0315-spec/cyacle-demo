@@ -33,7 +33,6 @@ const BasisPage = () => {
     };
 
     useEffect(() => {
-        setTitleOverride('My Green Project');
         setLayoutConfig('title-only');
         setActions(null);
 

@@ -1,7 +1,7 @@
-import { IconUserCircle, IconDatabase, IconLayoutKanban, IconBuilding, IconFileCode, IconBell, IconSettings } from '@tabler/icons-react';
+import { IconUserCircle, IconDatabase, IconLayoutKanban, IconBuilding, IconFileCode, IconBell, IconSettings, IconFileText, IconX } from '@tabler/icons-react';
 import Tooltip from '../common/Tooltip';
 
-export default function L1Sidebar({ activeL1, onSelect }) {
+export default function L1Sidebar({ activeL1, onSelect, openedTabs = [], activeTarget, onSelectTab, onCloseTab }) {
 
     const navItems = [
         { id: 'home', icon: IconUserCircle, label: '工作空间 (Workspace)' },
@@ -40,6 +40,47 @@ export default function L1Sidebar({ activeL1, onSelect }) {
                         <IconFileCode className={`w-6 h-6 transition-colors text-[#10B981] ${activeL1 === 'project_tag' ? '' : 'group-hover:text-[#34D399]'}`} />
                     </button>
                 </Tooltip>
+
+                {/* Render Opened Tabs if any exist */}
+                {openedTabs.length > 0 && (
+                    <>
+                        <div className="h-px bg-white/10 w-8 mx-auto my-[4px] mt-2"></div>
+                        <div className="flex flex-col gap-[2px] w-full items-center">
+                            {openedTabs.map(tab => {
+                                const isActive = activeTarget === tab.id;
+                                // Determine Icon based on context
+                                let TabIcon = IconFileText;
+                                if (tab.l1Context === 'project_mgmt') TabIcon = IconLayoutKanban;
+                                else if (tab.l1Context === 'enterprise') TabIcon = IconShield;
+
+                                return (
+                                    <Tooltip key={tab.id} content={tab.title} placement="right">
+                                        <div className="relative group">
+                                            <button
+                                                onClick={() => onSelectTab && onSelectTab(tab.id)}
+                                                className={`p-3 rounded-xl transition-colors ${isActive ? 'bg-[#087F9C]/20 border border-[#087F9C]/50' : 'hover:bg-white/5 border border-transparent'}`}
+                                            >
+                                                <TabIcon
+                                                    className={`w-6 h-6 transition-colors ${isActive ? 'text-[#087F9C]' : 'text-white/60 group-hover:text-white'}`}
+                                                />
+                                            </button>
+                                            {/* Close Button - Top Right Badge Style */}
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    onCloseTab && onCloseTab(tab.id, e);
+                                                }}
+                                                className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-[1px] opacity-0 group-hover:opacity-100 transition-opacity shadow-sm hover:scale-110"
+                                            >
+                                                <IconX size={10} stroke={3} />
+                                            </button>
+                                        </div>
+                                    </Tooltip>
+                                );
+                            })}
+                        </div>
+                    </>
+                )}
             </div>
 
             <div className="mt-auto flex flex-col gap-[2px] w-full items-center px-1">

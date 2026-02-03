@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useHeaderContext } from '../../../context/HeaderContext';
-import { IconFilter, IconGrid4x4, IconNetwork, IconHierarchy, IconBox } from '@tabler/icons-react';
+import { IconFilter, IconGrid4x4, IconNetwork, IconHierarchy, IconBox, IconPlus } from '@tabler/icons-react';
 
 const ModelPage = () => {
     const { setActions, setTitleOverride, setLayoutConfig } = useHeaderContext();
@@ -13,15 +13,19 @@ const ModelPage = () => {
     const [activeView, setActiveView] = useState('overview'); // 'overview' | 'reference' | 'inheritance'
 
     useEffect(() => {
-        setTitleOverride('My Green Project');
-        setLayoutConfig('title-only');
-        setActions(null);
+        // Init Actions
+        setActions(
+            <button className="flex items-center gap-1 px-3 py-1.5 bg-[#087F9C] text-white text-sm font-medium rounded hover:bg-[#076F8A] transition-colors shadow-sm">
+                <IconPlus size={16} />
+                <span>创建模型</span>
+            </button>
+        );
 
         return () => {
             setActions(null);
             setTitleOverride(null);
         };
-    }, [setActions, setTitleOverride, setLayoutConfig]);
+    }, [setActions, setTitleOverride]);
 
     // 模拟数据
     const models = [
@@ -76,8 +80,8 @@ const ModelPage = () => {
                         key={tab.id}
                         onClick={() => setActiveView(tab.id)}
                         className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded transition-colors ${activeView === tab.id
-                                ? 'bg-white text-[#087F9C] shadow-sm border border-gray-200'
-                                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                            ? 'bg-white text-[#087F9C] shadow-sm border border-gray-200'
+                            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                             }`}
                     >
                         <tab.icon size={16} />
@@ -118,8 +122,8 @@ const ModelPage = () => {
                             <div className="flex items-center justify-between">
                                 <span className="text-gray-500">状态：</span>
                                 <span className={`px-2 py-0.5 rounded text-xs ${model.status === '已发布'
-                                        ? 'bg-green-100 text-green-700'
-                                        : 'bg-yellow-100 text-yellow-700'
+                                    ? 'bg-green-100 text-green-700'
+                                    : 'bg-yellow-100 text-yellow-700'
                                     }`}>
                                     {model.status}
                                 </span>

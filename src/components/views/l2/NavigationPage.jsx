@@ -21,8 +21,7 @@ const NavigationPage = () => {
     };
 
     useEffect(() => {
-        // 1. Set Title
-        setTitleOverride('My Green Project');
+        // 1. Set Title (None - handled by Workbench/Header)
         setLayoutConfig('title-only');
 
         // 2. Set Actions (Re-run when state changes)

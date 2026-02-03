@@ -37,7 +37,7 @@ const Header = ({
     const renderWidget = (widgetId) => {
         switch (widgetId) {
             case 'breadcrumb': return <BreadcrumbWidget key="bread" />;
-            case 'title': return <TitleWidget key="title" />;
+            case 'title': return <TitleWidget key="title" title={title} />;
 
             case 'mode_switch': return <ModeSwitchWidget key="mode" />;
             case 'methodology': return <MethodologyWidget key="meth" />;

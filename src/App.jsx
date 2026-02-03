@@ -17,6 +17,10 @@ export default function App() {
     const [activeL3, setActiveL3] = useState('acct_basic');
     const [mode, setMode] = useState(MODES.HOME);
 
+    // State for Business Mode Navigation (Lifted from Workbench)
+    const [businessTarget, setBusinessTarget] = useState('database_mgmt');
+    const [openedTabs, setOpenedTabs] = useState([]);
+
     // Scoped History State for Project Mode
     const [projHistory, setProjHistory] = useState([]);
     const [historyIndex, setHistoryIndex] = useState(-1);
@@ -46,6 +50,7 @@ export default function App() {
         } else if (businessModes.includes(activeL1)) {
             // Business L1s stay in HOME mode in terms of layout (just header/sidebar diffs)
             setMode(MODES.HOME);
+            // NOTE: Default target logic and tab reset moved to handleL1Change/handleTabClick to prevent overwriting
         } else {
             setMode(MODES.HOME);
         }
@@ -62,6 +67,55 @@ export default function App() {
         }
     }, [activeL2, isProjectLayout]);
 
+    // Tab Handlers
+    const handleOpenTab = (item) => {
+        const tabId = `detail_${item.id}`;
+        // Add tab if not exists
+        if (!openedTabs.find(t => t.id === tabId)) {
+            const newTab = {
+                id: tabId,
+                title: item.name,
+                type: 'detail',
+                data: item,
+                l1Context: activeL1 // Store origin context
+            };
+            setOpenedTabs(prev => [...prev, newTab]);
+        }
+        // Switch to the tab
+        setBusinessTarget(tabId);
+        setActiveL2('navigation'); // Force Default L2 Selection on Open
+    };
+
+    const handleCloseTab = (tabId, e) => {
+        if (e) e.stopPropagation();
+
+        const newTabs = openedTabs.filter(t => t.id !== tabId);
+        setOpenedTabs(newTabs);
+
+        // If closing current tab, switch back to default list
+        if (businessTarget === tabId) {
+            let defaultTarget = 'all_projects';
+            if (activeL1 === 'background_data') defaultTarget = 'database_mgmt';
+            if (activeL1 === 'enterprise') defaultTarget = 'all_objects';
+
+            setBusinessTarget(defaultTarget);
+        }
+    };
+
+    const handleTabClick = (tabId) => {
+        const tab = openedTabs.find(t => t.id === tabId);
+        if (tab) {
+            // Switch Context if needed (Visual Icon Highlight)
+            if (tab.l1Context && tab.l1Context !== activeL1) {
+                setActiveL1(tab.l1Context);
+            }
+            // Set Target
+            setBusinessTarget(tabId);
+
+            // Ensure L2 Sidebar defaults to Navigation (first menu) when entering detail view
+            setActiveL2('navigation');
+        }
+    };
 
     // Handlers
     const updateUrl = (l1, l2, l3) => {
@@ -81,12 +135,18 @@ export default function App() {
         setActiveL3(nextL3);
         updateUrl(val, nextL2, nextL3);
 
+        // Set Default Business Target (moved from useEffect)
+        if (val === 'background_data') setBusinessTarget('database_mgmt');
+        else if (val === 'project_mgmt') setBusinessTarget('all_projects');
+        else if (val === 'enterprise') setBusinessTarget('all_objects');
+
         // Reset history when entering project mode afresh
         if (val === 'project_tag') {
             setProjHistory([{ l2: nextL2, l3: nextL3 }]);
             setHistoryIndex(0);
         }
     };
+
 
     const handleL2Change = (val) => {
         setActiveL2(val);
@@ -168,7 +228,15 @@ export default function App() {
         <HeaderProvider>
             <div className="flex h-screen w-screen bg-[#1E2A32] overflow-hidden text-[#4D4D4D] relative">
                 {/* L1 Sidebar */}
-                <L1Sidebar activeL1={activeL1} onSelect={handleL1Change} />
+                <L1Sidebar
+                    activeL1={activeL1}
+                    onSelect={handleL1Change}
+                    // Tab Props
+                    openedTabs={openedTabs}
+                    activeTarget={businessTarget}
+                    onSelectTab={handleTabClick}
+                    onCloseTab={handleCloseTab}
+                />
 
                 {/* Workbench (Floating Card) */}
                 <Workbench
@@ -180,6 +248,13 @@ export default function App() {
                     onL3Change={handleL3Change}
                     isProjectLayout={isProjectLayout}
                     isBusinessLayout={isBusinessLayout}
+
+                    // Business Logic Props (Lifted)
+                    businessTarget={businessTarget}
+                    setBusinessTarget={setBusinessTarget}
+                    openedTabs={openedTabs}
+                    onOpenTab={handleOpenTab}
+                    onCloseTab={handleCloseTab} // Pass the App-level handler
 
                     // Scoped Navigation Props
                     onProjectBack={handleProjectBack}

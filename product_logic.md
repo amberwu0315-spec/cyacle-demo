@@ -10,7 +10,7 @@ The application has 3 primary view modes. JavaScript must toggle `hidden` classe
 | Mode ID | 触发条件 (Trigger) | L2 状态 | L3 状态 | Main 内容区状态 | 备注 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **MODE_HOME** | L1 点击 "工作空间" | 隐藏 | **Hidden** | **Hidden** | **Dashboard View** | 纯净仪表盘 (No Header) |
-| **MODE_L1_HEADER** | L1 点击 "背景/项目管理/企业" | 隐藏 | **Hidden** | **Visible** | **Dashboard View** | 顶部带 Header (16pt Title) |
+| **MODE_MANAGEMENT** | L1 点击 "背景/项目管理/企业" | **Visible** | **Hidden** | **Visible** | **Admin/Mgmt View** | 全屏管理视图，带L2侧边栏，复用业务实体。 |
 | **MODE_WIDE** | L1 点击 "项目" -> L2 点击 "导航/基础/分配/模型" | **完整版** | **Hidden** | **Visible** | **Wide View** (撑满 w-full) | 适合表格/画布 |
 | **MODE_SPLIT** | L1 点击 "项目" -> L2 点击 "核算" | **完整版** | **Visible** (Show) | **Split View** (被挤压 flex-1) | 核心核算页 |
 
@@ -22,11 +22,11 @@ The application has 3 primary view modes. JavaScript must toggle `hidden` classe
 *   **Structure:**
     *   **Top Group (Dashboard Types):**
         *   User Profile (Avatar)
-        *   Background Data (Database Icon)
-        *   Project Management (Folder Icon)
-        *   Enterprise/Objects (Building Icon)
+        *   **Background Data (Database):** *Enters Management Mode (L2 Sidebar + Full Content)*
+        *   **Project Management (Folder):** *Enters Management Mode*
+        *   **Enterprise/Objects (Building):** *Enters Management Mode*
     *   **Middle Group (Project Context):**
-        *   **Project Tag (Green Document Icon):** This is the **ONLY** entry point to the "Project Layout" (L2 + L3 + Footer).
+        *   **Project Tag (Green Document Icon):** *Enters Project Mode (L2 + L3 + Footer)*
     *   **Bottom Group:**
         *   Notification Center (Bell)
         *   Settings (Gear)
@@ -36,16 +36,22 @@ The application has 3 primary view modes. JavaScript must toggle `hidden` classe
     *   **Dashboard Logic:** Clicking Top Group items switches the Main View to a **Dashboard Layout** (No L2, No L3, No Footer).
     *   **Project Logic:** Clicking "Project Tag" switches Main View to **Project Layout** (Has L2 bar, Has L3 sidebar, Has Footer).
 
-### B. L2 业务切换 (Project Navigation)
-*   **Visibility:** **ONLY** visible when "Project Tag" (L1) is active.
+### B. L2 导航体系 (Navigation Systems)
+
+#### 1. 项目上下文中 (Project Context)
+*   **Trigger:** L1 = "Project Tag"
 *   **Items:** Navigation, Basis, Allocation, Model, Accounting.
-*   **Styling (Interaction):**
-    *   **Active:** Icon Container = Cyan Bg (`#087F9C`) + White Icon. Label = Cyan Text (`#087F9C`).
-    *   **Inactive:** Transparent Bg + Gray Icon + Gray Text.
-*   **Header Sync:** The Top Header Title must update to show the **Name** of the active L2 item (e.g., "核算").
-*   **Action:** Switches content within the Project Layout.
-    *   *Accounting* -> `MODE_SPLIT`.
-    *   *Others* -> `MODE_WIDE`.
+*   **Layout:** Standard L2 + L3 (optional) + Footer.
+
+#### 2. 背景数据管理中 (Background Data Management)
+*   **Trigger:** L1 = "Background Data"
+*   **Items:** **Database Management** + **Shared Business Entities** (Components, Factors, etc.).
+*   **Logic (Dual Entry Pattern):**
+    *   这里的菜单项与 **Footer** 中的"右侧业务组"是**同一套实体**。
+    *   **区别**: 
+        *   此处是**管理视图** (全屏维护，增删改查)。
+        *   Footer是**引用视图** (弹窗选择，项目内使用)。
+    *   **Default**: 默认选中 "Database Management"。
 
 ### C. Footer 覆盖弹窗 (The Floating Panel)
 *   **Visibility:** Only available in **Project Layout**.

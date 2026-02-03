@@ -64,6 +64,111 @@ AI 会自动加载以上所有文档，无需逐一指定。
 
 ---
 
+## 🗄️ L2 背景数据页面 (Background Data Pages)
+
+### L2 数据库管理 (Database Management) ⚠️默认选中
+**路径**: `/Users/wuyuhui/Desktop/Cyacle-UX/src/components/views/BusinessContent.jsx` (renderDatabaseManagement)
+**顶部栏**:
+- 左侧标题: "数据库管理"
+- 右侧业务功能: 创建按钮(⚠️填充样式)
+**内容区**（撑满宽度）:
+- 搜索栏（最大宽度 max-w-md）
+- 筛选器：筛选条件
+- 表格：数据展示
+
+### L2 元件 (Component)
+**路径**: `/Users/wuyuhui/Desktop/Cyacle-UX/src/components/views/l2/ComponentPage.jsx`  
+**顶部栏**:
+- 左侧标题: "元件"
+- 右侧业务功能: 创建按钮(⚠️填充样式)
+**说明**: ⚠️ 整个页面内容布局与 Footer - 元件完全一致，逻辑也会是一样的(逻辑之后补充)  
+**参考**: 见下方 "Footer - 元件 (Component)" 配置
+
+### L2 基本流 (BasicFlow)
+**路径**: `/Users/wuyuhui/Desktop/Cyacle-UX/src/components/views/l2/BasicFlowPage.jsx`  
+**顶部栏**:
+- 左侧标题: "基本流"
+- 右侧业务功能: 创建按钮(⚠️填充样式)
+**说明**: ⚠️ 整个页面内容布局与 Footer - 基本流完全一致，逻辑也会是一样的(逻辑之后补充)  
+**参考**: 见下方 "Footer - 基本流 (BasicFlow)" 配置
+
+### L2 复合因子 (CompositeFactor)
+**路径**: `/Users/wuyuhui/Desktop/Cyacle-UX/src/components/views/l2/CompositeFactorPage.jsx`  
+**顶部栏**:
+- 左侧标题: "复合因子"
+- 右侧业务功能: 创建按钮(⚠️填充样式)
+**说明**: ⚠️ 整个页面内容布局与 Footer - 复合因子完全一致，逻辑也会是一样的(逻辑之后补充)  
+**参考**: 见下方 "Footer - 复合因子 (CompositeFactor)" 配置
+
+### L2 文献因子 (LiteratureFactor)
+**路径**: `/Users/wuyuhui/Desktop/Cyacle-UX/src/components/views/l2/LiteratureFactorPage.jsx`  
+**顶部栏**:
+- 左侧标题: "文献因子"
+- 右侧业务功能: 创建按钮(⚠️填充样式)
+**说明**: ⚠️ 整个页面内容布局与 Footer - 文献因子完全一致，逻辑也会是一样的(逻辑之后补充)  
+**参考**: 见下方 "Footer - 文献因子 (LiteratureFactor)" 配置
+
+---
+
+## 🗄️ L1 项目管理 (Project Management)
+
+### 全部项目 (All Projects) ⚠️默认选中
+**路径**: `/Users/wuyuhui/Desktop/Cyacle-UX/src/components/views/BusinessContent.jsx` (renderProjectManagement)
+**顶部栏**:
+- 左侧标题: "全部项目"
+- 右侧业务功能: 创建(填充按钮)
+**内容区**:
+- 筛选器1
+- 表格
+
+### 产品碳足迹 (Product Carbon Footprint) ⚠️快捷筛选
+**路径**: `/Users/wuyuhui/Desktop/Cyacle-UX/src/components/views/BusinessContent.jsx` (renderProjectManagement)
+**顶部栏**:
+- 左侧标题: "全部项目" (⚠️注意：虽然是PCF视图，但Title保持为"全部项目")
+- 右侧业务功能: 创建(填充按钮)
+**内容区**:
+- 筛选器：已选产品碳足迹筛选条件
+- 表格：只展示产品碳足迹项目数据
+
+### 企业碳足迹 (Enterprise Carbon Footprint) ⚠️快捷筛选
+**路径**: `/Users/wuyuhui/Desktop/Cyacle-UX/src/components/views/BusinessContent.jsx` (renderProjectManagement)
+**顶部栏**:
+- 左侧标题: "全部项目" (⚠️注意：虽然是OCF视图，但Title保持为"全部项目")
+- 右侧业务功能: 创建(填充按钮)
+**内容区**:
+- 筛选器：已选企业碳足迹筛选条件
+- 表格：只展示企业碳足迹项目数据
+
+---
+
+## 🗄️ L1 研究对象 (Enterprise/Objects)
+
+### 研究对象-全部 (All Objects) ⚠️默认选中
+**路径**: `/Users/wuyuhui/Desktop/Cyacle-UX/src/components/views/BusinessContent.jsx` (renderResearchObjects)
+**顶部栏**:
+- 左侧标题: "研究对象"
+- 右侧业务功能: 创建(填充按钮)
+**内容区**:
+- 筛选器
+- 表格
+
+
+### L2 文献 (Literature)
+**路径**: `/Users/wuyuhui/Desktop/Cyacle-UX/src/components/views/l2/LiteraturePage.jsx`  
+**顶部栏**:
+- 左侧标题: "文献"
+- 右侧业务功能: 创建按钮(⚠️填充样式)
+**说明**: ⚠️ 整个页面内容布局与 Footer - 文献完全一致，逻辑也会是一样的(逻辑之后补充)  
+**参考**: 见下方 "Footer - 文献 (Literature)" 配置
+
+> [!IMPORTANT]
+> **背景数据页面布局规则**
+> 1. **创建/添加按钮位置**: 所有背景数据页面的创建按钮都通过 `useHeaderContext().setActions` 设置到顶部栏（Header）的右侧，而不是在内容区
+> 2. **内容区宽度**: 内容区使用 `w-full` 撑满整个区域，不会有右侧大空白
+> 3. **Header模式**: 使用 Simple L2 规则（仅标题+业务按钮，无ViewActions）
+
+---
+
 ## 📦 Footer 模块配置
 
 ### Footer - 信息 (Info)
