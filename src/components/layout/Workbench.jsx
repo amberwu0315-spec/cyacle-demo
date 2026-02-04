@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import L2Sidebar from './L2Sidebar';
-import BusinessSidebar from './BusinessSidebar';
 import Header from './Header';
 import MainContent from '../views/MainContent';
 import Footer from './Footer';
@@ -107,12 +106,10 @@ const WorkbenchContent = ({
             setSidebarTitle(isDetailView ? (activeL1 === 'enterprise' ? enterpriseName : projectName) : projectName);
 
         } else if (isBusinessLayout) {
-
-        } else if (isBusinessLayout) {
-            const titleMap = {
+            const businessTitleMap = {
                 'background_data': '数据库管理',
                 'project_mgmt': '全部项目',
-                'enterprise': '研究对象'
+                'enterprise': '全部研究对象'
             };
             // Title Mapping based on Target (Priority) or L1
             const targetTitleMap = {
@@ -125,13 +122,17 @@ const WorkbenchContent = ({
                 'literature': '文献',
                 // Projects
                 'all_projects': '全部项目',
-                'pcf': '全部项目',
-                'ocf': '全部项目',
+                'pcf': '产品碳足迹', // Specific Context
+                'ocf': '组织碳足迹', // Specific Context
                 // Enterprise
-                'all_objects': '研究对象'
+                'all_objects': '全部研究对象' // Specific Context, distinct from 'Research Object' identity
             };
 
-            setHeaderTitle(targetTitleMap[businessTarget] || titleMap[activeL1] || '');
+            // Logic: 
+            // 1. If businessTarget is set (clicked L2 item), use its title.
+            // 2. If no target (default view), use the L1 default title.
+            const currentTitle = targetTitleMap[businessTarget] || businessTitleMap[activeL1] || '';
+            setHeaderTitle(currentTitle);
 
         } else {
             setHeaderTitle('Dashboard');
@@ -162,20 +163,20 @@ const WorkbenchContent = ({
         <div className="absolute left-[60px] top-1 bottom-1 right-1 bg-white rounded-[12px] overflow-hidden shadow-2xl z-0 flex flex-col">
             <div className="flex-1 flex flex-row overflow-hidden relative">
                 {/* Project L2 Sidebar (50px) - Show for Project Tag OR Detail Views */}
-                {(isProjectLayout || isDetailView) && (
-                    <L2Sidebar activeL2={activeL2} onSelect={onL2Change} activeL1={activeL1} enterpriseName={sidebarTitle} />
-                )}
-
-                {/* Business Sidebar (Full Height 200px) - Hide if in Detail View */}
-                {isBusinessLayout && !isDetailView && (
-                    <BusinessSidebar
+                {/* L2 Sidebar: Unified for Project, Detail, and Business List */}
+                {(isProjectLayout || isDetailView || (isBusinessLayout && !isDetailView)) && (
+                    <L2Sidebar
                         activeL1={activeL1}
-                        activeTarget={businessTarget}
-                        // Note: openedTabs removed from BusinessSidebar as requested
-                        onSelectContent={(target, title) => {
-                            setBusinessTarget(target);
-                            setHeaderTitle(title);
+                        activeL2={(isProjectLayout || isDetailView) ? activeL2 : businessTarget}
+                        onSelect={(id) => {
+                            if (isProjectLayout || isDetailView) {
+                                onL2Change(id);
+                            } else {
+                                setBusinessTarget(id);
+                            }
                         }}
+                        enterpriseName={sidebarTitle}
+                        isDetailView={isDetailView}
                     />
                 )}
 
