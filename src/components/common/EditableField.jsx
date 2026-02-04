@@ -290,13 +290,16 @@ const EditableField = ({
                         {renderEditInput()}
                     </div>
                 ) : (
-                    <div className={`relative flex-1 w-full h-full flex items-center px-3 border border-transparent overflow-visible group-hover:bg-gray-50 rounded`}>
+                    <div
+                        className={`relative flex-1 w-full h-full flex items-center px-3 border border-transparent overflow-visible group-hover:bg-gray-50 rounded cursor-pointer`}
+                        onClick={handleEdit}
+                    >
                         <div className={`truncate pr-12 w-full ${textStyles}`}>
                             {renderDisplayValue()}
                         </div>
                         <div className="absolute right-0 top-1/2 -translate-y-1/2 pl-4 bg-gradient-to-l from-gray-50 via-gray-50 to-transparent flex items-center h-[calc(100%-2px)] mr-[1px] opacity-0 group-hover:opacity-100 transition-opacity">
                             <button
-                                onClick={handleEdit}
+                                onClick={(e) => { e.stopPropagation(); handleEdit(); }}
                                 className="flex items-center gap-1 px-2 h-6 bg-white border border-gray-200 text-xs text-gray-600 hover:text-[#087F9C] hover:border-[#087F9C] rounded shadow-sm transition-all whitespace-nowrap"
                                 title="编辑"
                             >

@@ -35,7 +35,10 @@ const WorkbenchContent = ({
     setBusinessTarget,
     openedTabs,
     onOpenTab,
-    onCloseTab
+    onCloseTab,
+    // Data Props
+    projects,
+    onAddProject
 }) => {
     // Sync activeL2 (Props) -> activeDimension (Context)
     const { setActiveDimension, setActiveMode } = useNavigation();
@@ -214,6 +217,9 @@ const WorkbenchContent = ({
                             businessTarget={businessTarget}
                             onOpenTab={onOpenTab} // Pass open handler from props
                             openedTabs={openedTabs}   // Pass tabs data from props
+                            // Data Props
+                            projects={projects}
+                            onAddProject={onAddProject}
                         />
                     </div>
 

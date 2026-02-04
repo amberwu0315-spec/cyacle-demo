@@ -2,7 +2,7 @@ import Dashboard from '../views/Dashboard';
 import BusinessContent from '../views/BusinessContent';
 import ProjectLayout from '../views/ProjectLayout';
 
-export default function MainContent({ mode, activeL1, activeL2, activeL3, onL3Change, businessTarget, onOpenTab, openedTabs }) {
+export default function MainContent({ mode, activeL1, activeL2, activeL3, onL3Change, businessTarget, onOpenTab, openedTabs, projects, onAddProject }) {
 
     // Determine what to render
     const isProject = activeL1 === 'project_tag';
@@ -24,6 +24,8 @@ export default function MainContent({ mode, activeL1, activeL2, activeL3, onL3Ch
                     target={businessTarget}
                     onOpenTab={onOpenTab}
                     openedTabs={openedTabs}
+                    projects={projects}
+                    onAddProject={onAddProject}
                 />
             )}
 

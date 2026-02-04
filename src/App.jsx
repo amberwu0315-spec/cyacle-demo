@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import L1Sidebar from './components/layout/L1Sidebar';
 import Workbench from './components/layout/Workbench';
 import { HeaderProvider } from './context/HeaderContext';
+import { projectData } from './data/mockData';
 
 // Modes
 const MODES = {
@@ -20,6 +21,13 @@ export default function App() {
     // State for Business Mode Navigation (Lifted from Workbench)
     const [businessTarget, setBusinessTarget] = useState('database_mgmt');
     const [openedTabs, setOpenedTabs] = useState([]);
+
+    // Data State (Lifted for Persistence)
+    const [projects, setProjects] = useState(projectData);
+
+    const handleAddProject = (newProject) => {
+        setProjects(prev => [newProject, ...prev]);
+    };
 
     // Scoped History State for Project Mode
     const [projHistory, setProjHistory] = useState([]);
@@ -273,10 +281,13 @@ export default function App() {
                     onCloseTab={handleCloseTab} // Pass the App-level handler
 
                     // Scoped Navigation Props
-                    onProjectBack={handleProjectBack}
                     onProjectForward={handleProjectForward}
                     canGoBack={historyIndex > 0}
                     canGoForward={historyIndex < projHistory.length - 1}
+
+                    // Data Props
+                    projects={projects}
+                    onAddProject={handleAddProject}
                 />
             </div>
         </HeaderProvider>

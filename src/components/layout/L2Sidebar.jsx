@@ -96,7 +96,8 @@ export default function L2Sidebar({ activeL2, onSelect, activeL1, enterpriseName
 
     // ==================== Logic Determination ====================
     const isEnterpriseDetail = activeL1 === 'enterprise' && isDetailView;
-    const isBusinessList = ['background_data', 'project_mgmt', 'enterprise'].includes(activeL1) && !isEnterpriseDetail;
+    const isProjectDetail = activeL1 === 'project_mgmt' && isDetailView;
+    const isBusinessList = ['background_data', 'project_mgmt', 'enterprise'].includes(activeL1) && !isEnterpriseDetail && !isProjectDetail;
 
     // Only render the Collapsible Sidebar if we are in one of these modes
     if (isEnterpriseDetail || isBusinessList) {
