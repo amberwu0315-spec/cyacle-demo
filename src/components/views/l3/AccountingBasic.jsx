@@ -25,7 +25,7 @@ const AccountingBasic = () => {
     // State for Accounting Settings fields
     const [projectStandard, setProjectStandard] = useState('ISO 14067');
     const [reportTemplate, setReportTemplate] = useState('通用产品碳足迹报告');
-    const [qualitySystem, setQualitySystem] = useState('豪特卡洛法');
+    const [qualitySystem, setQualitySystem] = useState('蒙特卡洛法');
     const [multiLanguage, setMultiLanguage] = useState('否');
 
     // State for Analysis Settings
@@ -61,33 +61,9 @@ const AccountingBasic = () => {
                 {/* Module 1: 输出产品设置 (Output Product Settings) */}
                 <ContentModule>
                     <ModuleHeader title="输出产品设置" />
-                    <FormBlock>
-                        <EditableField
-                            label="输出产品"
-                            value={outputProduct}
-                            onSave={setOutputProduct}
-                            type="text"
-                        />
-                        <EditableField
-                            label="申报单位"
-                            value={declaringUnit}
-                            onSave={setDeclaringUnit}
-                            type="text"
-                        />
-                        <EditableField
-                            label="产品数量"
-                            value={productCount}
-                            onSave={setProductCount}
-                            type="number"
-                        />
-                        <EditableField
-                            label="产品重量"
-                            value={productWeight}
-                            onSave={setProductWeight}
-                            type="number"
-                            unit={weightUnit}
-                        />
-                    </FormBlock>
+                    <div className="p-3 text-sm text-gray-400">
+                        此模块内容待定
+                    </div>
                 </ContentModule>
 
                 {/* Module 2: 分析设置 (Analysis Settings) */}
@@ -174,12 +150,12 @@ const AccountingBasic = () => {
                             </>
                         )}
 
-                        <EditableField label="建立气体量化方法">
+                        <EditableField label="温室气体量化方法">
                             <div className="flex items-center gap-4 min-h-9 flex-wrap">
                                 <Checkbox
                                     checked={buildingMethod.excludeMethod}
                                     onChange={(e) => setBuildingMethod({ ...buildingMethod, excludeMethod: e.target.checked })}
-                                    label="排放扣除法"
+                                    label="排放因子法"
                                 />
                                 <Checkbox
                                     checked={buildingMethod.qualityMethod}
@@ -244,9 +220,7 @@ const AccountingBasic = () => {
                             onSave={setProjectStandard}
                             type="select"
                             options={[
-                                { value: 'ISO 14067', label: 'ISO 14067' },
-                                { value: 'ISO 14044', label: 'ISO 14044' },
-                                { value: 'PAS 2050', label: 'PAS 2050' }
+                                { value: 'ISO 14067', label: 'ISO 14067' }
                             ]}
                         />
                         <EditableField
@@ -255,8 +229,7 @@ const AccountingBasic = () => {
                             onSave={setReportTemplate}
                             type="select"
                             options={[
-                                { value: '通用产品碳足迹报告', label: '通用产品碳足迹报告' },
-                                { value: '建筑产品碳足迹报告', label: '建筑产品碳足迹报告' }
+                                { value: '通用产品碳足迹报告', label: '通用产品碳足迹报告' }
                             ]}
                         />
                         <EditableField
@@ -265,8 +238,8 @@ const AccountingBasic = () => {
                             onSave={setQualitySystem}
                             type="select"
                             options={[
-                                { value: '豪特卡洛法', label: '豪特卡洛法' },
-                                { value: 'Pedigree矩阵', label: 'Pedigree矩阵' }
+                                { value: '蒙特卡洛法', label: '蒙特卡洛法' },
+                                { value: '误差传递法', label: '误差传递法' }
                             ]}
                         />
                         <EditableField
@@ -292,21 +265,9 @@ const AccountingBasic = () => {
                         iconBadge={IconInfoCircle}
                         iconBadgeTooltip="此内容属于模型信息，编辑后会同步至当前模型下的所有核算"
                     />
-
                     {isAdvancedOpen && (
-                        <div className="p-3 bg-gray-50 border-t border-gray-100 flex flex-col gap-2">
-                            <button className="flex items-center justify-between px-3 py-2 bg-white border border-gray-200 rounded text-sm text-gray-700 hover:border-[#087F9C] hover:text-[#087F9C] transition-all group">
-                                <span>复制当前核算</span>
-                                <span className="text-[10px] text-gray-400 group-hover:text-[#087F9C]">快速创建副本</span>
-                            </button>
-                            <button className="flex items-center justify-between px-3 py-2 bg-white border border-gray-200 rounded text-sm text-gray-700 hover:border-[#087F9C] hover:text-[#087F9C] transition-all group">
-                                <span>批量同步模型数据</span>
-                                <span className="text-[10px] text-gray-400 group-hover:text-[#087F9C]">同步 5 个子项</span>
-                            </button>
-                            <button className="flex items-center justify-between px-3 py-2 bg-white border border-gray-200 rounded text-sm text-red-500 hover:bg-red-50 hover:border-red-200 transition-all group">
-                                <span>删除此核算</span>
-                                <span className="text-[10px] text-red-300 group-hover:text-red-400">不可撤销</span>
-                            </button>
+                        <div className="p-3 text-sm text-gray-400">
+                            此模块内容待定
                         </div>
                     )}
                 </ContentModule>

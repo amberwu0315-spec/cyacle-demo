@@ -27,6 +27,8 @@ const WorkbenchContent = ({
     canGoForward,
     headerTitle,
     setHeaderTitle,
+    sidebarTitle,
+    setSidebarTitle,
     // Tab & Navigation Props (from App)
     businessTarget,
     setBusinessTarget,
@@ -63,9 +65,13 @@ const WorkbenchContent = ({
         if (isProjectLayout || isDetailView) {
             // 1. Determine Project Name (Context)
             let projectName = 'My Green Project'; // Default/Placeholder
+            let enterpriseName = '';
             if (isDetailView) {
                 const tab = openedTabs.find(t => t.id === businessTarget);
-                if (tab) projectName = tab.title;
+                if (tab) {
+                    projectName = tab.title;
+                    enterpriseName = tab.title;
+                }
             }
 
             // 2. Determine Page Title based on Rule A/B
@@ -81,9 +87,26 @@ const WorkbenchContent = ({
 
             if (['navigation', 'basis'].includes(activeL2)) {
                 setHeaderTitle(projectName);
+            } else if (activeL1 === 'enterprise') {
+                // Enterprise Detail View: Header Title = Active Menu Name
+                const entTitleMap = {
+                    'ent_projects': '项目',
+                    'ent_info': '信息',
+                    'ent_locations': '地点',
+                    'ent_products': '产品',
+                    'ent_data': '数据',
+                    'ent_datasources': '数据源',
+                    'ent_docs': '文档'
+                };
+                setHeaderTitle(entTitleMap[activeL2] || '详情');
             } else {
                 setHeaderTitle(titleMap[activeL2] || '项目');
             }
+
+            // Set Sidebar Card Title (Always Fixed -> Project/Enterprise Name)
+            setSidebarTitle(isDetailView ? (activeL1 === 'enterprise' ? enterpriseName : projectName) : projectName);
+
+        } else if (isBusinessLayout) {
 
         } else if (isBusinessLayout) {
             const titleMap = {
@@ -140,7 +163,7 @@ const WorkbenchContent = ({
             <div className="flex-1 flex flex-row overflow-hidden relative">
                 {/* Project L2 Sidebar (50px) - Show for Project Tag OR Detail Views */}
                 {(isProjectLayout || isDetailView) && (
-                    <L2Sidebar activeL2={activeL2} onSelect={onL2Change} />
+                    <L2Sidebar activeL2={activeL2} onSelect={onL2Change} activeL1={activeL1} enterpriseName={sidebarTitle} />
                 )}
 
                 {/* Business Sidebar (Full Height 200px) - Hide if in Detail View */}
@@ -206,6 +229,7 @@ const WorkbenchContent = ({
 export default function Workbench(props) {
     // Only manage local UI state like Header Title here
     const [headerTitle, setHeaderTitle] = useState('');
+    const [sidebarTitle, setSidebarTitle] = useState('');
 
     // businessTarget and openedTabs are now PROPS passed from App.jsx
 
@@ -215,6 +239,8 @@ export default function Workbench(props) {
                 {...props}
                 headerTitle={headerTitle}
                 setHeaderTitle={setHeaderTitle}
+                sidebarTitle={sidebarTitle}
+                setSidebarTitle={setSidebarTitle}
             />
         </NavigationProvider>
     );

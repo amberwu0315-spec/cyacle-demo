@@ -19,7 +19,9 @@ const StandardBusinessLayout = ({
     showSearch = true,
     setHeaderActions,
     defaultFilterType = 'all',
-    onRowClick
+    onRowClick,
+    columns,
+    data
 }) => {
     const [filterType, setFilterType] = useState(defaultFilterType);
     const [filterStatus, setFilterStatus] = useState('all');
@@ -112,40 +114,52 @@ const StandardBusinessLayout = ({
         );
     };
 
-    // 渲染表格容器(占位符 -> 临时列表用于测试Tab)
+    // 渲染表格容器
     const renderTable = () => {
-        const mockData = [
-            { id: '101', name: '演示项目-门窗生产', type: '产品碳足迹', status: '进行中' },
-            { id: '102', name: '集团2024碳核算', type: '组织碳足迹', status: '已完成' },
-            { id: '103', name: '新工艺研发测试', type: '产品碳足迹', status: '草稿' },
-        ];
+        // Fallback if no columns/data provided
+        if (!columns || !data) {
+            return <div className="p-4 text-center text-gray-400">No data available</div>;
+        }
 
         return (
             <div className="bg-white rounded border border-gray-200 flex-1 flex flex-col overflow-hidden">
-                <table className="w-full text-sm text-left">
-                    <thead className="bg-gray-50 text-gray-500 border-b border-gray-200">
-                        <tr>
-                            <th className="px-4 py-3 font-medium text-xs">项目名称</th>
-                            <th className="px-4 py-3 font-medium text-xs">类型</th>
-                            <th className="px-4 py-3 font-medium text-xs">状态</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100">
-                        {mockData.map(item => (
-                            <tr
-                                key={item.id}
-                                onClick={() => onRowClick && onRowClick(item)}
-                                className="hover:bg-blue-50 cursor-pointer transition-colors"
-                            >
-                                <td className="px-4 py-3 font-medium text-gray-900">{item.name}</td>
-                                <td className="px-4 py-3 text-gray-500">{item.type}</td>
-                                <td className="px-4 py-3 text-gray-500">{item.status}</td>
+                <div className="overflow-x-auto">
+                    <table className="w-full text-sm text-left">
+                        <thead className="bg-gray-50 text-gray-500 border-b border-gray-200">
+                            <tr>
+                                {columns.map((col, index) => (
+                                    <th
+                                        key={col.key || index}
+                                        className={`px-4 py-3 font-medium text-xs ${col.className || ''}`}
+                                        style={{ width: col.width }}
+                                    >
+                                        {col.title}
+                                    </th>
+                                ))}
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-                <div className="p-4 text-center text-xs text-gray-400 border-t border-gray-100 mt-auto">
-                    点击列表行以打开详情标签页
+                        </thead>
+                        <tbody className="divide-y divide-gray-100">
+                            {data.map((item, rowIndex) => (
+                                <tr
+                                    key={item.id || rowIndex}
+                                    onClick={() => onRowClick && onRowClick(item)}
+                                    className="hover:bg-blue-50 cursor-pointer transition-colors group"
+                                >
+                                    {columns.map((col, colIndex) => (
+                                        <td
+                                            key={`${item.id}-${col.key || colIndex}`}
+                                            className={`px-4 py-3 text-gray-900 ${col.className || ''}`}
+                                        >
+                                            {col.render ? col.render(item[col.key], item) : item[col.key]}
+                                        </td>
+                                    ))}
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+                <div className="p-2 text-center text-xs text-gray-400 border-t border-gray-100 mt-auto bg-gray-50">
+                    共 {data.length} 条记录
                 </div>
             </div>
         );

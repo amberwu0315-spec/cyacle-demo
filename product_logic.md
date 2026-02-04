@@ -45,6 +45,18 @@ The application has 3 primary view modes. JavaScript must toggle `hidden` classe
         *   Footer是**引用视图** (弹窗选择，项目内使用)。
     *   **Default**: 默认选中 "Database Management"。
 
+#### 3. 研究对象详情页 (Enterprise Detail View)
+*   **Trigger:** Click on an Enterprise row in `L1: Enterprise` List.
+*   **Behavior Rule:**
+    *   **Sidebar Card (Identity)**: A specialized blue card at the top of the L2 sidebar.
+        *   **Content**: DISPLAYS the **Entity Name** (e.g., "Demonstration Window Co., Ltd.").
+        *   **Persistence**: MUST remain **FIXED**. Changing L2 menu items NEVER changes this card's text.
+    *   **Page Header (Context)**: The white top bar of the main content area.
+        *   **Content**: DISPLAYS the **Active Menu Name** (e.g., "Project", "Info", "Locations").
+        *   **Dynamic**: Updates instantly on L2 menu click to show functional context.
+    *   **Default Selection**:
+        *   Entering the detail view MUST default to **"Project"** (`ent_projects`).
+
 ### C. Footer 覆盖弹窗 (The Floating Panel)
 *   **Visibility:** Only available in **Project Layout**.
 *   **Function Lists:**

@@ -34,6 +34,7 @@ export default function MainContent({ mode, activeL1, activeL2, activeL3, onL3Ch
                     activeL2={activeL2}
                     activeL3={activeL3}
                     onL3Change={onL3Change}
+                    activeL1={activeL1}
                 // We could pass data here if ProjectLayout needs it
                 />
             )}

@@ -1,4 +1,4 @@
-import { IconUserCircle, IconDatabase, IconLayoutKanban, IconBuilding, IconFileCode, IconBell, IconSettings, IconFileText, IconX } from '@tabler/icons-react';
+import { IconUserCircle, IconDatabase, IconLayoutKanban, IconBuilding, IconFileCode, IconBell, IconSettings, IconFileText, IconX, IconShield } from '@tabler/icons-react';
 import Tooltip from '../common/Tooltip';
 
 export default function L1Sidebar({ activeL1, onSelect, openedTabs = [], activeTarget, onSelectTab, onCloseTab }) {

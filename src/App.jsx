@@ -48,13 +48,20 @@ export default function App() {
             if (!activeL2) setActiveL2('navigation');
             setMode(MODES.WIDE);
         } else if (businessModes.includes(activeL1)) {
-            // Business L1s stay in HOME mode in terms of layout (just header/sidebar diffs)
-            setMode(MODES.HOME);
-            // NOTE: Default target logic and tab reset moved to handleL1Change/handleTabClick to prevent overwriting
+            // Check if we are in a Detail View (Tab Open)
+            const isDetailView = businessTarget && businessTarget.startsWith('detail_');
+
+            if (isDetailView) {
+                // Detail Views need the WIDE layout (Sidebar structure)
+                setMode(MODES.WIDE);
+            } else {
+                // Standard Business List Views use HOME layout
+                setMode(MODES.HOME);
+            }
         } else {
             setMode(MODES.HOME);
         }
-    }, [activeL1]);
+    }, [activeL1, businessTarget]); // Added businessTarget dependency
 
     useEffect(() => {
         // Logic when L2 changes within Project
@@ -113,7 +120,11 @@ export default function App() {
             setBusinessTarget(tabId);
 
             // Ensure L2 Sidebar defaults to Navigation (first menu) when entering detail view
-            setActiveL2('navigation');
+            if (tab.l1Context === 'enterprise') {
+                setActiveL2('ent_projects');
+            } else {
+                setActiveL2('navigation');
+            }
         }
     };
 
