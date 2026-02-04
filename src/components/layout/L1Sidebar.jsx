@@ -7,7 +7,7 @@ export default function L1Sidebar({ activeL1, onSelect, openedTabs = [], activeT
         { id: 'home', icon: IconUserCircle, label: '工作空间 (Workspace)' },
         { id: 'background_data', icon: IconDatabase, label: '背景数据 (Background Data)' },
         { id: 'project_mgmt', icon: IconLayoutKanban, label: '项目管理 (Project Management)' },
-        { id: 'enterprise', icon: IconBuilding, label: '企业/对象 (Enterprise)' },
+        { id: 'enterprise', icon: IconBuilding, label: '研究对象 (Enterprise)' },
     ];
 
     return (

@@ -12,25 +12,24 @@ const BasisPage = () => {
         name: '示例门窗生产企业',
         nameLink: '#',
         address: '中国广东省深圳市南山区科技园',
-        contactName: '张伟',
-        contactEmail: 'zhangwei@example.com',
+        contact_name: '张伟', // Aligned with schema: contactName -> contact_name
+        contact_email: 'zhangwei@example.com',
         introduction: '专业生产节能门窗系统，拥有20年行业经验，年产能达到100万平方米。'
     };
 
     // 类型视图-设置列表 - 可编辑表格
     const [typeViewList, setTypeViewList] = useState([
-        { id: 1, source: '数据库A', level1: '建筑材料', level2: '门窗系统', editing: null }
+        { id: 1, source: '数据库A', level1: '建筑材料', level2: '门窗系统' }
     ]);
 
-    // 基础信息 - 部分可编辑
-    const [projectRemark, setProjectRemark] = useState('这是一个示例项目，用于演示碳足迹核算流程。');
-
-    const basicInfo = {
-        demandType: '产品碳足迹',
-        creator: '李明',
-        createTime: '2024-01-15 10:30:00',
-        updateTime: '2024-02-03 14:20:00'
-    };
+    // 基础信息 - 扩展 Project 实体
+    const [projectData, setProjectData] = useState({
+        type: 'CFP',              // demandType -> type
+        owner: '李明',             // creator -> owner
+        created_at: '2024-01-15 10:30:00',
+        updated_at: '2024-02-03 14:20:00',
+        description: '这是一个示例项目，用于演示碳足迹核算流程。' // remark -> description
+    });
 
     useEffect(() => {
         setLayoutConfig('title-only');
@@ -49,29 +48,13 @@ const BasisPage = () => {
             id: newId,
             source: '数据库B',
             level1: '',
-            level2: '',
-            editing: null
+            level2: ''
         }]);
     };
 
-    // 开始编辑某个字段
-    const handleStartEdit = (id, field) => {
+    const handleUpdateTypeView = (id, field, value) => {
         setTypeViewList(typeViewList.map(item =>
-            item.id === id ? { ...item, editing: field } : item
-        ));
-    };
-
-    // 保存编辑
-    const handleSaveEdit = (id, field, value) => {
-        setTypeViewList(typeViewList.map(item =>
-            item.id === id ? { ...item, [field]: value, editing: null } : item
-        ));
-    };
-
-    // 取消编辑
-    const handleCancelEdit = (id) => {
-        setTypeViewList(typeViewList.map(item =>
-            item.id === id ? { ...item, editing: null } : item
+            item.id === id ? { ...item, [field]: value } : item
         ));
     };
 
@@ -81,7 +64,7 @@ const BasisPage = () => {
             <div className="w-2/3 flex flex-col gap-3">
                 {/* 研究对象 - 只读 */}
                 <ContentModule>
-                    <ModuleHeader title="研究对象" />
+                    <ModuleHeader title="所属研究对象" />
                     <div className="p-3">
                         <div className="space-y-0.5">
                             {/* 名称 - 带链接 */}
@@ -103,19 +86,19 @@ const BasisPage = () => {
 
                             {/* 联系人名称 */}
                             <div className="flex items-center min-h-9 px-3">
-                                <span className="text-sm text-gray-500 w-24">联系人名称：</span>
-                                <span className="flex-1 text-sm text-gray-800">{researchObject.contactName}</span>
+                                <span className="text-sm text-gray-500 w-24">联系人姓名：</span>
+                                <span className="flex-1 text-sm text-gray-800">{researchObject.contact_name}</span>
                             </div>
 
                             {/* 联系人邮箱 */}
                             <div className="flex items-center min-h-9 px-3">
                                 <span className="text-sm text-gray-500 w-24">联系人邮箱：</span>
-                                <span className="flex-1 text-sm text-gray-800">{researchObject.contactEmail}</span>
+                                <span className="flex-1 text-sm text-gray-800">{researchObject.contact_email}</span>
                             </div>
 
                             {/* 介绍 */}
                             <div className="flex items-start min-h-9 px-3">
-                                <span className="text-sm text-gray-500 w-24 pt-0.5">介绍：</span>
+                                <span className="text-sm text-gray-500 w-24 pt-0.5">企业简介：</span>
                                 <span className="flex-1 text-sm text-gray-800">{researchObject.introduction}</span>
                             </div>
                         </div>
@@ -137,7 +120,13 @@ const BasisPage = () => {
                         }
                     />
                     <div className="p-3">
+                        {/* Standard Table with EditableField */}
                         <table className="w-full border-collapse">
+                            <colgroup>
+                                <col className="w-32" />
+                                <col className="w-auto" />
+                                <col className="w-auto" />
+                            </colgroup>
                             <thead>
                                 <tr className="bg-gray-50 border-b border-gray-200">
                                     <th className="text-left py-2 px-3 text-sm font-medium text-gray-700">来源</th>
@@ -147,103 +136,29 @@ const BasisPage = () => {
                             </thead>
                             <tbody>
                                 {typeViewList.map((item) => (
-                                    <tr key={item.id} className="border-b border-gray-100">
-                                        {/* 来源 - 标签形式 */}
-                                        <td className="py-2 px-3">
+                                    <tr key={item.id} className="border-b border-gray-100 group">
+                                        {/* 来源 - 标签形式 (暂不支持编辑，只读展示) */}
+                                        <td className="py-2 px-3 align-middle">
                                             <span className="inline-block px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded">
                                                 {item.source}
                                             </span>
                                         </td>
 
-                                        {/* 一级类型 - 可编辑 */}
-                                        <td className="py-2 px-3">
-                                            {item.editing === 'level1' ? (
-                                                <div className="flex items-center gap-1">
-                                                    <input
-                                                        type="text"
-                                                        defaultValue={item.level1}
-                                                        autoFocus
-                                                        className="flex-1 px-2 py-1 text-sm border border-[#087F9C] rounded focus:outline-none"
-                                                        onKeyDown={(e) => {
-                                                            if (e.key === 'Enter') {
-                                                                handleSaveEdit(item.id, 'level1', e.target.value);
-                                                            } else if (e.key === 'Escape') {
-                                                                handleCancelEdit(item.id);
-                                                            }
-                                                        }}
-                                                        onBlur={(e) => handleSaveEdit(item.id, 'level1', e.target.value)}
-                                                    />
-                                                    <button
-                                                        onClick={(e) => {
-                                                            const input = e.currentTarget.previousElementSibling;
-                                                            handleSaveEdit(item.id, 'level1', input.value);
-                                                        }}
-                                                        className="p-1 text-green-600 hover:bg-green-50 rounded"
-                                                    >
-                                                        <IconCheck size={16} />
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleCancelEdit(item.id)}
-                                                        className="p-1 text-gray-600 hover:bg-gray-100 rounded"
-                                                    >
-                                                        <IconX size={16} />
-                                                    </button>
-                                                </div>
-                                            ) : (
-                                                <div
-                                                    className="flex items-center justify-between group cursor-pointer hover:bg-gray-50 px-2 py-1 rounded"
-                                                    onClick={() => handleStartEdit(item.id, 'level1')}
-                                                >
-                                                    <span className="text-sm text-gray-800">{item.level1 || '点击编辑'}</span>
-                                                    <IconPencil size={14} className="text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                                </div>
-                                            )}
-                                        </td>
+                                        {/* 一级类型 - 使用 EditableField table 模式 */}
+                                        <EditableField
+                                            layout="table"
+                                            value={item.level1}
+                                            onSave={(val) => handleUpdateTypeView(item.id, 'level1', val)}
+                                            type="text"
+                                        />
 
-                                        {/* 二级类型 - 可编辑 */}
-                                        <td className="py-2 px-3">
-                                            {item.editing === 'level2' ? (
-                                                <div className="flex items-center gap-1">
-                                                    <input
-                                                        type="text"
-                                                        defaultValue={item.level2}
-                                                        autoFocus
-                                                        className="flex-1 px-2 py-1 text-sm border border-[#087F9C] rounded focus:outline-none"
-                                                        onKeyDown={(e) => {
-                                                            if (e.key === 'Enter') {
-                                                                handleSaveEdit(item.id, 'level2', e.target.value);
-                                                            } else if (e.key === 'Escape') {
-                                                                handleCancelEdit(item.id);
-                                                            }
-                                                        }}
-                                                        onBlur={(e) => handleSaveEdit(item.id, 'level2', e.target.value)}
-                                                    />
-                                                    <button
-                                                        onClick={(e) => {
-                                                            const input = e.currentTarget.previousElementSibling;
-                                                            handleSaveEdit(item.id, 'level2', input.value);
-                                                        }}
-                                                        className="p-1 text-green-600 hover:bg-green-50 rounded"
-                                                    >
-                                                        <IconCheck size={16} />
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleCancelEdit(item.id)}
-                                                        className="p-1 text-gray-600 hover:bg-gray-100 rounded"
-                                                    >
-                                                        <IconX size={16} />
-                                                    </button>
-                                                </div>
-                                            ) : (
-                                                <div
-                                                    className="flex items-center justify-between group cursor-pointer hover:bg-gray-50 px-2 py-1 rounded"
-                                                    onClick={() => handleStartEdit(item.id, 'level2')}
-                                                >
-                                                    <span className="text-sm text-gray-800">{item.level2 || '点击编辑'}</span>
-                                                    <IconPencil size={14} className="text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                                </div>
-                                            )}
-                                        </td>
+                                        {/* 二级类型 - 使用 EditableField table 模式 */}
+                                        <EditableField
+                                            layout="table"
+                                            value={item.level2}
+                                            onSave={(val) => handleUpdateTypeView(item.id, 'level2', val)}
+                                            type="text"
+                                        />
                                     </tr>
                                 ))}
                             </tbody>
@@ -259,37 +174,40 @@ const BasisPage = () => {
                     <ModuleHeader title="基础信息" />
                     <div className="p-3">
                         <div className="space-y-0.5">
-                            {/* 项目需求类型 - 只读 */}
+                            {/* 需求类型 - 只读 */}
                             <div className="flex items-center min-h-9 px-3">
-                                <span className="text-sm text-gray-500 w-28">项目需求类型：</span>
-                                <span className="flex-1 text-sm text-gray-800">{basicInfo.demandType}</span>
+                                <span className="text-sm text-gray-500 w-28">需求类型：</span>
+                                <span className="flex-1 text-sm text-gray-800">
+                                    {projectData.type === 'CFP' ? '产品碳足迹 (CFP)' : '组织碳足迹 (CFO)'}
+                                </span>
                             </div>
 
                             {/* 创建人 - 只读 */}
                             <div className="flex items-center min-h-9 px-3">
                                 <span className="text-sm text-gray-500 w-28">创建人：</span>
-                                <span className="flex-1 text-sm text-gray-800">{basicInfo.creator}</span>
+                                <span className="flex-1 text-sm text-gray-800">{projectData.owner}</span>
                             </div>
 
                             {/* 创建时间 - 只读 */}
                             <div className="flex items-center min-h-9 px-3">
                                 <span className="text-sm text-gray-500 w-28">创建时间：</span>
-                                <span className="flex-1 text-sm text-gray-800">{basicInfo.createTime}</span>
+                                <span className="flex-1 text-sm text-gray-800">{projectData.created_at}</span>
                             </div>
 
                             {/* 更新时间 - 只读 */}
                             <div className="flex items-center min-h-9 px-3">
                                 <span className="text-sm text-gray-500 w-28">更新时间：</span>
-                                <span className="flex-1 text-sm text-gray-800">{basicInfo.updateTime}</span>
+                                <span className="flex-1 text-sm text-gray-800">{projectData.updated_at}</span>
                             </div>
 
-                            {/* 项目备注 - 可编辑 */}
+                            {/* 项目描述 - 可编辑 */}
                             <div className="px-3 pt-2">
                                 <EditableField
-                                    label="项目备注"
-                                    value={projectRemark}
-                                    onSave={setProjectRemark}
+                                    label="项目描述"
+                                    value={projectData.description}
+                                    onSave={(val) => setProjectData({ ...projectData, description: val })}
                                     type="textarea"
+                                    rows={3}
                                 />
                             </div>
                         </div>

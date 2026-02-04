@@ -7,6 +7,8 @@ import Modal from './Modal';
 import ViewActionGroup from './ViewActionGroup';
 import { NavigationProvider, useNavigation } from '../../context/NavigationContext';
 
+import { useHeaderContext } from '../../context/HeaderContext'; // Import Context
+
 /**
  * Inner Component to Consume Navigation Context
  * This bridges the prop-driven "activeL2" with the Context-driven "activeDimension"
@@ -37,6 +39,7 @@ const WorkbenchContent = ({
 }) => {
     // Sync activeL2 (Props) -> activeDimension (Context)
     const { setActiveDimension, setActiveMode } = useNavigation();
+    const { showHeader } = useHeaderContext(); // Consume showHeader
 
     // Derived State for Layout Switching
     const isDetailView = businessTarget && businessTarget.startsWith('detail_');
@@ -183,7 +186,7 @@ const WorkbenchContent = ({
                 {/* Right Column: Header + Content + Footer */}
                 <div className="flex-1 flex flex-col h-full overflow-hidden relative">
                     {/* Header: Visible for Project & Business, Hidden for Dashboard */}
-                    {(isProjectLayout || isBusinessLayout) && (
+                    {(isProjectLayout || isBusinessLayout) && showHeader && (
                         <Header
                             title={headerTitle}
                             // For Legacy Pages (Basis, Navigation), we still pass default actions here

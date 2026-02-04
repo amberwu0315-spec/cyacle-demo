@@ -223,6 +223,11 @@ export default function App() {
             setActiveL1(l1);
             setActiveL2(l2);
             setActiveL3(l3);
+
+            // Sync Default Business Target on Init
+            if (l1 === 'background_data') setBusinessTarget('database_mgmt');
+            else if (l1 === 'project_mgmt') setBusinessTarget('all_projects');
+            else if (l1 === 'enterprise') setBusinessTarget('all_objects');
         };
 
         // Initial sync

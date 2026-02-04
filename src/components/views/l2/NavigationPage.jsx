@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useHeaderContext } from '../../../context/HeaderContext';
 import { IconStar, IconTrash, IconStarFilled } from '@tabler/icons-react'; // Added Filled Star
-import CenterModal from '../../common/CenterModal'; // Import new common modal
+import CenterModal from '../../common/CenterModal';
 import Tooltip from '../../common/Tooltip';
+import { SingleColumnPage } from '../../layout/PageLayouts';
 
 const NavigationPage = () => {
     const { setActions, setTitleOverride, setLayoutConfig } = useHeaderContext();
@@ -57,7 +58,7 @@ const NavigationPage = () => {
     }, [setActions, setTitleOverride, setLayoutConfig, isStarred]); // Add isStarred dependency
 
     return (
-        <div className="p-3 relative">
+        <SingleColumnPage className="p-3">
             <h2 className="text-xl font-bold mb-4">导航 (Navigation)</h2>
             <p className="text-gray-600">这里是项目导航仪表盘的内容区域。</p>
 
@@ -98,7 +99,7 @@ const NavigationPage = () => {
                     <p className="text-gray-500 text-xs">此操作无法撤销。</p>
                 </div>
             </CenterModal>
-        </div>
+        </SingleColumnPage>
     );
 };
 

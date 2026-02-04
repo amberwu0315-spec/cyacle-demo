@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { IconPlus, IconFilter, IconSearch } from '@tabler/icons-react';
+import { CanvasPage } from '../layout/PageLayouts';
 
 /**
  * StandardBusinessLayout - 标准背景数据页面布局
@@ -166,7 +167,7 @@ const StandardBusinessLayout = ({
     };
 
     return (
-        <div className="h-full w-full flex flex-col p-3 bg-[#F5F6F8]">
+        <CanvasPage className="p-3 bg-[#F5F6F8]">
             {/* 搜索栏 */}
             {renderSearchBar()}
 
@@ -175,7 +176,7 @@ const StandardBusinessLayout = ({
 
             {/* 表格容器 */}
             {renderTable()}
-        </div>
+        </CanvasPage>
     );
 };
 

@@ -5,6 +5,8 @@ const HeaderContext = createContext({
   setActions: () => { },
   titleOverride: null,
   setTitleOverride: () => { },
+  showHeader: true,
+  setShowHeader: () => { },
 });
 
 export const useHeaderContext = () => useContext(HeaderContext);
@@ -15,12 +17,15 @@ export const HeaderProvider = ({ children }) => {
   const [layoutConfig, setLayoutConfig] = useState('title-only');
   const [breadcrumbData, setBreadcrumbData] = useState([]);
 
+  const [showHeader, setShowHeader] = useState(true);
+
   return (
     <HeaderContext.Provider value={{
       actions, setActions,
       titleOverride, setTitleOverride,
       layoutConfig, setLayoutConfig,
-      breadcrumbData, setBreadcrumbData
+      breadcrumbData, setBreadcrumbData,
+      showHeader, setShowHeader
     }}>
       {children}
     </HeaderContext.Provider>
