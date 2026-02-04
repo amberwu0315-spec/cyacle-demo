@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import L1Sidebar from './components/layout/L1Sidebar';
 import Workbench from './components/layout/Workbench';
 import { HeaderProvider } from './context/HeaderContext';
-import { projectData } from './data/mockData';
+import { projectData, researchObjectData } from './data/mockData';
 
 // Modes
 const MODES = {
@@ -24,9 +24,14 @@ export default function App() {
 
     // Data State (Lifted for Persistence)
     const [projects, setProjects] = useState(projectData);
+    const [researchObjects, setResearchObjects] = useState(researchObjectData);
 
     const handleAddProject = (newProject) => {
         setProjects(prev => [newProject, ...prev]);
+    };
+
+    const handleAddResearchObject = (newObj) => {
+        setResearchObjects(prev => [newObj, ...prev]);
     };
 
     // Scoped History State for Project Mode
@@ -48,39 +53,26 @@ export default function App() {
     const businessModes = ['background_data', 'project_mgmt', 'enterprise'];
     const isBusinessLayout = businessModes.includes(activeL1);
 
-    // Initial Sync Logic (similar to syncUI)
+    // Unified Sync Logic for Modes and Layouts
     useEffect(() => {
-        // Basic mode logic
-        if (activeL1 === 'project_tag') {
-            // Default to navigation and WIDE mode when entering project
-            if (!activeL2) setActiveL2('navigation');
-            setMode(MODES.WIDE);
-        } else if (businessModes.includes(activeL1)) {
-            // Check if we are in a Detail View (Tab Open)
-            const isDetailView = businessTarget && businessTarget.startsWith('detail_');
+        const isDetailView = businessTarget && businessTarget.startsWith('detail_');
 
-            if (isDetailView) {
-                // Detail Views need the WIDE layout (Sidebar structure)
-                setMode(MODES.WIDE);
-            } else {
-                // Standard Business List Views use HOME layout
-                setMode(MODES.HOME);
-            }
-        } else {
-            setMode(MODES.HOME);
-        }
-    }, [activeL1, businessTarget]); // Added businessTarget dependency
-
-    useEffect(() => {
-        // Logic when L2 changes within Project
-        if (isProjectLayout) {
+        if (isProjectLayout || isDetailView) {
+            // Project-style Layouts
             if (activeL2 === 'accounting') {
                 setMode(MODES.SPLIT);
             } else {
                 setMode(MODES.WIDE);
             }
+            if (!activeL2) setActiveL2('navigation');
+        } else if (isBusinessLayout) {
+            // Standard Business List Views
+            setMode(MODES.HOME);
+        } else {
+            // Dashboard / Default
+            setMode(MODES.HOME);
         }
-    }, [activeL2, isProjectLayout]);
+    }, [activeL1, businessTarget, activeL2, isProjectLayout, isBusinessLayout]);
 
     // Tab Handlers
     const handleOpenTab = (item) => {
@@ -120,10 +112,6 @@ export default function App() {
     const handleTabClick = (tabId) => {
         const tab = openedTabs.find(t => t.id === tabId);
         if (tab) {
-            // Switch Context if needed (Visual Icon Highlight)
-            if (tab.l1Context && tab.l1Context !== activeL1) {
-                setActiveL1(tab.l1Context);
-            }
             // Set Target
             setBusinessTarget(tabId);
 
@@ -288,6 +276,8 @@ export default function App() {
                     // Data Props
                     projects={projects}
                     onAddProject={handleAddProject}
+                    researchObjects={researchObjects}
+                    onAddResearchObject={handleAddResearchObject}
                 />
             </div>
         </HeaderProvider>

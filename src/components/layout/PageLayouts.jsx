@@ -74,7 +74,7 @@ export const DoubleColumnPage = ({
                 {/* Title Area */}
                 <div className="flex items-center gap-2">
                     {/* Optional Back Icon if needed, or just Title */}
-                    <div className="font-medium text-[#087F9C] text-sm">
+                    <div className="font-medium text-gray-800 text-sm">
                         {rightHeader.title || 'Untitled'}
                     </div>
                 </div>

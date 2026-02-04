@@ -9,11 +9,15 @@ import LiteratureFactorPage from './l2/LiteratureFactorPage';
 import LiteraturePage from './l2/LiteraturePage';
 import DatabaseManagementPage from './l2/DatabaseManagementPage';
 import CreateProjectPage from './l2/CreateProjectPage';
+import CreateResearchObjectPage from './l2/CreateResearchObjectPage';
 
 import { researchObjectData } from '../../data/mockData';
 
-export default function BusinessContent({ activeL1, target, onOpenTab, openedTabs = [], projects = [], onAddProject }) {
+export default function BusinessContent({ activeL1, target, onOpenTab, openedTabs = [], projects = [], onAddProject, researchObjects = [], onAddResearchObject }) {
     const { setActions } = useHeaderContext();
+
+    // State for Research Object View Mode
+    const [objectLimitMode, setObjectLimitMode] = React.useState('list'); // 'list' | 'create'
 
     // ==================== 项目管理页面 ====================
 
@@ -56,6 +60,7 @@ export default function BusinessContent({ activeL1, target, onOpenTab, openedTab
     // Reset mode when target changes
     useEffect(() => {
         setProjectLimitMode('list');
+        setObjectLimitMode('list');
     }, [target]);
 
     const renderProjectManagement = (defaultType = 'all') => {
@@ -154,6 +159,27 @@ export default function BusinessContent({ activeL1, target, onOpenTab, openedTab
     ];
 
     const renderResearchObjects = () => {
+        // Mode Check: Create
+        if (objectLimitMode === 'create') {
+            return (
+                <CreateResearchObjectPage
+                    onCancel={() => setObjectLimitMode('list')}
+                    onSave={(newData) => {
+                        const newObj = {
+                            id: String(researchObjects.length + 100), // simple ID
+                            createTime: new Date().toISOString(),
+                            creator: 'Current User',
+                            ...newData
+                        };
+                        if (onAddResearchObject) {
+                            onAddResearchObject(newObj);
+                        }
+                        setObjectLimitMode('list');
+                    }}
+                />
+            );
+        }
+
         const filterOptions = {
             types: [
                 { value: 'product', label: '产品' },
@@ -169,10 +195,20 @@ export default function BusinessContent({ activeL1, target, onOpenTab, openedTab
         return <StandardBusinessLayout
             title="研究对象"
             filterOptions={filterOptions}
-            setHeaderActions={setActions}
+            setHeaderActions={(actions) => {
+                setActions(
+                    <button
+                        onClick={() => setObjectLimitMode('create')}
+                        className="flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium text-white bg-[#087f9c] hover:bg-[#076a82] rounded transition-colors"
+                    >
+                        <IconPlus size={16} />
+                        <span>创建</span>
+                    </button>
+                );
+            }}
             onRowClick={onOpenTab}
             columns={researchObjectColumns}
-            data={researchObjectData}
+            data={researchObjects}
         />;
     };
 

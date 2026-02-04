@@ -38,7 +38,9 @@ const WorkbenchContent = ({
     onCloseTab,
     // Data Props
     projects,
-    onAddProject
+    onAddProject,
+    researchObjects,
+    onAddResearchObject
 }) => {
     // Sync activeL2 (Props) -> activeDimension (Context)
     const { setActiveDimension, setActiveMode } = useNavigation();
@@ -46,6 +48,8 @@ const WorkbenchContent = ({
 
     // Derived State for Layout Switching
     const isDetailView = businessTarget && businessTarget.startsWith('detail_');
+    const activeTab = openedTabs.find(t => t.id === businessTarget);
+    const effectiveL1 = isDetailView ? activeTab?.l1Context : activeL1;
 
     // Modal State
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -92,7 +96,7 @@ const WorkbenchContent = ({
 
             if (['navigation', 'basis'].includes(activeL2)) {
                 setHeaderTitle(projectName);
-            } else if (activeL1 === 'enterprise') {
+            } else if (effectiveL1 === 'enterprise') {
                 // Enterprise Detail View: Header Title = Active Menu Name
                 const entTitleMap = {
                     'ent_projects': '项目',
@@ -109,7 +113,7 @@ const WorkbenchContent = ({
             }
 
             // Set Sidebar Card Title (Always Fixed -> Project/Enterprise Name)
-            setSidebarTitle(isDetailView ? (activeL1 === 'enterprise' ? enterpriseName : projectName) : projectName);
+            setSidebarTitle(isDetailView ? (effectiveL1 === 'enterprise' ? enterpriseName : projectName) : projectName);
 
         } else if (isBusinessLayout) {
             const businessTitleMap = {
@@ -137,13 +141,13 @@ const WorkbenchContent = ({
             // Logic: 
             // 1. If businessTarget is set (clicked L2 item), use its title.
             // 2. If no target (default view), use the L1 default title.
-            const currentTitle = targetTitleMap[businessTarget] || businessTitleMap[activeL1] || '';
+            const currentTitle = targetTitleMap[businessTarget] || businessTitleMap[effectiveL1] || '';
             setHeaderTitle(currentTitle);
 
         } else {
             setHeaderTitle('Dashboard');
         }
-    }, [activeL1, activeL2, isProjectLayout, isBusinessLayout, businessTarget, isDetailView, openedTabs, setHeaderTitle]);
+    }, [effectiveL1, activeL2, isProjectLayout, isBusinessLayout, businessTarget, isDetailView, openedTabs, setHeaderTitle]);
 
     // Auto-Close Modal
     useEffect(() => {
@@ -172,7 +176,7 @@ const WorkbenchContent = ({
                 {/* L2 Sidebar: Unified for Project, Detail, and Business List */}
                 {(isProjectLayout || isDetailView || (isBusinessLayout && !isDetailView)) && (
                     <L2Sidebar
-                        activeL1={activeL1}
+                        activeL1={effectiveL1}
                         activeL2={(isProjectLayout || isDetailView) ? activeL2 : businessTarget}
                         onSelect={(id) => {
                             if (isProjectLayout || isDetailView) {
@@ -220,6 +224,8 @@ const WorkbenchContent = ({
                             // Data Props
                             projects={projects}
                             onAddProject={onAddProject}
+                            researchObjects={researchObjects}
+                            onAddResearchObject={onAddResearchObject}
                         />
                     </div>
 
