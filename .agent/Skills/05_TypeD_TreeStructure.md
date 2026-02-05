@@ -1,33 +1,59 @@
----
-name: 层级树规范
-description: 用于维护 Cyacle 项目中树形结构、层级导航和状态指示条的规范。
----
+import React, { memo, useMemo, useState } from 'react';
+// 1. 严格从 Tabler 导入
+import { 
+  IconPackage, IconPlayerPause, IconLayoutGrid, IconBox, 
+  IconLink, IconCircleOff, IconLayersIntersect, IconGitBranch, 
+  IconChevronDown, IconChevronRight 
+} from '@tabler/icons-react';
 
-# Cyacle 层级与树形菜单 (Hierarchy Tree) 规范
+// 2. 样式映射表
+const TEXT_STYLE_MAP = {
+  normal: 'text-[#4D4D4D]',
+  screened: 'text-[#4D4D4D]',
+  excluded: 'text-[#4D4D4D] line-through',
+  deleted: 'text-gray-400 line-through',
+  added: 'text-emerald-600',
+  modified: 'text-orange-500'
+};
 
-此 Skill 涵盖了 L3 菜单树、状态节点树以及层级关系的可视化规范。
+// 3. 逻辑判断：拆分引用不显示百分比
+const shouldShowPercent = (node) => {
+  if (!node || node.type !== 'process') return false;
+  if (['excluded', 'screened', 'deleted'].includes(node.status)) return false;
+  if (node.subType === 'split_ref') return false; // 关键逻辑
+  return true;
+};
 
-## 01. 物理结构 (Anatomy)
+// 4. 节点组件 (Memoized)
+const TreeNode = memo(({ node, level, expandedIds, selectedId, onToggle, onSelect }) => {
+  if (!node) return null; // 防御性检查
 
-- **引导线 (Guide Line)**: 左侧必须包含 `1px` 垂直线，颜色 `#D6D9DC`。
-- **缩进法则**: 每增加一级嵌套，`padding-left` 增加 `24px` (`pl-6`)。
-- **高度约束**: 菜单项固定高度为 `30px`。
+  // ... Icon 计算逻辑 (参考上方真值表) ...
+  // ... 渲染逻辑 ...
+  
+  return (
+    <div 
+      className={`... ${isSelected ? 'bg-[#087F9C] text-white' : ''}`}
+      onClick={() => onSelect(node)} // 选中
+    >
+      <div onClick={(e) => { e.stopPropagation(); onToggle(node.id); }}>
+        {/* 箭头图标 */}
+      </div>
+      {/* 内容 */}
+    </div>
+  );
+});
 
-## 02. 状态指示条 (Indicator Strip)
-
-在节点行最右侧（`absolute right-0`）必须包含 **3px 宽的内容状态指示条**。
-
-## 03. 全量状态机 (Full State Machine)
-
-| 状态 | 文本样式 | 装饰/指示条 |
-| :--- | :--- | :--- |
-| **Stable (正常)** | `#4D4D4D` | 默认图标 |
-| **Modified (变更)** | `#F97316` (Oragne) | 橙色指示条 |
-| **Added (新增)** | `#10B981` (Green) | 绿色指示条 |
-| **Deleted (删除)** | `gray-400` + 中划线 | 红色指示条 |
-| **Excluded (排除)** | `black` + 中划线 | 透明/无指示条 |
-
-## 04. 交互热区 (Interaction Hotspots)
-- **图标区 (Arrow)**: 仅触发 `toggleExpand()` (展开/收起)。
-- **复选框区**: 触发多选逻辑。
-- **文字主体区**: 触发右侧主内容刷新。
+// 5. 主容器 (必须默认导出)
+export default function L3AdvancedTree({ data, selectedId, onSelect }) {
+  // 防御：无数据时不渲染空 Map 导致报错
+  if (!Array.isArray(data) || data.length === 0) {
+    return <div className="p-4 text-gray-400 text-xs">暂无数据</div>;
+  }
+  
+  return (
+    <div className="py-2">
+      {data.map(node => <TreeNode key={node.id} node={node} ... />)}
+    </div>
+  );
+}
