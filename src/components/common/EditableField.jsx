@@ -128,7 +128,7 @@ const EditableField = ({
 
         if (type === 'textarea') {
             return (
-                <span className="text-sm text-gray-900 whitespace-pre-wrap line-clamp-2">
+                <span className="text-sm text-gray-900 whitespace-pre-wrap">
                     {value || '未填写'}
                 </span>
             );
@@ -291,10 +291,10 @@ const EditableField = ({
                     </div>
                 ) : (
                     <div
-                        className={`relative flex-1 w-full h-full flex items-center px-3 border border-transparent overflow-visible group-hover:bg-gray-50 rounded cursor-pointer`}
+                        className={`relative flex-1 w-full ${isMultiLine ? 'min-h-[36px] items-start py-2' : 'h-full items-center'} flex px-3 border border-transparent overflow-visible group-hover:bg-gray-50 rounded cursor-pointer`}
                         onClick={handleEdit}
                     >
-                        <div className={`truncate pr-12 w-full ${textStyles}`}>
+                        <div className={`pr-12 w-full ${isMultiLine ? '' : 'truncate'} ${textStyles}`}>
                             {renderDisplayValue()}
                         </div>
                         <div className="absolute right-0 top-1/2 -translate-y-1/2 pl-4 bg-gradient-to-l from-gray-50 via-gray-50 to-transparent flex items-center h-[calc(100%-2px)] mr-[1px] opacity-0 group-hover:opacity-100 transition-opacity">

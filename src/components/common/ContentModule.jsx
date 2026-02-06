@@ -3,9 +3,20 @@ import { createPortal } from 'react-dom';
 import { IconChevronDown, IconChevronRight } from '@tabler/icons-react';
 
 // Reusable Content Module Wrapper (Component D)
-export const ContentModule = ({ children, className = '' }) => {
+// Principle: "外圆内方、高度自适、状态显性、间距统一"
+export const ContentModule = ({ children, className = '', type = 'detail', status = '' }) => {
+    // 状态显性: Added (Green), Deleted (Red)
+    const statusClasses = {
+        added: 'border-l-4 border-[#29AC68]',
+        deleted: 'border-l-4 border-[#E38585]',
+    };
+
     return (
-        <div className={`w-full h-auto bg-white rounded-lg shadow-sm overflow-hidden border border-gray-100 ${className}`}>
+        <div
+            className={`w-full h-auto bg-white rounded-lg shadow-sm overflow-hidden border border-gray-100 ${status ? statusClasses[status] : ''} ${className}`}
+            data-type={type}
+            data-status={status}
+        >
             {children}
         </div>
     );
@@ -69,7 +80,8 @@ export const ModuleHeader = ({
     subTitle,
     toggle,
     iconBadge: IconBadge,
-    iconBadgeTooltip = ''
+    iconBadgeTooltip = '',
+    status = '' // Inherit or pass status for title styling
 }) => {
     const [showTooltip, setShowTooltip] = useState(false);
     const badgeRef = useRef(null);
@@ -77,8 +89,15 @@ export const ModuleHeader = ({
     // Only show bottom border if it's NOT an accordion, OR if it IS an accordion and IS open
     const showBorder = !isAccordion || (isAccordion && isOpen);
 
+    // 状态显性: Title styling based on status
+    const titleClasses = {
+        added: 'text-[#29AC68]',
+        deleted: 'text-[#C6C6C6] line-through',
+        default: 'text-[#4D4D4D]'
+    };
+
     return (
-        <div className={`flex items-center justify-between px-3 py-2 bg-white min-h-[48px] rounded-t-lg ${showBorder ? 'border-b border-gray-100' : ''}`}>
+        <div className={`flex items-center justify-between px-3 py-2 bg-white min-h-[48px] ${showBorder ? 'border-b border-gray-100' : ''}`}>
             {/* Zone L: Title Variants + Toggle */}
             <div className={`flex items-center gap-2 ${isAccordion ? 'cursor-pointer' : ''}`} onClick={isAccordion ? onToggle : undefined}>
                 {isAccordion && (
@@ -89,9 +108,11 @@ export const ModuleHeader = ({
 
                 {Icon && <Icon className="text-gray-500" size={18} />}
 
-                <h3 className="text-base font-semibold text-[#4D4D4D] select-none">{title}</h3>
+                <h3 className={`text-base font-semibold select-none ${status ? titleClasses[status] : titleClasses.default}`}>
+                    {title}
+                </h3>
 
-                {/* Icon Badge - 4px spacing from title */}
+                {/* Icon Badge ... (keep as is) ... */}
                 {IconBadge && (
                     <div
                         ref={badgeRef}
@@ -101,7 +122,6 @@ export const ModuleHeader = ({
                     >
                         <IconBadge className="text-gray-400 hover:text-[#087F9C] transition-colors cursor-help" size={16} />
 
-                        {/* Portal Tooltip */}
                         {showTooltip && iconBadgeTooltip && (
                             <PortalTooltip text={iconBadgeTooltip} parentRef={badgeRef} />
                         )}
@@ -112,7 +132,6 @@ export const ModuleHeader = ({
                     <span className="text-xs text-gray-400 font-normal ml-1">{subTitle}</span>
                 )}
 
-                {/* Toggle Switch in Left Zone (8px from title) */}
                 {toggle && (
                     <div className="ml-2">
                         {toggle}

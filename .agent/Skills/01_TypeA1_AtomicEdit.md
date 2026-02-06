@@ -33,6 +33,16 @@ description: 用于实现和维护 Cyacle 项目中原位编辑 (Inline Editing)
 
 项目已封装通用组件 `EditableField.jsx`。请优先复用此组件。
 
+### 组件参数表 (Component Props)
+
+| 参数 (Prop) | 类型 | 必填 | 说明 |
+| :--- | :--- | :--- | :--- |
+| `label` | string | 是 | 左侧的标签文本 (自动添加中文冒号) |
+| `value` | any | 是 | 当前绑定的值 |
+| `onSave` | function | 是 | 保存回调 `(val) => void` |
+| `type` | enum | 否 | `text` (默认) \| `select` \| `textarea` |
+| `options` | array | 否 | 仅 `type="select"` 时有效，格式 `{value, label}` |
+
 ### A. 基础文本编辑 (Basic Text)
 ```jsx
 <EditableField 
