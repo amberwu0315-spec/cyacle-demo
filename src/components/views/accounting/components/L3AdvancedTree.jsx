@@ -1,4 +1,4 @@
-import React, { memo, useMemo, useState, useEffect, useRef } from 'react';
+import React, { memo, useMemo, useState, useEffect } from 'react';
 import {
     IconPackage,
     IconPlayerPause,
@@ -8,15 +8,12 @@ import {
     IconCircleOff,
     IconLayersIntersect,
     IconGitBranch,
-    IconChevronDown,
-    IconChevronRight,
     IconPlus,
     IconDots,
     IconSearch,
     IconTrash,
     IconEdit,
     IconRefresh,
-    IconFocus2,
     IconTriangleFilled
 } from '@tabler/icons-react';
 
@@ -31,8 +28,6 @@ const TEXT_STYLE_MAP = {
 
 // 2. 权限校验辅助
 const canRename = (node) => node?.origin === 'self';
-const canDelete = (node) => node?.origin === 'self';
-const canShield = (node) => node?.origin === 'inherited';
 const canReset = (node) => node?.origin === 'inherited' && node?.is_changed;
 
 // 3. 百分比仪表盘组件 (v2.0)
@@ -130,7 +125,6 @@ const TreeNode = memo(({ node, level, expandedIds, selectedId, focusPath, onTogg
     const isExpanded = expandedIds?.includes(node.id);
     const isSelected = selectedId === node.id;
     const isEditing = editingId === node.id;
-    const isFocusedAncestor = focusPath?.includes(node.id) && !isSelected;
     const hasChildren = Array.isArray(node.children) && node.children.length > 0;
 
     const IconComponent = useMemo(() => getNodeIcon(node), [node.type, node.subType, node.origin, node.status]);
@@ -163,7 +157,7 @@ const TreeNode = memo(({ node, level, expandedIds, selectedId, focusPath, onTogg
         e.preventDefault();
         const draggedId = e.dataTransfer.getData('nodeId');
         if (draggedId && draggedId !== node.id) {
-            onMoveNode(draggedId, node.id);
+            onMoveNode?.(draggedId, node.id); // 使用透传下来的真实函数
         }
     };
 
@@ -258,7 +252,7 @@ const TreeNode = memo(({ node, level, expandedIds, selectedId, focusPath, onTogg
                             onContextMenu={onContextMenu}
                             editingId={editingId}
                             onRenameComplete={onRenameComplete}
-                            onMoveNode={onMoveNode}
+                            onMoveNode={onMoveNode} // 传递给递归子节点
                             onAddChild={onAddChild}
                         />
                     ))}
@@ -269,7 +263,7 @@ const TreeNode = memo(({ node, level, expandedIds, selectedId, focusPath, onTogg
 });
 
 // 7. 主容器组件
-export default function L3AdvancedTree({ data = [], selectedId, onSelect, onAddChild, onRename, onDelete }) {
+export default function L3AdvancedTree({ data = [], selectedId, onSelect, onAddChild, onRename, onDelete, onMoveNode }) {
     const [expandedIds, setExpandedIds] = useState(['root']);
     const [searchQuery, setSearchQuery] = useState('');
     const [editingId, setEditingId] = useState(null);
@@ -353,11 +347,6 @@ export default function L3AdvancedTree({ data = [], selectedId, onSelect, onAddC
         setMenu({ x: e.clientX, y: e.clientY, node });
     };
 
-    const handleMoveNode = (draggedId, targetId) => {
-        console.log('Moving Node:', draggedId, 'into', targetId);
-        // TODO: Implement actual state update for D&D
-    };
-
     const handleAddChildAndExpand = (parentId) => {
         onAddChild?.(parentId);
         setExpandedIds(prev => Array.from(new Set([...prev, parentId])));
@@ -398,7 +387,7 @@ export default function L3AdvancedTree({ data = [], selectedId, onSelect, onAddC
                         onContextMenu={handleContextMenu}
                         editingId={editingId}
                         onRenameComplete={handleRenameComplete}
-                        onMoveNode={handleMoveNode}
+                        onMoveNode={onMoveNode} // 传递给根节点
                         onAddChild={handleAddChildAndExpand}
                     />
                 ))}
