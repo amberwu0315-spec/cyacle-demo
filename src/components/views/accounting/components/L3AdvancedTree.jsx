@@ -146,20 +146,25 @@ const TreeNode = memo(({
     const textStyle = TEXT_STYLE_MAP[node.status] || TEXT_STYLE_MAP.normal;
     const rowHeight = node.type === 'product' ? 'h-[36px]' : 'h-[32px]';
 
-    // --- 智能对齐计算 (V3.1 Axial Alignment) ---
-    // 基准：行容器距离父级引导线固定 4px
+    // --- 智能对齐计算 (V3.0 Radial Alignment) ---
+    // 基准：行容器距离父级引导线固定 4px (Requirement 9)
     const paddingLeft = level === 0 ? BASE_PADDING : (parentLineX + 4);
 
     // 线条对齐：引导线位于当前层级展开图标的中心 (Padding + 10px)
     const lineLeft = paddingLeft + 10;
-
     // --- 条件引导线逻辑 ---
     const showGuideLine = useMemo(() => {
         if (!isExpanded || !hasChildren || level === 0) return false;
-        if (node.type === 'phase') return node.children.some(c => c.type === 'module' || c.type === 'process');
-        if (node.type === 'module') return node.children.some(c => c.type === 'process');
+        if (node.type === 'phase') {
+            // 阶段节点：仅当有模块或过程子节点时显示
+            return node.children.some(c => c.type === 'module' || c.type === 'process');
+        }
+        if (node.type === 'module') {
+            // 模块节点：仅当有过程子节点时显示
+            return node.children.some(c => c.type === 'process');
+        }
         return false;
-    }, [isExpanded, hasChildren, level, node.children, node.type]);
+    }, [isExpanded, hasChildren, level, node.type, node.children]);
 
     // 拖拽逻辑保持不变
     const handleDragStart = (e) => {
@@ -177,18 +182,28 @@ const TreeNode = memo(({
         if (draggedId && draggedId !== node.id) onMoveNode?.(draggedId, node.id);
     };
 
+    const [tempName, setTempName] = useState(node.name);
+    useEffect(() => { if (isEditing) setTempName(node.name); }, [isEditing, node.name]);
+
+    const bgGap = parentLineX > 0 ? parentLineX + 4 : 0;
     const bgOpacity = isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100';
     const bgColor = isSelected ? 'bg-[#087F9C]' : 'bg-gray-100';
 
     return (
-        <div className="w-full">
-            {/* Node Row */}
+        <div className="w-full relative">
+            {/* Background Layer (Selection/Hover) */}
+            <div
+                className={`absolute inset-y-0.5 right-1 rounded transition-all duration-150 ${bgOpacity} ${bgColor} z-0`}
+                style={{ left: `${bgGap}px` }}
+            />
+
+            {/* Node Row Content */}
             <div
                 draggable={node.origin === 'self' && node.type !== 'product'}
                 onDragStart={handleDragStart}
                 onDragOver={handleDragOver}
                 onDrop={handleDrop}
-                className={`group relative flex items-center ${rowHeight} cursor-pointer select-none transition-all pr-2 text-sm
+                className={`group relative flex items-center ${rowHeight} cursor-pointer select-none transition-all pr-2 text-sm z-10
                     ${isSelected ? 'text-white' : textStyle}
                 `}
                 style={{ paddingLeft: `${paddingLeft}px` }}
@@ -196,14 +211,7 @@ const TreeNode = memo(({
                 onDoubleClick={() => canRename(node) && onRenameComplete(node.id, 'start')}
                 onContextMenu={(e) => { e.preventDefault(); onContextMenu(e, node); }}
             >
-                {/* Background Layer (Independent Selection) */}
-                <div
-                    className={`absolute inset-y-0.5 right-1 rounded transition-all duration-150 ${bgOpacity} ${bgColor} -z-10`}
-                    style={{ left: `0px` }}
-                />
-
-                {/* 1. 展开/折叠箭头 */}
-                {/* 1. 展开/折叠箭头 (Product & Process 节点不显示箭头) */}
+                {/* 1. 展开/折叠箭头 (Product 节点完全移除此 DOM) */}
                 {node.type !== 'product' && node.type !== 'process' && (
                     <div
                         className={`flex-none w-[20px] h-[20px] flex items-center justify-center mr-0.5 rounded transition-all z-10
@@ -221,7 +229,7 @@ const TreeNode = memo(({
                     </div>
                 )}
 
-                {/* 1.5 过程节点占位符 (对齐逻辑：Module 图标中心在 20+2+8=30px; Process 图标中心在 8+8=16px; 差额 14px 刚好抵消层级 14px) */}
+                {/* 1.5 过程节点占位符 (为了让图标对齐父级模块图标: 4px gap + 8px spacer + 8px icon_half = 20px from line) */}
                 {node.type === 'process' && (
                     <div className="flex-none w-[8px] h-[20px] z-10" />
                 )}
@@ -270,14 +278,14 @@ const TreeNode = memo(({
             {/* Children Container & Guide Line */}
             {isExpanded && hasChildren && (
                 <div className="w-full relative">
-                    {/* Vertical Guide Line */}
+                    {/* Vertical Guide Line (Level 0 不显示最外层连线) */}
                     {showGuideLine && (
                         <div
                             className="absolute border-l border-gray-200 z-0 pointer-events-none"
                             style={{
                                 left: `${lineLeft}px`,
                                 top: '0px',
-                                bottom: '16px' // 精准结束于最后一个子节点行的垂直中心
+                                bottom: '16px' // 底部留白，刚好到最后一个子节点的中心
                             }}
                         />
                     )}
