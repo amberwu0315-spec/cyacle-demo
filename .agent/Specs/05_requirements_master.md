@@ -216,9 +216,10 @@ The application has 3 primary view modes. JavaScript must toggle `hidden` classe
 *   **严格限制**: 「L3-模型配置与结果」页面 (`acct_model_config`) 的左侧树状节点**禁止展示**任何与 Diff (差异对比) 相关的内容或视觉标识。
 *   **专属页面**: 所有与 Diff 相关的数据详情和对比逻辑**仅在**「L3-对比标识详情」页面 (`cmp_detail`) 中展示。
 
-#### 6. 树形交互与视觉逻辑 (Tree UI Logic)
-*   **缩进与占位 (Indentation)**: 若节点不具备展开/收起功能（如 Product 或无子节点的 Process），则前面**禁止**留出三角图标的占位空间，内容整体左移。
-*   **连线逻辑 (Lineage Lines)**: 引导线**仅**在 Phase (阶段) 和 Module (模块) 节点下方显示，用于引导其子节点。
-*   **垂直对齐 (Vertical Alignment)**: Module 节点的图标必须与上级 Phase 的**图标**左侧垂直对齐；Process 节点的图标必须与上级 Module 的**图标**左侧垂直对齐。
-*   **悬停逻辑 (Hover)**: 「过程」节点悬停时，**保留**百分比 Badge 显示，并在其左侧呼出“更多 (IconDots)”菜单。
-*   **全黑规范 (Coloring)**: 常规状态下全树文本强制纯黑纹，禁止灰色。
+#### 6. 树形交互与视觉逻辑 (Tree UI Perfection v3)
+*   **独立选中 (Independent Selection)**: 每个节点的选中高亮背景仅应用于当前行，**包含**展开图标，但不包含其下级容器。选中时图标反白色。
+*   **层级架构 (Hierarchy)**: 严格遵循 核算-阶段-模块-过程 结构。禁止同级出现不同类型的节点。
+*   **轴向对齐 (Axial Alignment)**: 过程（Process）节点的图标中心必须与父级模块（Module）节点的图标中心完全处于同一垂直线上。
+*   **连线终点 (Line Termination)**: 引导连接线必须恰好结束于最后一个子节点行的垂直中轴线（图标中心）位置，不准超出。
+*   **间距律 (4px Law)**: 所有子节点行容器（包含图标）距离父级引导线固定为 **4px**。
+*   **图标规范**: 展开图标为纯白色背景，**无阴影、无边框**。
