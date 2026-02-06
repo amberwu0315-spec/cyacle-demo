@@ -9,7 +9,7 @@ import {
 
 // [M01] 动态头部
 export const L3Header = ({ node, showResult }) => (
-  <div className="flex items-start justify-between shrink-0 p-6 border-b border-gray-100 bg-white">
+  <div className="bg-white rounded-lg p-6 shadow-sm flex items-start justify-between shrink-0 transition-all overflow-hidden">
     <div className="flex gap-3">
       <div className="p-2 bg-[#087F9C]/10 text-[#087F9C] rounded-lg">
         <IconInfoCircle className="w-5 h-5" />
@@ -30,16 +30,16 @@ export const L3Header = ({ node, showResult }) => (
       </div>
     </div>
     <div className="flex gap-2">
-      <button className="px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-50 border rounded-md transition-colors">重置</button>
-      <button className="px-4 py-1.5 text-sm bg-[#087F9C] text-white hover:bg-[#066a82] rounded-md shadow-sm transition-colors">保存</button>
+      <button className="px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-50 border rounded-lg transition-colors">重置</button>
+      <button className="px-4 py-1.5 text-sm bg-[#087F9C] text-white hover:bg-[#066a82] rounded-lg shadow-sm transition-colors">保存</button>
     </div>
   </div>
 );
 
 // [M02] 提示区
 export const HintSection = ({ hints = [] }) => (
-  <div className="bg-blue-50/50 p-4 rounded-lg border border-blue-100/50 flex gap-3">
-    <IconInfoCircle className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
+  <div className="bg-blue-50/50 p-6 rounded-lg border border-blue-100/50 flex gap-3 shadow-sm">
+    <IconInfoCircle className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
     <div className="text-sm text-blue-800 space-y-1">
       {hints.map((h, i) => <p key={i} className="leading-relaxed opacity-90">{h}</p>)}
     </div>
@@ -52,13 +52,13 @@ export const ConfigParams = ({ node, subType, mode, compareMode }) => {
   const borderClass = compareMode ? 'border-orange-200 bg-orange-50/30' : 'border-gray-100 bg-white';
 
   return (
-    <div className="space-y-3">
+    <div className="bg-white rounded-lg p-6 shadow-sm space-y-4 transition-all overflow-hidden">
       <div className="flex items-center justify-between">
         <h3 className={`text-sm font-bold ${compareMode ? 'text-orange-600' : 'text-[#087F9C]'}`}>配置参数</h3>
         {isRead && <button className="p-1 hover:bg-gray-100 rounded text-gray-400"><IconPencil className="w-3.5 h-3.5" /></button>}
       </div>
 
-      <div className={`p-5 border rounded-xl shadow-sm ${borderClass} transition-all`}>
+      <div className={`p-5 border rounded-lg shadow-sm ${borderClass} transition-all`}>
         {/* 常规类型 */}
         {subType === 'normal' && (
           isRead ? (
@@ -116,9 +116,9 @@ export const ConfigParams = ({ node, subType, mode, compareMode }) => {
 
 // [M04] 变量信息
 export const VarInfo = ({ compareMode }) => (
-  <div className="space-y-3">
+  <div className="bg-white rounded-lg p-6 shadow-sm space-y-4 transition-all overflow-hidden">
     <h3 className="text-sm font-bold text-gray-900">变量信息 (Flows)</h3>
-    <div className="border border-gray-100 rounded-xl overflow-hidden shadow-sm">
+    <div className="border border-gray-100 rounded-lg overflow-hidden shadow-sm">
       <div className="grid grid-cols-12 bg-gray-50/80 px-4 py-2 text-[11px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
         <div className="col-span-6">流名称</div>
         <div className="col-span-3 text-right">数值</div>
@@ -142,15 +142,17 @@ export const VarInfo = ({ compareMode }) => (
 
 // [M05] 重要问题
 export const ImportantIssues = () => (
-  <div className="p-4 bg-red-50/50 border border-red-100 rounded-xl flex gap-3">
-    <IconAlertTriangle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
-    <div className="text-sm text-red-900 font-medium">关键排放过程数据缺失，评估结果存在高度不确定性。</div>
+  <div className="bg-white rounded-lg p-6 shadow-sm transition-all overflow-hidden">
+    <div className="p-4 bg-red-50/50 border border-red-100 rounded-lg flex gap-3">
+      <IconAlertTriangle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+      <div className="text-sm text-red-900 font-medium">关键排放过程数据缺失，评估结果存在高度不确定性。</div>
+    </div>
   </div>
 );
 
 // [M06] 排放详情
 export const EmissionDetail = ({ showChart }) => (
-  <div className="space-y-4">
+  <div className="bg-white rounded-lg p-6 shadow-sm space-y-6 transition-all overflow-hidden">
     <div className="flex gap-6 border-b border-gray-100">
       {['全部子项', '贡献排行'].map((t, i) => (
         <button key={i} className={`pb-3 text-sm font-bold transition-all ${i === 0 ? 'text-[#087F9C] border-b-2 border-[#087F9C]' : 'text-gray-400 hover:text-gray-600'}`}>
@@ -159,11 +161,11 @@ export const EmissionDetail = ({ showChart }) => (
       ))}
     </div>
     {showChart && (
-      <div className="h-40 bg-gray-50 rounded-xl border border-dashed border-gray-200 flex items-center justify-center text-xs text-gray-400">
+      <div className="h-40 bg-gray-50 rounded-lg border border-dashed border-gray-200 flex items-center justify-center text-xs text-gray-400">
         环形图展示区域 (Top 10)
       </div>
     )}
-    <div className="text-sm text-gray-400 text-center py-8 bg-gray-50/30 rounded-xl border border-gray-100">
+    <div className="text-sm text-gray-400 text-center py-8 bg-gray-50/30 rounded-lg border border-gray-100">
       列表数据加载中...
     </div>
   </div>
@@ -171,8 +173,8 @@ export const EmissionDetail = ({ showChart }) => (
 
 // [M07] 空状态
 export const EmptyState = ({ type }) => (
-  <div className="py-16 flex flex-col items-center text-center space-y-4 bg-gray-50/50 rounded-2xl border-2 border-dashed border-gray-100">
-    <div className="w-12 h-12 bg-white rounded-2xl shadow-sm flex items-center justify-center text-gray-300">
+  <div className="py-16 flex flex-col items-center text-center space-y-4 bg-gray-50/50 rounded-lg border-2 border-dashed border-gray-100">
+    <div className="w-12 h-12 bg-white rounded-lg shadow-sm flex items-center justify-center text-gray-300">
       <IconArrowRight className="w-6 h-6" />
     </div>
     <div className="space-y-1">

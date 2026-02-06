@@ -19,7 +19,7 @@ export default function L1Sidebar({ activeL1, onSelect, openedTabs = [], activeT
                         <Tooltip key={item.id} content={item.label} placement="right">
                             <button
                                 onClick={() => onSelect(item.id)}
-                                className={`group relative p-3 rounded-xl transition-colors ${isActive ? 'bg-white/10' : 'hover:bg-white/10'}`}
+                                className={`group relative p-3 rounded-lg transition-colors ${isActive ? 'bg-white/10' : 'hover:bg-white/10'}`}
                             >
                                 <item.icon
                                     className={`w-6 h-6 transition-colors ${isActive ? 'text-white' : 'text-white/70 group-hover:text-white'}`}
@@ -35,7 +35,7 @@ export default function L1Sidebar({ activeL1, onSelect, openedTabs = [], activeT
                 <Tooltip content="项目标签 (Project Tag)" placement="right">
                     <button
                         onClick={() => onSelect('project_tag')}
-                        className={`group relative p-3 rounded-xl transition-colors ${activeL1 === 'project_tag' ? 'bg-white/10' : 'hover:bg-white/10'}`}
+                        className={`group relative p-3 rounded-lg transition-colors ${activeL1 === 'project_tag' ? 'bg-white/10' : 'hover:bg-white/10'}`}
                     >
                         <IconFileCode className={`w-6 h-6 transition-colors text-[#10B981] ${activeL1 === 'project_tag' ? '' : 'group-hover:text-[#34D399]'}`} />
                     </button>
@@ -58,7 +58,7 @@ export default function L1Sidebar({ activeL1, onSelect, openedTabs = [], activeT
                                         <div className="relative group">
                                             <button
                                                 onClick={() => onSelectTab && onSelectTab(tab.id)}
-                                                className={`p-3 rounded-xl transition-colors ${isActive ? 'bg-[#087F9C]/20 border border-[#087F9C]/50' : 'hover:bg-white/5 border border-transparent'}`}
+                                                className={`p-3 rounded-lg transition-colors ${isActive ? 'bg-[#087F9C]/20 border border-[#087F9C]/50' : 'hover:bg-white/5 border border-transparent'}`}
                                             >
                                                 <TabIcon
                                                     className={`w-6 h-6 transition-colors ${isActive ? 'text-[#087F9C]' : 'text-white/60 group-hover:text-white'}`}

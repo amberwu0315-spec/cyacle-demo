@@ -179,3 +179,15 @@ The application has 3 primary view modes. JavaScript must toggle `hidden` classe
     *   **重要问题识别 (Important Issue Identification)**: 必须始终开启 (`Checked`) 且不可更改 (`Disabled`)。
         *   *业务原因*: 报告合规性要求，必须展示。
         *   *Tooltip*: "作用：展示并说明对产品碳足迹排放影响最大的模块的方法；"
+
+### B. 继承逻辑规则 (Inheritance Logic)
+
+#### 1. 继承节点子类型 (Inherited Node Sub-types)
+在核算与模型配置中，当节点来源于继承（如来源于模板或上游模型）时，遵循以下状态定义与处理规则：
+
+*   **常规 (Conventional)**: 继承过来的节点未变更。
+    *   *定义*: 节点及其内部所有配置参数均保持与源头一致。
+*   **被编辑 (Edited)**: 继承过来的节点已变更。
+    *   *定义*: 节点内的任何配置参数（如数值、比例、选择项）被用户修改。
+*   **被屏蔽 (Screened)**: 继承过来的节点已屏蔽。
+    *   *定义*: 该节点已被手动设置为排除/屏蔽，不参与核算分析，但保留在结构树中。

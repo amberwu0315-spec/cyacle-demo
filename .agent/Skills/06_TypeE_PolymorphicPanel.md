@@ -1,148 +1,97 @@
-# Skill 06: Polymorphic Panel (多态面板)
+# Skill 06: L3 Polymorphic Detail (L3 多态详情面板)
 
 ## 1. 核心定义 (Identity)
-* **类型:** Type E (Contextual Router & Composer)
-* **适用场景:** L3 核算页面的右侧详情区。
-* **核心职责:** 将“节点类型”与“业务状态”映射为具体的**组件积木组合**，管理面板内的空状态、提示区与对比模式。
+* **核心职责:** 根据左侧树选中的节点类型（Product / Phase / Module / Process），动态渲染完全不同的详情视图。
+* **架构模式:** **容器-积木模式 (Container-Bricks Pattern)**。
+  * `L3DetailPanel` (Container): 负责路由判断 (`if/else`) 和数据获取。
+  * `L3Bricks` (UI Library): 纯展示组件库，负责渲染具体的表单块。
 
-## 2. 交互宪法 (Interaction Constitution)
+## 2. 技术栈铁律 (Strict Tech Stack)
+> **警告:** 必须严格遵守，否则会导致组件崩溃。
 
-| 规则 | 定义 | AI 执行指令 |
+| 维度 | 强制规则 |
+| :--- | :--- |
+| **图标库** | **必须且只能**使用 `@tabler/icons-react`。 |
+| **导出规范** | 所有积木组件 (Bricks) 使用命名导出 (`export const`)；主容器使用默认导出 (`export default`)。 |
+| **防御渲染** | 必须处理 `node` 为空的情况 (显示 EmptyState)。 |
+
+## 3. 视图路由真值表 (View Router Truth Table)
+
+根据 `node.type` 和 `node.subType` 决定渲染哪些积木：
+
+| 节点类型 | 渲染内容 (积木组合) | 关键逻辑 |
 | :--- | :--- | :--- |
-| **层级特异性** | **Product > Phase > Module** | **产品级**独占 Top10 图表；**模块级**独占重要问题识别；**阶段级**只有基础表格。 |
-| **提示区逻辑** | **自动消隐** | `HintSection` 默认显示。当 `status === 'completed'` (已完成) 时，必须自动卸载/隐藏该区域。 |
-| **过程分流** | **SubType 分流** | 过程节点必须根据 `subType` (常规/拆分/整体) 渲染完全不同的配置表单，不可混用。 |
-| **对比穿透** | **Props Drilling** | 若 `context === 'compare'`，必须向所有子积木 (`ConfigParams`, `VarInfo`, `Header`) 传入 `compareMode={true}` 以触发 Diff 高亮。 |
+| **Product** | `Header` + `EmissionDetail(Chart)` | 显示 Top 10 环形图 |
+| **Phase** | `Header` + `EmissionDetail(List)` | 仅显示列表，无图表 |
+| **Module** | `Header` + `ImportantIssues` + `EmissionDetail` | 需额外显示“关键问题”警示条 |
+| **Process** | `Header` + `ConfigParams` + `VarInfo` | **最复杂的表单页** |
 
-## 3. DNA 配置 (The 7 Elements)
+## 4. 业务逻辑细节 (Business Logic Specs)
 
-| 要素 | 策略 | 强制规则 (Rules) |
-| :--- | :--- | :--- |
-| **Structure**| **Stack** | 垂直堆叠布局 (`flex-col space-y-4`)。 |
-| **Guard** | **Null Check** | 切换节点时，若 `node` 为空或数据未加载，显示骨架屏。 |
-| **Routing** | **Strict Map** | 严禁使用 `if-else` 面条代码，必须遵循下方的 "Routing Map" 进行组件组装。 |
+### A. 过程节点配置区 (`ConfigParams`)
+根据 `subType` 切换表单形态：
+* **Normal (常规):** 显示“活动水平 (Activity Level)”和“单位 (Unit)”输入框。
+* **Split Ref (拆分引用):** * 显示“分配方式 (Mass/Economic)”下拉框。
+    * 显示“分配系数 (%)”输入框。
+    * **禁止**显示活动水平和单位（因为是继承的）。
+* **Whole Ref (整体引用):** 显示“数据源卡片” (Source Card) 和版本号，只读。
 
-## 4. 详细路由逻辑矩阵 (The Routing Map)
+### B. 编辑 vs 完成态
+* **未完成 (Editing):** 输入框可编辑，显示 `HintSection` (提示区)。
+* **已完成 (Completed):** * `Header` 显示最终排放数值 (Result)。
+    * `ConfigParams` 变为**只读模式** (Read-only)。
+    * `HintSection` 隐藏。
+    * 底部追加 `AnalysisChart` (核算分析图表)。
 
-### A. 聚合层级 (Aggregation Layers)
+## 5. 代码骨架 (The Golden Skeleton)
 
-| 节点类型 | 内容状态 | 渲染积木栈 (从上到下) | 关键业务特征 |
-| :--- | :--- | :--- | :--- |
-| **产品 (Product)** | **空状态** | 1. `Header` (Title Only)<br>2. `HintSection`<br>3. `EmptyState` (Action: Add Phase) | |
-| **产品 (Product)** | **有内容** | 1. `Header` (Title + Result)<br>2. **`ChartSection` (Top 10)**<br>3. `EmissionDetail` (Tabs: Phase/Module/Process) | **唯一拥有 Top 10 图表** |
-| **阶段 (Phase)** | **空状态** | 1. `Header` (Title Only)<br>2. `HintSection`<br>3. `EmptyState` (Action: Add Module) | |
-| **阶段 (Phase)** | **有内容** | 1. `Header` (Title + Result + Func)<br>2. `EmissionDetail` (Tabs: Module/Process) | 无图表，仅表格 |
-| **模块 (Module)** | **空状态** | 1. `Header` (Title + Func)<br>2. `HintSection`<br>3. `EmptyState` (Action: Add Process) | |
-| **模块 (Module)** | **有内容** | 1. `Header` (Title + Result + Func)<br>2. `EmissionDetail` (Tabs: Process)<br>3. **`ImportantIssues`** | **独有：重要问题识别列表** |
+### Part A: 积木库 (L3Bricks.jsx)
+```jsx
+import { IconInfoCircle, IconAlertTriangle, IconPencil } from '@tabler/icons-react';
 
-### B. 原子过程 (Atomic Process)
+// 积木 1: 头部
+export const L3Header = ({ node, showResult }) => (
+  <div className="border-b p-6 flex justify-between">
+    <h1>{node.name}</h1>
+    {showResult && <span className="font-mono text-2xl">{node.value}</span>}
+  </div>
+);
 
-| 子类型 | 配置进度 | 渲染积木栈 (从上到下) | 积木状态定义 |
-| :--- | :--- | :--- | :--- |
-| **常规 (Normal)** | **配置中** | 1. `Header` (Title + Func)<br>2. `HintSection`<br>3. `ConfigParams` (Form Mode)<br>4. `VarInfo` (Disabled) | **配置参数:** 输入框+单位选择<br>**变量信息:** 置灰不可点 |
-| **常规 (Normal)** | **已完成** | 1. `Header` (Title + Result + Func)<br>2. `HintSection` (Hidden)<br>3. `ConfigParams` (Read Mode)<br>4. `VarInfo` (Active)<br>5. **`AnalysisResult`** | **配置参数:** 纯文本+编辑钮<br>**新增:** 结果分析图表 |
-| **拆分 (Split)** | **配置中** | 1. `Header` (Title + Func)<br>2. `HintSection`<br>3. `ConfigParams` (**Split Rules**)<br>4. `VarInfo` | **配置参数:** 拆分比例分配表单 |
-| **拆分 (Split)** | **已完成** | 1. `Header` (Title + Func)<br>2. `HintSection` (Hidden)<br>3. `ConfigParams` (Split Read)<br>4. `VarInfo` | **特例:** 完成态**不显示**结果分析区 |
-| **整体 (Whole)** | **(默认)**| 1. `Header` (Title + Result + Func)<br>2. `HintSection` (Hidden)<br>3. `ConfigParams` (**Source Card**)<br>4. `VarInfo`<br>5. **`AnalysisResult`** | **配置参数:** 引用源只读卡片 |
+// 积木 2: 参数配置 (多态核心)
+export const ConfigParams = ({ node, mode }) => {
+  const isRead = mode === 'read';
+  // 根据 node.subType 渲染不同表单...
+  return <div className="p-4 border rounded">...</div>;
+};
 
-## 5. 标准积木库详解 (Module Specifications)
+```
 
-### [M01] Header (动态头部)
-* **Props:** `node`, `status`
-* **显示逻辑:**
-    * **Empty:** 仅显示图标 + 标题。
-    * **Configuring:** 增加“功能按钮区” (如重置)。
-    * **Completed:** 增加“评估结果区” (数值/单位/不确定性Badge) + “功能按钮区”。
+### Part B: 主容器 (L3DetailPanel.jsx)
 
-### [M02] EmissionDetail (排放详情)
-* **Props:** `tabs` (Array), `showChart` (Boolean)
-* **逻辑:**
-    * 包含 Tab 切换器 (Phase / Module / Process)。
-    * **Top 10 Chart:** 仅当 `showChart=true` (产品级) 时渲染 ECharts 环形图。
-    * **Table:** 渲染当前层级下的所有子节点列表。
+```jsx
+import React from 'react';
+import { L3Header, ConfigParams, EmptyState, EmissionDetail } from './L3Bricks';
 
-### [M03] ConfigParams (配置参数 - 核心)
-* **Props:** `subType`, `mode` ('edit' | 'read'), `compareMode`
-* **变体 (Variants):**
-    * **Input Form (常规-编辑):** `Input` (活动水平) + `Select` (单位)。支持脏检查自动保存。
-    * **Text Display (常规-只读):** 纯数值文本 + “编辑”Icon。
-    * **Split Rule (拆分):** 分配方式选择 (质量/价值) + 百分比输入。
-    * **Source Card (引用):** 来源库/版本号/原过程名称 (Skill 03 Card)。
+export default function L3DetailPanel({ node }) {
+  // 1. 防御性检查
+  if (!node) return <div className="p-10">请选择节点</div>;
 
-### [M04] VarInfo (变量信息)
-* **Props:** `disabled` (Boolean), `compareMode`
-* **逻辑:**
-    * 渲染输入流 (Input Flow) 和输出流 (Output Flow) 列表。
-    * `disabled=true` 时，列表透明度降低，禁止点击跳转。
-
-### [M05] ImportantIssues (重要问题)
-* **Props:** `issues` (Array)
-* **逻辑:** 仅模块级显示。渲染红/黄/蓝预警条目列表。
-
-## 6. 代码骨架 (Smart Router Skeleton)
-
-```javascript
-export const L3DetailPanel = ({ node, context = 'config' }) => {
-  if (!node) return <div className="flex h-full items-center justify-center text-gray-400">请选择节点</div>;
-
-  const isCompare = context === 'compare';
-  // 核心状态推导
-  const isCompleted = node.status === 'completed' || node.subType === 'whole_ref';
-  const showHint = !isCompleted; 
+  const isCompleted = node.status === 'completed';
 
   return (
-    <div className="flex flex-col h-full bg-white overflow-y-auto custom-scrollbar">
-      {/* 1. Header: 根据完成状态显示结果区 */}
+    <div className="flex flex-col h-full bg-white">
       <L3Header node={node} showResult={isCompleted} />
-
-      {/* 2. Hint: 完成后自动隐藏 */}
-      {showHint && (
-        <div className="px-6 pt-4">
-          <HintSection hints={node.hints || []} />
-        </div>
-      )}
-
-      <div className="p-6 space-y-6 flex-1">
-        {/* === 分支 A: 聚合视图 (Product/Phase/Module) === */}
+      
+      <div className="flex-1 overflow-y-auto p-6">
+        {/* 路由逻辑 */}
         {['product', 'phase', 'module'].includes(node.type) && (
-          node.hasData ? (
-            <>
-              {/* 产品级独有 Top10 图表 */}
-              <EmissionDetail 
-                node={node} 
-                showChart={node.type === 'product'} 
-              />
-              {/* 模块级独有重要问题 */}
-              {node.type === 'module' && <ImportantIssues issues={node.issues} />}
-            </>
-          ) : (
-            <EmptyState type={`add_${getNextLevel(node.type)}`} />
-          )
+           <EmissionDetail showChart={node.type === 'product'} />
         )}
-
-        {/* === 分支 B: 原子视图 (Process) === */}
+        
         {node.type === 'process' && (
-          <>
-            {/* 配置参数: 核心多态区域 */}
-            <ConfigParams 
-              node={node}
-              mode={isCompleted ? 'read' : 'edit'}
-              compareMode={isCompare}
-            />
-
-            {/* 变量信息: 正常显示 */}
-            <VarInfo 
-              node={node} 
-              compareMode={isCompare}
-            />
-
-            {/* 分析结果: 仅完成态显示 (拆分引用除外) */}
-            {isCompleted && node.subType !== 'split_ref' && (
-              <AnalysisResult node={node} />
-            )}
-          </>
+           <ConfigParams node={node} mode={isCompleted ? 'read' : 'edit'} />
         )}
       </div>
     </div>
   );
-};
+}

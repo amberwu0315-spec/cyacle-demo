@@ -7,20 +7,20 @@ export default function AccountingConfig() {
             <div className="grid grid-cols-12 gap-3 h-full">
 
                 {/* Left Panel (4 cols) */}
-                <div className="col-span-4 bg-white rounded-md shadow-[0_1px_3px_0_rgba(0,0,0,0.06)] flex flex-col h-full overflow-hidden">
+                <div className="col-span-4 bg-white rounded-lg shadow-[0_1px_3px_0_rgba(0,0,0,0.06)] flex flex-col h-full overflow-hidden">
 
                     <div className="flex-1 p-4 overflow-y-auto space-y-4">
                         {/* Mock Form Items */}
                         <div className="space-y-1">
                             <label className="text-xs text-gray-500">计算模型</label>
-                            <select className="w-full h-8 px-2 text-sm border border-gray-200 rounded text-gray-600 focus:border-[#087F9C] focus:outline-none">
+                            <select className="w-full h-8 px-2 text-sm border border-gray-200 rounded-lg text-gray-600 focus:border-[#087F9C] focus:outline-none">
                                 <option>IPCC 2006 标准版</option>
                                 <option>ISO 14067</option>
                             </select>
                         </div>
                         <div className="space-y-1">
                             <label className="text-xs text-gray-500">地理边界</label>
-                            <select className="w-full h-8 px-2 text-sm border border-gray-200 rounded text-gray-600 focus:border-[#087F9C] focus:outline-none">
+                            <select className="w-full h-8 px-2 text-sm border border-gray-200 rounded-lg text-gray-600 focus:border-[#087F9C] focus:outline-none">
                                 <option>中国区域电网</option>
                                 <option>华东电网</option>
                             </select>
@@ -29,7 +29,7 @@ export default function AccountingConfig() {
                 </div>
 
                 {/* Right Panel (8 cols) */}
-                <div className="col-span-8 bg-white rounded-md shadow-[0_1px_3px_0_rgba(0,0,0,0.06)] flex flex-col h-full overflow-hidden">
+                <div className="col-span-8 bg-white rounded-lg shadow-[0_1px_3px_0_rgba(0,0,0,0.06)] flex flex-col h-full overflow-hidden">
                     <div className="p-4 border-b border-gray-100 flex items-center justify-between">
                         <h3 className="font-bold text-gray-700 flex items-center gap-2">
                             <IconChartBar className="w-4 h-4 text-[#087F9C]" /> 实时结果

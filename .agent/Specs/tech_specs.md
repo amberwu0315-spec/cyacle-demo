@@ -12,15 +12,19 @@
 ## 2. Component Pattern (组件开发模式)
 - **Export Rule (导出规则):**
   - 必须使用 `export default function ComponentName` 作为主导出。
-  - 禁止仅使用命名导出 (Named Export)，以防止父组件引用报错。
+  - 子组件 (Sub-components) 使用命名导出 `export const SubName = ...`。
 - **Defensive Rendering (防御性渲染):**
-  - 所有接收 `data`, `node`, `list` 等 props 的组件，**必须**在渲染前进行非空校验。
-  - 示例：`if (!data) return <div>Loading...</div>;`
-  - 禁止在未校验的情况下直接调用 `.map()` 或 `.filter()`。
-- **Prop Independence (Props 独立性):**
-  - UI 组件应尽量设计为“纯展示组件 (Dumb Component)”。
-  - 尽量避免在组件内部直接调用 `useContext` (如 `useHeader`)，除非是全局布局组件。数据应优先通过 Props 传入。
+  - 所有接收 `data`, `node` 的组件，**必须**在渲染前进行非空校验。
+  - 示例：`if (!node) return <EmptyState />;`
+  - 禁止在未校验的情况下直接调用 `.map()`。
 
-## 3. File Structure (文件结构)
-- **Atomic Design:** 复杂组件（如面板）应拆分为 `Bricks` (积木/子组件) 和 `Container` (容器/逻辑)。
-- **No Residual Code:** 这里的代码必须是**生产级 (Production Ready)** 的，严禁包含 `// TODO`, `console.log` 或未使用的变量。
+## 3. Project Structure (项目结构)
+- **Atomic Design:**
+  - `components/views/`: 页面级视图 (Page Views)。
+  - `components/views/[module]/components/`: 模块专用组件 (Local Components)。
+- **Bricks Pattern:**
+  - 复杂 UI 必须拆分为 `Container` (逻辑层) 和 `Bricks` (展示层/积木)。
+
+## 4. Environment Safety (环境安全)
+- **No Residual Code:** 严禁在最终代码中保留 `console.log`、`// TODO` 或未使用的 import。
+- **Context Usage:** 使用 `useContext` 时必须处理 Context 为 `undefined` 的情况 (即组件在 Provider 外部渲染时的回退逻辑)。

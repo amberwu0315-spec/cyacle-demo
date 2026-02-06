@@ -11,7 +11,7 @@ export default function InnerDrawer({ isOpen, onClose, title, children }) {
                 <h3 className="font-bold text-gray-700 text-sm">{title}</h3>
                 <button
                     onClick={onClose}
-                    className="p-1 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+                    className="p-1 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
                 >
                     <IconX size={16} />
                 </button>

@@ -31,7 +31,7 @@ const NavigationPage = () => {
                 <Tooltip content={isStarred ? "取消关注" : "关注 (Star)"}>
                     <button
                         onClick={toggleStar}
-                        className={`p-1.5 rounded-md transition-colors ${isStarred
+                        className={`p-1.5 rounded-lg transition-colors ${isStarred
                             ? 'text-yellow-500 hover:bg-yellow-50'
                             : 'text-gray-500 hover:text-yellow-500 hover:bg-yellow-50'
                             }`}
@@ -43,7 +43,7 @@ const NavigationPage = () => {
                 <Tooltip content="删除 (Delete)">
                     <button
                         onClick={handleDeleteClick}
-                        className="p-1.5 text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-md transition-colors"
+                        className="p-1.5 text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                     >
                         <IconTrash size={18} />
                     </button>
@@ -64,10 +64,10 @@ const NavigationPage = () => {
 
             {/* Project Navigation Content */}
             <div className="grid grid-cols-3 gap-4 mt-6">
-                <div className="bg-white p-4 rounded shadow-sm border border-gray-100">
+                <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 overflow-hidden">
                     <h3 className="font-medium text-gray-800">模块 A</h3>
                 </div>
-                <div className="bg-white p-4 rounded shadow-sm border border-gray-100">
+                <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 overflow-hidden">
                     <h3 className="font-medium text-gray-800">模块 B</h3>
                 </div>
             </div>
@@ -81,13 +81,13 @@ const NavigationPage = () => {
                     <>
                         <button
                             onClick={() => setIsDeleteOpen(false)}
-                            className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-200 rounded-md transition-colors"
+                            className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-200 rounded-lg transition-colors"
                         >
                             取消
                         </button>
                         <button
                             onClick={handleConfirmDelete}
-                            className="px-4 py-2 text-sm text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors shadow-sm"
+                            className="px-4 py-2 text-sm text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors shadow-sm"
                         >
                             确认删除
                         </button>

@@ -170,7 +170,7 @@ const WorkbenchContent = ({
     };
 
     return (
-        <div className="absolute left-[60px] top-1 bottom-1 right-1 bg-white rounded-[12px] overflow-hidden shadow-2xl z-0 flex flex-col">
+        <div className="absolute left-[60px] top-1 bottom-1 right-1 bg-white rounded-lg overflow-hidden shadow-2xl z-0 flex flex-col">
             <div className="flex-1 flex flex-row overflow-hidden relative">
                 {/* Project L2 Sidebar (50px) - Show for Project Tag OR Detail Views */}
                 {/* L2 Sidebar: Unified for Project, Detail, and Business List */}

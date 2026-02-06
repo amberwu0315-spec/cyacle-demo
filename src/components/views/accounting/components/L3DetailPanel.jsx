@@ -15,55 +15,51 @@ export const L3DetailPanel = ({ node, context = 'config' }) => {
     const isCompleted = node.status === 'completed' || node.subType === 'whole_ref';
 
     return (
-        <div className="flex flex-col h-full bg-white overflow-hidden">
-            {/* 1. 头部 - 仅完成态显示结果 */}
+        <div className="flex flex-col h-full overflow-y-auto custom-scrollbar gap-3">
+            {/* 1. 头部卡片 */}
             <L3Header node={node} showResult={isCompleted} />
 
-            {/* 2. 提示区 - 完成态隐藏 */}
+            {/* 2. 提示卡片 */}
             {!isCompleted && (
-                <div className="px-6 pt-4 shrink-0">
-                    <HintSection hints={node.hints || ['请完善基础信息以完成核算']} />
-                </div>
+                <HintSection hints={node.hints || ['请完善基础信息以完成核算']} />
             )}
 
-            {/* 3. 内容滚动区 */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar">
-
-                {/* 分支 A: 聚合视图 (Product/Phase/Module) */}
-                {['product', 'phase', 'module'].includes(node.type) && (
-                    node.hasData ? (
-                        <>
-                            <EmissionDetail showChart={node.type === 'product'} />
-                            {node.type === 'module' && <ImportantIssues />}
-                        </>
-                    ) : (
-                        <EmptyState type={`add_${getNextLevel(node.type)}`} />
-                    )
-                )}
-
-                {/* 分支 B: 过程视图 (Process) */}
-                {node.type === 'process' && (
+            {/* 3. 核心内容卡片栈 */}
+            {/* 分支 A: 聚合视图 */}
+            {['product', 'phase', 'module'].includes(node.type) && (
+                node.hasData ? (
                     <>
-                        <ConfigParams
-                            node={node}
-                            subType={node.subType || 'normal'}
-                            mode={isCompleted ? 'read' : 'edit'}
-                            compareMode={isCompare}
-                        />
-                        <VarInfo compareMode={isCompare} />
-
-                        {/* 规则：完成态显示分析区，但拆分引用除外 */}
-                        {isCompleted && node.subType !== 'split_ref' && (
-                            <div className="pt-4 border-t border-gray-100">
-                                <h3 className="text-sm font-bold text-gray-900 mb-3">核算分析</h3>
-                                <div className="h-32 bg-gray-50 rounded-xl border border-gray-100 flex items-center justify-center text-xs text-gray-400">
-                                    分析图表组件载入中...
-                                </div>
-                            </div>
-                        )}
+                        <EmissionDetail showChart={node.type === 'product'} />
+                        {node.type === 'module' && <ImportantIssues />}
                     </>
-                )}
-            </div>
+                ) : (
+                    <div className="bg-white rounded-lg p-6 shadow-sm">
+                        <EmptyState type={`add_${getNextLevel(node.type)}`} />
+                    </div>
+                )
+            )}
+
+            {/* 分支 B: 过程视图 */}
+            {node.type === 'process' && (
+                <>
+                    <ConfigParams
+                        node={node}
+                        subType={node.subType || 'normal'}
+                        mode={isCompleted ? 'read' : 'edit'}
+                        compareMode={isCompare}
+                    />
+                    <VarInfo compareMode={isCompare} />
+
+                    {isCompleted && node.subType !== 'split_ref' && (
+                        <div className="bg-white rounded-lg p-6 shadow-sm space-y-4 transition-all">
+                            <h3 className="text-sm font-bold text-gray-900">核算分析</h3>
+                            <div className="h-32 bg-gray-50 rounded-lg border border-gray-100 flex items-center justify-center text-xs text-gray-400">
+                                分析图表组件载入中...
+                            </div>
+                        </div>
+                    )}
+                </>
+            )}
         </div>
     );
 };

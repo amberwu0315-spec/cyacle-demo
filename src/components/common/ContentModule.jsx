@@ -5,7 +5,7 @@ import { IconChevronDown, IconChevronRight } from '@tabler/icons-react';
 // Reusable Content Module Wrapper (Component D)
 export const ContentModule = ({ children, className = '' }) => {
     return (
-        <div className={`w-full h-auto bg-white rounded-md shadow-sm overflow-visible border border-gray-100 ${className}`}>
+        <div className={`w-full h-auto bg-white rounded-lg shadow-sm overflow-hidden border border-gray-100 ${className}`}>
             {children}
         </div>
     );
@@ -78,7 +78,7 @@ export const ModuleHeader = ({
     const showBorder = !isAccordion || (isAccordion && isOpen);
 
     return (
-        <div className={`flex items-center justify-between px-3 py-2 bg-white min-h-[48px] ${showBorder ? 'border-b border-gray-100' : ''}`}>
+        <div className={`flex items-center justify-between px-3 py-2 bg-white min-h-[48px] rounded-t-lg ${showBorder ? 'border-b border-gray-100' : ''}`}>
             {/* Zone L: Title Variants + Toggle */}
             <div className={`flex items-center gap-2 ${isAccordion ? 'cursor-pointer' : ''}`} onClick={isAccordion ? onToggle : undefined}>
                 {isAccordion && (

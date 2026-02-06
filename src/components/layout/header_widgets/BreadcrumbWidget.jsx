@@ -50,7 +50,7 @@ const BreadcrumbWidget = () => {
             <div
                 onClick={() => !isVersionMode && setIsOpen(!isOpen)}
                 className={`
-                    flex items-center gap-2 px-2 py-1 -ml-2 rounded-md transition-all select-none
+                    flex items-center gap-2 px-2 py-1 -ml-2 rounded-lg transition-all select-none
                     ${isVersionMode
                         ? 'cursor-default opacity-80'
                         : 'cursor-pointer hover:bg-gray-100'

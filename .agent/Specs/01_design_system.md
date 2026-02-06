@@ -17,7 +17,7 @@
 | **状态** | `Error` | `text-[#E35B5B]` | 失败/异常 |
 | **圆角** | `Radius-SM` | `rounded-[2px]` | 标签 Tag |
 | **圆角** | `Radius-MD` | `rounded-[4px]` | 输入框、按钮 |
-| **圆角** | `Radius-LG` | `rounded-lg` (8px) | 卡片、弹窗 |
+| **圆角** | `Radius-LG` | `rounded-lg` (8px) | **核心规范**: 所有内容模块、卡片、主容器必须使用此圆角 |
 | **圆角** | `Radius-XL` | `rounded-[12px]` | 工作台大容器 |
 | **阴影** | `Shadow-SM` | `shadow-sm` | 静态卡片 |
 | **阴影** | `Shadow-MD` | `shadow-md` | 悬浮/下拉 |
@@ -33,7 +33,7 @@
 | **Checkbox** | `<input type="checkbox" class="uk-checkbox">` | 选中色必须为 `#3BAA6D` (Success) 或 Brand |
 | **Table** | `<table class="uk-table uk-table-divider">` | 表头 `bg-[#EDF7FA] text-xs text-gray-500`，行高 `h-9` |
 | **Tag** | `<span class="uk-label">` | `rounded-[2px] px-1 text-xs`，背景色为语义色 10% 透明度 |
-| **Card** | `div` | `bg-white rounded-lg shadow-sm p-4 border border-transparent hover:border-[#D6D9DC]` |
+| **Card** | `div` | `bg-white rounded-lg shadow-sm p-4` | 严禁使用除 `rounded-lg` 以外的圆角类 |
 | **Modal** | `CenterModal.jsx` | 遮罩 `backdrop-blur-sm bg-black/20`，卡片 `bg-white rounded-lg shadow-2xl` |
 
 ## 3. 🧭 图标与排版 (Iconography)

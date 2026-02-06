@@ -41,14 +41,11 @@ const MOCK_DATA = [
 export default function AccountingModelConfig() {
     const [selectedNode, setSelectedNode] = useState(MOCK_DATA[0]);
 
-    // 3. 注意：这里我彻底删除了 setHeader 的相关代码
-    // 避免任何 Context 报错干扰页面渲染
-
     return (
-        <div className="flex w-full h-[calc(100vh-64px)] bg-white overflow-hidden">
-            {/* 左侧树结构 */}
-            <div className="w-[300px] border-r border-gray-100 flex flex-col shrink-0">
-                <div className="p-4 border-b border-gray-100 bg-gray-50/30 text-xs font-bold text-gray-400 uppercase tracking-widest">
+        <div className="flex w-full h-[calc(100vh-64px)] bg-[#F5F6F8] p-3 gap-3 overflow-hidden text-gray-900">
+            {/* 左侧树结构模块 */}
+            <div className="w-[300px] bg-white rounded-lg shadow-sm flex flex-col shrink-0 transition-all overflow-hidden">
+                <div className="p-4 border-b border-gray-100 bg-gray-50/10 text-[10px] font-bold text-gray-400 uppercase tracking-widest rounded-t-lg">
                     产品结构树
                 </div>
                 <div className="flex-1 overflow-y-auto custom-scrollbar">
@@ -60,8 +57,8 @@ export default function AccountingModelConfig() {
                 </div>
             </div>
 
-            {/* 右侧详情面板 */}
-            <div className="flex-1 bg-gray-50/20 overflow-hidden">
+            {/* 右侧详情模块列 */}
+            <div className="flex-1 overflow-hidden">
                 <L3DetailPanel node={selectedNode} context="config" />
             </div>
         </div>
