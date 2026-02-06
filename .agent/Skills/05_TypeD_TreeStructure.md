@@ -15,6 +15,7 @@
 | **图标库** | **必须且只能**使用 `@tabler/icons-react`。 | `import { IconPackage, ... } from '@tabler/icons-react'` |
 | **导出规范** | **必须**使用 `export default`。 | `export default function L3AdvancedTree...` |
 | **防御渲染** | **必须**校验数据存在性。 | `if (!data) return <Placeholder />` |
+| **内容限制** | **严禁**在配置页面 (`acct_model_config`) 渲染 Diff 相关逻辑。 | 对比逻辑仅限 `cmp_detail` 页面使用。 |
 | **样式方案** | Tailwind CSS Utility Classes。 | 禁止行内 Style (动态 Padding 除外)。 |
 
 ## 3. 视觉逻辑真值表 (Visual Truth Table)
@@ -85,11 +86,16 @@
 
 | 区域/动作 | 触发行为 | 备注 |
 | --- | --- | --- |
-| **点击箭头 (Chevron)** | `onToggle` | 仅展开/折叠，**不触发**选中，需 `stopPropagation` |
+| **点击箭头 (Chevron)** | `onToggle` | 仅展开/折叠，**不触发**选中，需 `stopPropagation`。<br>**特例**：Product 节点必须固定展开，禁止收纳。 |
 | **单击整行 (Row)** | `onSelect` | 选中高亮，右侧面板加载 |
 | **双击整行 (Row)** | `onRename` | 原地激活文本编辑框 (仅限有重命名权限的节点) |
 | **悬停 (Hover)** | `showQuickActions` | 在最右侧浮现 `[+]` (添加) 和 `[...]` (更多) 按钮 |
 | **右键 (Context Menu)** | `openContextMenu` | 根据 **Permission A** 表渲染菜单项 (置灰不可用项) |
+
+### B. 连线规范 (Connecting Lines)
+
+1. **纵向引导线**：在同一级子节点左侧，需使用 `border-l` (颜色为 `gray-100`) 串联所有同级节点。
+2. **位置对齐**：引导线需对齐父节点的图标中心点。
 
 ### B. 搜索与聚焦 (Global Features)
 
@@ -157,28 +163,13 @@ const TreeNode = memo(({ node, isSelected, onSelect, onToggle }) => {
         </span>
         
         {/* 节点名称 */}
-        <span className={`truncate ${textClass}`}>
-          {node.title}
-        </span>
-      </div>
+### C. 视觉精度与交互精细化 (Visual Precision & V4 Refinements)
 
-      {/* 右侧区域：Badge + 悬停操作 */}
-      <div className="flex items-center gap-2 pr-2">
-        <PercentageBadge node={node} />
-        
-        {/* Hover 快捷操作 (Group Hover) */}
-        <div className="hidden group-hover:flex gap-1 text-gray-400">
-           {/* [+] Icon */}
-           {/* [...] Icon */}
-        </div>
-      </div>
-    </div>
-  );
-});
-
-export default function L3AdvancedTree({ data, ...props }) {
-  if (!data) return null;
-  // ... 递归渲染逻辑
-}
+1.  **产品根节点对齐**：`level 0` (Product) 节点的左侧内边距固定为 `8px`，且**不显示**纵向连线。
+2.  **展开图标**：统一使用**实心三角形**样式 (如有需要旋转 90/180 度)。
+3.  **选中态间距**：选中高亮背景 (`bg-[#087F9C]`) 必须与纵向层级引导线保持 **4px** 的物理间距。
+4.  **文本着色**：常规态所有节点（包括选中节点的上级路径）统一使用 `text-gray-900`，**严禁使用灰色**。
+5.  **过程节点悬停 (Hover)**：悬停时隐藏百分比显示操作图标。
+6.  **全树边距**：树容器距离内容卡片左右边界固定为 `8px`。
 
 ```

@@ -74,7 +74,6 @@ The application has 3 primary view modes. JavaScript must toggle `hidden` classe
 *   **Trigger:** Click ANY icon in the Footer.
     *   **Visual Logic:** Refer to `PROJECT_RULES.md` (Footer Modal Rules).
     *   **Title:** The Modal Title must **dynamically match** the name of the clicked footer button.
-*   **Interaction Logic:**
     *   **Active State:** The clicked footer button must show an active state.
     *   **Toggle:** Clicking active button closes the modal.
 
@@ -108,9 +107,10 @@ The application has 3 primary view modes. JavaScript must toggle `hidden` classe
 *   `box` **模型** (Model) - *Triggers Model Level Sidemenu (Dimension B)*
 *   `calculator` **核算** (Acct) - *Triggers Accounting Level Sidemenu (Dimension A)*
 
-### C. L3 多维树形菜单 (Multi-Level Tree)
+### C. L3 高级业务树 (L3 Advanced Tree)
 
-> **New Logic:** The menu structure now depends on the Active L2 Item (Dimension) and Content Mode.
+> **核心职责 (Core Responsibility):** 执行严格的“血统权限控制”（自建 vs 继承），渲染 Product -> Phase -> Module -> Process 的四层结构。
+> **Icon System:** 必须且只能使用 `@tabler/icons-react`。
 
 #### **Dimension A: 核算层级 (Accounting Level)**
 *Triggered when L2 = "Accounting"*
@@ -180,14 +180,45 @@ The application has 3 primary view modes. JavaScript must toggle `hidden` classe
         *   *业务原因*: 报告合规性要求，必须展示。
         *   *Tooltip*: "作用：展示并说明对产品碳足迹排放影响最大的模块的方法；"
 
-### B. 继承逻辑规则 (Inheritance Logic)
+### B. 继承与血统规则 (Inheritance & Lineage)
 
-#### 1. 继承节点子类型 (Inherited Node Sub-types)
-在核算与模型配置中，当节点来源于继承（如来源于模板或上游模型）时，遵循以下状态定义与处理规则：
+#### 1. 血统定义 (Lineage Definitions)
+所有树节点必须标记 `origin` 属性以区分数据来源：
+*   **自建 (self)**: 用户在当前核算/模型中手动创建的节点。
+*   **继承 (inherited)**: 来源于模板、预定义模型或上游引用，用户仅具有有限的编辑权限。
 
-*   **常规 (Conventional)**: 继承过来的节点未变更。
-    *   *定义*: 节点及其内部所有配置参数均保持与源头一致。
-*   **被编辑 (Edited)**: 继承过来的节点已变更。
-    *   *定义*: 节点内的任何配置参数（如数值、比例、选择项）被用户修改。
-*   **被屏蔽 (Screened)**: 继承过来的节点已屏蔽。
-    *   *定义*: 该节点已被手动设置为排除/屏蔽，不参与核算分析，但保留在结构树中。
+#### 2. 权限与行为矩阵 (Permission Matrix)
+根据 `origin` 决定节点的操作权限：
+
+| 动作 | 🟢 自建节点 (origin: 'self') | 🔒 继承节点 (origin: 'inherited') | 备注 |
+| :--- | :--- | :--- | :--- |
+| **新增同级** | ✅ 允许 | ❌ 禁止 | 保护原有模型层级骨架 |
+| **新增下级** | ✅ 允许 | ✅ 允许 | 继承节点下只能挂载自建子节点 |
+| **删除/屏蔽** | ✅ **物理删除** | 🛡️ **屏蔽 (Screened)** | 继承节点不可物理消失 |
+| **重置/同步** | ❌ (不适用) | ✅ 允许 | 仅当 `is_changed: true` 时可用 |
+| **拖拽操作** | ✅ 允许移动 | ❌ 位置锁死 | 骨架节点不可移动位置 |
+
+#### 3. 节点状态精细化 (Refined Status)
+*   **常规 (Normal)**: `text-[#4D4D4D]`，继承节点未变更。
+*   **被屏蔽 (Screened)**: `text-gray-400`，继承节点被标记为不参与核算（软删除）。
+*   **被排除 (Excluded)**: `line-through text-gray-400`，因业务逻辑被显式排除计算。
+*   **已新增 (Added)**: `text-emerald-600`，本次操作中新创建的自建节点。
+*   **已变更 (Modified)**: `text-orange-500`，继承节点的属性已被修改。
+
+#### 4. 核算状态与百分比 (Calc Status & Badge)
+仅 **Process (过程)** 节点显示百分比仪表盘，逻辑如下：
+*   **判定前提**: 排除“被屏蔽”、“被排除”、“拆分引用”节点。
+*   **配置中 (pending)**: 显示 `- -%` (黄标 `bg-yellow-100`)。
+*   **配置完成 (done)**: 显示 `具体数值%` (蓝标 `bg-blue-100`)。
+*   **异常 (error)**: 显示 `- -%` (红标 `bg-red-100`)。
+
+#### 5. 差异化对比 (Comparison/Diff Policy)
+*   **严格限制**: 「L3-模型配置与结果」页面 (`acct_model_config`) 的左侧树状节点**禁止展示**任何与 Diff (差异对比) 相关的内容或视觉标识。
+*   **专属页面**: 所有与 Diff 相关的数据详情和对比逻辑**仅在**「L3-对比标识详情」页面 (`cmp_detail`) 中展示。
+
+#### 6. 树形交互与视觉逻辑 (Tree UI Logic)
+*   **缩进与占位 (Indentation)**: 若节点不具备展开/收起功能（如 Product 或无子节点的 Process），则前面**禁止**留出三角图标的占位空间，内容整体左移。
+*   **连线逻辑 (Lineage Lines)**: 引导线**仅**在 Phase (阶段) 和 Module (模块) 节点下方显示，用于引导其子节点。
+*   **垂直对齐 (Vertical Alignment)**: Module 节点的图标必须与上级 Phase 的**图标**左侧垂直对齐；Process 节点的图标必须与上级 Module 的**图标**左侧垂直对齐。
+*   **悬停逻辑 (Hover)**: 「过程」节点悬停时，**保留**百分比 Badge 显示，并在其左侧呼出“更多 (IconDots)”菜单。
+*   **全黑规范 (Coloring)**: 常规状态下全树文本强制纯黑纹，禁止灰色。

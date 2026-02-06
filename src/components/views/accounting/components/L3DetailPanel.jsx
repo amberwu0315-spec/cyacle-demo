@@ -33,7 +33,7 @@ export const L3DetailPanel = ({ node, context = 'config' }) => {
                         {node.type === 'module' && <ImportantIssues />}
                     </>
                 ) : (
-                    <div className="bg-white rounded-lg p-6 shadow-sm">
+                    <div className="bg-white rounded-lg p-4 shadow-sm">
                         <EmptyState type={`add_${getNextLevel(node.type)}`} />
                     </div>
                 )
@@ -51,7 +51,7 @@ export const L3DetailPanel = ({ node, context = 'config' }) => {
                     <VarInfo compareMode={isCompare} />
 
                     {isCompleted && node.subType !== 'split_ref' && (
-                        <div className="bg-white rounded-lg p-6 shadow-sm space-y-4 transition-all">
+                        <div className="bg-white rounded-lg p-4 shadow-sm space-y-4 transition-all">
                             <h3 className="text-sm font-bold text-gray-900">核算分析</h3>
                             <div className="h-32 bg-gray-50 rounded-lg border border-gray-100 flex items-center justify-center text-xs text-gray-400">
                                 分析图表组件载入中...
