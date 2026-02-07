@@ -1,13 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { TextInput, NumberInput, Select, Textarea, useCombobox } from '@mantine/core';
-import { IconPencil, IconCheck, IconX, IconRotate, IconTextPlus, IconInfoCircle } from '@tabler/icons-react';
+import { IconPencil, IconCheck, IconX, IconRotate, IconTextPlus, IconInfoCircle, IconLoader2 } from '@tabler/icons-react';
 
 /**
- * EditableField Component
- * 
- * A reusable field that supports inline editing with Key-Value horizontal layout.
- * 
- * Props:
+ * EditableField Component (Prototype Enhanced Edition)
+ * * A reusable field that supports inline editing with Key-Value horizontal layout.
+ * Includes "Prototype Mode" features: Fake Latency & Visual Feedback.
+ * * Props:
  * - label: Field label (e.g., "模型名称")
  * - value: Current value (string, number, or object for dataCard type)
  * - onSave: Callback when saving (newValue) => void
@@ -46,6 +45,12 @@ const EditableField = ({
 }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [tempValue, setTempValue] = useState(value);
+
+    // --- Prototype State: 模拟加载与成功反馈 ---
+    const [isLoading, setIsLoading] = useState(false);
+    const [showSuccess, setShowSuccess] = useState(false);
+    // ----------------------------------------
+
     const textareaRef = useRef(null);
     const containerRef = useRef(null);
     const valueContainerRef = useRef(null);
@@ -55,31 +60,49 @@ const EditableField = ({
 
     // Auto-open dropdown when entering editing mode for select types
     useEffect(() => {
-        if (isEditing && (type === 'select' || type === 'dataCard')) {
+        if (isEditing && !isLoading && (type === 'select' || type === 'dataCard')) {
             // Use a slightly longer delay to ensure focus and layout are complete
             const timer = setTimeout(() => {
                 combobox.openDropdown();
             }, 50);
             return () => clearTimeout(timer);
         }
-    }, [isEditing, type, combobox]);
+    }, [isEditing, isLoading, type, combobox]);
 
     const handleEdit = () => {
+        if (isLoading) return; // Prevent edit while saving
         setTempValue(value);
         setIsEditing(true);
+        setShowSuccess(false); // Clear previous success state
     };
 
     const handleSave = () => {
-        onSave(tempValue);
-        setIsEditing(false);
+        if (isLoading) return; // Prevent double submit
+
+        // --- Prototype Logic: Simulate Network Delay ---
+        setIsLoading(true);
+
+        // 模拟 600ms 的网络请求延迟
+        setTimeout(() => {
+            onSave(tempValue);
+            setIsLoading(false);
+            setIsEditing(false);
+
+            // 触发成功反馈动画
+            setShowSuccess(true);
+            setTimeout(() => setShowSuccess(false), 2000); // 2秒后消失
+        }, 600);
     };
 
     const handleCancel = () => {
+        if (isLoading) return;
         setTempValue(value);
         setIsEditing(false);
     };
 
     const handleKeyDown = (e) => {
+        if (isLoading) return;
+
         // For textarea, Ctrl/Cmd + Enter to save
         if (type === 'textarea') {
             if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
@@ -145,6 +168,9 @@ const EditableField = ({
     const shouldShowToolbar = ['textarea', 'multiSelect', 'rich-text'].includes(type);
 
     const handleBlur = (e) => {
+        // If loading, ignore blur to prevent conflicts
+        if (isLoading) return;
+
         // If there's a toolbar, we don't save on blur (user might be clicking the toolbar)
         if (shouldShowToolbar) return;
 
@@ -164,8 +190,11 @@ const EditableField = ({
             className: "w-full",
             onKeyDown: handleKeyDown,
             onBlur: handleBlur,
+            disabled: isLoading, // Disable input while saving
             styles: { input: { borderRadius: '4px' } },
-            placeholder: rest.placeholder || (!label ? '<未命名>' : (['select', 'date', 'dataCard'].includes(type) ? '请选择' : '请输入'))
+            placeholder: rest.placeholder || (!label ? '<未命名>' : (['select', 'date', 'dataCard'].includes(type) ? '请选择' : '请输入')),
+            // Add right section for loading spinner
+            rightSection: isLoading ? <IconLoader2 size={16} className="animate-spin text-gray-400" /> : null
         };
 
         switch (type) {
@@ -189,7 +218,14 @@ const EditableField = ({
                             maxLength={maxLength}
                             minRows={rows}
                             autosize
+                        // Textarea doesn't support rightSection in Mantine v7 easily inside props, keep it simple
                         />
+                        {/* Custom Loading Overlay for Textarea */}
+                        {isLoading && (
+                            <div className="absolute top-2 right-2 p-1 bg-white/80 rounded-full">
+                                <IconLoader2 size={16} className="animate-spin text-[#087F9C]" />
+                            </div>
+                        )}
                         {maxLength && <div className="text-xs text-gray-400 mt-1 text-right">{tempValue?.length || 0}/{maxLength}</div>}
                     </div>
                 );
@@ -215,8 +251,9 @@ const EditableField = ({
                             setTempValue(val);
                             // If no toolbar, we save immediately even if value is same
                             if (!shouldShowToolbar) {
-                                onSave(val);
-                                setIsEditing(false);
+                                // Manual trigger save for select to ensure delay logic runs
+                                // We need to update state first then call save
+                                setTimeout(() => handleSave(), 0);
                             }
                         }}
                         onChange={setTempValue}
@@ -244,8 +281,7 @@ const EditableField = ({
                             const selected = dataCardOptions.find(opt => String(opt.id) === String(val));
                             setTempValue(selected || val);
                             if (!shouldShowToolbar) {
-                                onSave(selected || val);
-                                setIsEditing(false);
+                                setTimeout(() => handleSave(), 0);
                             }
                         }}
                         onChange={(val) => {
@@ -280,9 +316,13 @@ const EditableField = ({
         // Shared text styles for zero-jump
         const textStyles = `text-sm font-normal ${isMultiLine ? 'leading-relaxed' : 'leading-none h-full flex items-center'}`;
 
+        // Success Feedback Styles
+        const successClass = showSuccess ? 'bg-green-50/50' : '';
+        const successBorder = showSuccess ? 'border-green-200' : 'border-transparent';
+
         return (
             <div
-                className={`flex items-center rounded transition-all duration-200 ease-in-out relative ${!isEditing ? 'group' : ''} ${!isMultiLine ? 'h-9' : ''}`}
+                className={`flex items-center rounded transition-all duration-500 ease-in-out relative ${!isEditing ? 'group' : ''} ${!isMultiLine ? 'h-9' : ''} ${successClass}`}
                 style={!isMultiLine ? { height: '36px' } : {}} // Lock height only for single line
             >
                 {isEditing ? (
@@ -291,22 +331,33 @@ const EditableField = ({
                     </div>
                 ) : (
                     <div
-                        className={`relative flex-1 w-full ${isMultiLine ? 'min-h-[36px] items-start py-2' : 'h-full items-center'} flex px-3 border border-transparent overflow-visible group-hover:bg-gray-50 rounded cursor-pointer`}
+                        className={`relative flex-1 w-full ${isMultiLine ? 'min-h-[36px] items-start py-2' : 'h-full items-center'} flex px-3 border ${successBorder} overflow-visible group-hover:bg-gray-50 rounded cursor-pointer transition-colors duration-200`}
                         onClick={handleEdit}
                     >
                         <div className={`pr-12 w-full ${isMultiLine ? '' : 'truncate'} ${textStyles}`}>
                             {renderDisplayValue()}
                         </div>
-                        <div className="absolute right-0 top-1/2 -translate-y-1/2 pl-4 bg-gradient-to-l from-gray-50 via-gray-50 to-transparent flex items-center h-[calc(100%-2px)] mr-[1px] opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button
-                                onClick={(e) => { e.stopPropagation(); handleEdit(); }}
-                                className="flex items-center gap-1 px-2 h-6 bg-white border border-gray-200 text-xs text-gray-600 hover:text-[#087F9C] hover:border-[#087F9C] rounded shadow-sm transition-all whitespace-nowrap"
-                                title="编辑"
-                            >
-                                <IconPencil size={12} />
-                                <span>编辑</span>
-                            </button>
-                        </div>
+
+                        {/* Hover Edit Button (Hide if success showing to avoid clutter) */}
+                        {!showSuccess && (
+                            <div className="absolute right-0 top-1/2 -translate-y-1/2 pl-4 bg-gradient-to-l from-gray-50 via-gray-50 to-transparent flex items-center h-[calc(100%-2px)] mr-[1px] opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); handleEdit(); }}
+                                    className="flex items-center gap-1 px-2 h-6 bg-white border border-gray-200 text-xs text-gray-600 hover:text-[#087F9C] hover:border-[#087F9C] rounded shadow-sm transition-all whitespace-nowrap"
+                                    title="编辑"
+                                >
+                                    <IconPencil size={12} />
+                                    <span>编辑</span>
+                                </button>
+                            </div>
+                        )}
+
+                        {/* Success Indicator (Prototype Feature) */}
+                        {showSuccess && (
+                            <div className="absolute right-2 top-1/2 -translate-y-1/2 text-green-500 animate-fade-in-up">
+                                <IconCheck size={16} stroke={3} />
+                            </div>
+                        )}
                     </div>
                 )}
             </div>
@@ -324,8 +375,14 @@ const EditableField = ({
                 </div>
             )}
             <div className="flex items-center gap-1 ml-auto">
-                <button onClick={handleCancel} className="w-6 h-6 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded transition-colors"><IconX size={16} /></button>
-                <button onClick={handleSave} className="w-6 h-6 flex items-center justify-center text-green-600 hover:bg-green-50 rounded transition-colors"><IconCheck size={16} /></button>
+                <button onClick={handleCancel} disabled={isLoading} className="w-6 h-6 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded transition-colors"><IconX size={16} /></button>
+                <button
+                    onClick={handleSave}
+                    disabled={isLoading}
+                    className="w-6 h-6 flex items-center justify-center text-green-600 hover:bg-green-50 rounded transition-colors disabled:opacity-50"
+                >
+                    {isLoading ? <IconLoader2 size={16} className="animate-spin" /> : <IconCheck size={16} />}
+                </button>
             </div>
         </div>
     );

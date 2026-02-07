@@ -1,19 +1,25 @@
 import React, { useEffect, useState } from 'react';
+import { IconLoader2 } from '@tabler/icons-react'; // [新增] 用于 Loading 图标
 import { useHeaderContext } from '../../../context/HeaderContext';
 import { useNavigation } from '../../../context/NavigationContext';
 import L3Sidebar from '../../layout/L3Sidebar';
+import InnerDrawer from '../../common/InnerDrawer';
+
+// L3 Views
 import AccountingBasic from '../l3/AccountingBasic';
 import AccountingModelConfig from '../accounting/AccountingModelConfig';
 import ActivityDataView from '../shared/ActivityDataView';
 import FactorDataView from '../shared/FactorDataView';
 import ReportInfo from '../l3/ReportInfo';
 import ReportExport from '../l3/ReportExport';
-import InnerDrawer from '../../common/InnerDrawer';
 
 // Wrapper for L3 Routing Logic
 const AccountingPage = ({ activeL3, onL3Change }) => {
-    const { setActions, setLayoutConfig } = useHeaderContext(); // Removed setBreadcrumbData logic as it's now in Header Widget
+    const { setActions } = useHeaderContext();
     const { activeMode } = useNavigation();
+
+    // [新增] 页面加载状态：用于模拟切换 Tab 时的接口请求延迟
+    const [isPageLoading, setIsPageLoading] = useState(false);
 
     // Default Selection Logic
     useEffect(() => {
@@ -22,12 +28,23 @@ const AccountingPage = ({ activeL3, onL3Change }) => {
         }
     }, [activeL3, onL3Change]);
 
+    // [新增] 监听 activeL3 变化，触发“假”加载效果
+    useEffect(() => {
+        // 只有在非 Version 模式下，且有 activeL3 变化时才触发
+        if (activeMode !== 'version') {
+            setIsPageLoading(true);
+            // 随机延迟 300ms - 600ms，模拟真实感
+            const timeout = setTimeout(() => {
+                setIsPageLoading(false);
+            }, 300 + Math.random() * 300);
+            return () => clearTimeout(timeout);
+        }
+    }, [activeL3, activeMode]);
+
     const [activeDrawer, setActiveDrawer] = useState(null);
     const closeDrawer = () => setActiveDrawer(null);
 
     useEffect(() => {
-        // Since BreadcrumbWidget handles its own data via Context,
-        // and Header Widgets handle logic, we just clear legacy actions.
         setActions(null);
         return () => setActions(null);
     }, [setActions]);
@@ -69,7 +86,23 @@ const AccountingPage = ({ activeL3, onL3Change }) => {
                         <p>此处显示版本快照内容，不可编辑。</p>
                     </div>
                 ) : (
-                    renderL3Content()
+                    // [修改] 增加 Loading 状态判断
+                    <React.Fragment>
+                        {isPageLoading ? (
+                            // Loading State: 居中显示加载动画，带轻微呼吸效果
+                            <div className="flex-1 flex flex-col items-center justify-center bg-white/50 backdrop-blur-sm z-10 transition-all duration-300">
+                                <div className="flex flex-col items-center gap-3 p-6 rounded-lg">
+                                    <IconLoader2 className="animate-spin text-[#087F9C]" size={36} stroke={1.5} />
+                                    <span className="text-sm font-medium text-gray-500 animate-pulse">数据加载中...</span>
+                                </div>
+                            </div>
+                        ) : (
+                            // Content State: 加载完成后淡入显示
+                            <div className="flex-1 flex flex-col h-full overflow-hidden animate-in fade-in duration-500">
+                                {renderL3Content()}
+                            </div>
+                        )}
+                    </React.Fragment>
                 )}
 
                 {/* Legacy Drawers */}
