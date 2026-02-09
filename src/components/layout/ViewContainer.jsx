@@ -3,7 +3,8 @@ import React from 'react';
 /**
  * ViewContainer - 标准页面容器
  * 
- * 用于统一处理页面的滚动策略和基础布局。
+ * 🏢 角色：页面容器 (Page Workspace)
+ * 📝 职责：统一管理页面的滚动行为 (Scroll vs Fixed)。
  * 
  * @param {string} type - 页面类型 (Page Type)
  *   - 'scroll': (滚动页) 也就是之前的 "Document"。容器会有滚动条，内容负责从上往下堆叠。

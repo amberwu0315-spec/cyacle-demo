@@ -1,9 +1,16 @@
+/**
+ * ComponentPage - 元件管理
+ * 
+ * 🏢 角色：半成品库 (Components)
+ * 📝 职责：管理可复用的功能组件（如“电池模组”、“电机”）。
+ * 1. 它是连接基础流和完整产品的中间层。
+ */
 import React from 'react';
 import StandardBusinessLayout from '../StandardBusinessLayout';
-import { useHeaderContext } from '../../../context/HeaderContext';
+import { usePagePresentation } from '../../../context/PagePresentationContext';
 
 const ComponentPage = () => {
-    const { setActions } = useHeaderContext();
+    const { setActions } = usePagePresentation();
 
     const filterOptions = {
         types: [

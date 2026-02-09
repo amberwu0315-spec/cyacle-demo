@@ -1,12 +1,21 @@
+/**
+ * NavigationPage - 项目导航页 (L2 Dashboard)
+ * 
+ * 🏢 角色：项目大厅 (Project Lobby)
+ * 📝 职责：
+ * 1. 作为进入某个具体项目后的“首页”。
+ * 2. 提供该项目下各模块（基础、模型、核算）的快捷入口和概览状态。
+ */
 import React, { useEffect, useState } from 'react';
-import { useHeaderContext } from '../../../context/HeaderContext';
+import { usePagePresentation } from '../../../context/PagePresentationContext';
 import { IconStar, IconTrash, IconStarFilled } from '@tabler/icons-react'; // Added Filled Star
+import { IconArrowRight, IconBox, IconLayoutBoard, IconChartPie, IconReportMedical, IconDatabase } from '@tabler/icons-react';
 import CenterModal from '../../common/CenterModal';
 import Tooltip from '../../common/Tooltip';
 import { SingleColumnPage } from '../../layout/PageLayouts';
 
 const NavigationPage = () => {
-    const { setActions, setTitleOverride, setLayoutConfig } = useHeaderContext();
+    const { setActions, setTitleOverride, setLayoutConfig } = usePagePresentation();
 
     // UI State
     const [isStarred, setIsStarred] = useState(false);

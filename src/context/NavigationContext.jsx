@@ -1,3 +1,10 @@
+/**
+ * NavigationContext - 业务导航上下文
+ * 
+ * 🏢 角色：调度室 / 路标
+ * 📝 职责：管理具体业务模块内的流程流转 (L2/L3)。
+ * 🔧 包含：activeDimension (当前维度), activeMode (配置模式/版本模式).
+ */
 import React, { createContext, useContext, useState, useMemo } from 'react';
 
 const NavigationContext = createContext(null);

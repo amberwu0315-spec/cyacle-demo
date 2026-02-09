@@ -1,11 +1,19 @@
+/**
+ * BasisPage - 基础信息页面
+ * 
+ * 🏢 角色：项目档案室 (Project Archive)
+ * 📝 职责：
+ * 1. 展示和编辑项目的基本元数据（名称、时间、地点）。
+ * 2. 包含生命周期阶段、功能单位等核心定义。
+ */
 import React, { useEffect, useState } from 'react';
-import { useHeaderContext } from '../../../context/HeaderContext';
+import { usePagePresentation } from '../../../context/PagePresentationContext';
 import { IconPlus, IconPencil, IconCheck, IconX } from '@tabler/icons-react';
 import { ContentModule, ModuleHeader } from '../../common/ContentModule';
 import EditableField from '../../common/EditableField';
 
 const BasisPage = () => {
-    const { setActions, setTitleOverride, setLayoutConfig } = useHeaderContext();
+    const { setActions, setTitleOverride, setLayoutConfig } = usePagePresentation();
 
     // 研究对象 - 只读数据
     const researchObject = {

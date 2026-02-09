@@ -1,3 +1,11 @@
+/**
+ * CreateResearchObjectPage - 创建研究对象页面
+ * 
+ * 🏢 角色：产品注册处 (Product Registration)
+ * 📝 职责：
+ * 1. 在项目内创建一个新的研究对象（如具体的电机型号）。
+ * 2. 也是进入具体业务工作的起点。
+ */
 import React, { useState, useEffect } from 'react';
 import { IconDeviceFloppy } from '@tabler/icons-react';
 
@@ -5,10 +13,10 @@ import { DoubleColumnPage } from '../../layout/PageLayouts';
 import { ContentModule, ModuleHeader } from '../../common/ContentModule';
 import FormBlock from '../../common/FormBlock';
 import EditableField from '../../common/EditableField';
-import { useHeaderContext } from '../../../context/HeaderContext';
+import { usePagePresentation } from '../../../context/PagePresentationContext';
 
 const CreateResearchObjectPage = ({ onCancel, onSave }) => {
-    const { setShowHeader } = useHeaderContext();
+    const { setShowHeader } = usePagePresentation();
 
     // 隐藏系统 Header
     useEffect(() => {

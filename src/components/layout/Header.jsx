@@ -1,5 +1,15 @@
+/**
+ * Header - 顶部导航栏 / 页面呈现控制
+ * 
+ * 🏢 角色：门面装修 (Storefront / Facade)
+ * 📝 职责：
+ * 1. 显示当前页面的标题（TitleWidget）。
+ * 2. 提供视图级别的操作（ViewActionGroup）。
+ * 3. 承载业务内容的自定义操作（BusinessActions）。
+ * 4. 它的内容由 `PagePresentationContext` 动态驱动。
+ */
 import React, { useState, useEffect } from 'react';
-import { useHeaderContext } from '../../context/HeaderContext';
+import { usePagePresentation } from '../../context/PagePresentationContext';
 import { useNavigation } from '../../context/NavigationContext';
 import { NAV_SCHEME } from '../../config/navigationConfig';
 
@@ -17,8 +27,8 @@ const Header = ({
     defaultActions = [] // For legacy pages or fallback
 }) => {
     const [isScrolled, setIsScrolled] = useState(false);
-    const { activeDimension, activeMode } = useNavigation();
-    const { titleOverride, actions } = useHeaderContext();
+    const { actions, titleOverride, layoutConfig } = usePagePresentation();
+    const { activeDimension, activeMode } = layoutConfig; // Assuming activeDimension and activeMode are part of layoutConfig
 
     // Now ALL configured dimensions use widget layout.
     // If activeDimension is not in NAV_SCHEME, we fall back to generic layout.

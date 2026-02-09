@@ -1,235 +1,261 @@
 import React, { useState } from 'react';
-import { IconPlus } from '@tabler/icons-react';
+import { IconPlus, IconFilePlus, IconTrash, IconFileText, IconX } from '@tabler/icons-react';
 import { ContentModule, ModuleHeader } from '../../common/ContentModule';
 import FormBlock from '../../common/FormBlock';
 import EditableField from '../../common/EditableField';
 import Checkbox from '../../common/Checkbox';
 
-// Toggle Switch Component (Local Helper)
-const ToggleSwitch = ({ checked, onChange }) => (
-    <div
-        className={`relative inline-block w-8 h-4 rounded-full cursor-pointer transition-colors ${checked ? 'bg-[#087F9C]' : 'bg-gray-200'}`}
-        onClick={() => onChange(!checked)}
-    >
-        <div className={`absolute left-0.5 top-0.5 w-3 h-3 bg-white rounded-full shadow-sm transition-transform ${checked ? 'translate-x-4' : 'translate-x-0'}`}></div>
-    </div>
-);
+// --- 演示专用：微交互组件 ---
 
-// L3: 报告信息 (ReportInfo)
-const ReportInfo = () => {
-    // 1. Module 1: 报告编写属性 State
-    const [rptReviewer, setRptReviewer] = useState('报告复核人名称示例');
-    const [rptLead, setRptLead] = useState('核算负责人名称示例');
-    const [rptEditDate, setRptEditDate] = useState('2025-09-29');
-    const [rptValidity, setRptValidity] = useState('2028-09-05');
-    const [rptPurpose, setRptPurpose] = useState('本产品碳足迹核算报告的核算主体为演示五金制品有限公司的特定型号的产品。报告通过计算和分析该产品的年度温室气体（GHG）排放量，主要为以下目的服务：\n(1) 为本厂管理者提供决策支持；\n(2) 为下游生产商提供较为准确的上游供应链数据。\n本厂为积极参与国家制定的“双碳”目标，为实现零碳目标作出应尽的社会责任，自主选择对本厂的特定产品进行碳足迹核算，以便联合上下文游产业链，力求减少对环境产生的影响。');
+/**
+ * 演示用上传按钮
+ * Fix: 增加了 whitespace-nowrap 防止文字竖排，增加了 h-9 确保与 Label 对齐
+ */
+const MockUploadField = ({ label }) => {
+    const [status, setStatus] = useState('empty'); // empty, uploading, done
 
-    // 2. Module 2: 报告研究范围 State
-    const [rptBasis, setRptBasis] = useState('本研究所依据的标准为 ISO 14067:2018《温室气体—产品碳足迹—量化要求和指南》。');
-    const [rptSystem, setRptSystem] = useState('本报告所研究的系统范围为演示五金制品有限公司所生产的特定“铝铆钉”(型号：“789”)。\n产品简介如下：铝铆钉也称作销子，是由铝线材做的零件，用以将几个单独的物件固定在一起或作为一个物件悬在另一物件上的支撑物。\n产品主体材料为线材，本次研究和计算还包含了成品的包装。');
-    const [rptDefinition, setRptDefinition] = useState('本报告所研究的系统范围为演示五金制品有限公司所生产的特定“铝铆钉”产品（型号：“789”）“从摇篮到大门”的整个过程。');
-    const [rptAssumptions, setRptAssumptions] = useState('1、原辅料中的纸箱、缠绕膜、润滑油均为本市采购，运输距离较短，统计经济成本较高，本报告采取保守的核算方法，纸箱、缠绕膜运输距离取 20km 进行核算，润滑油运输距离取 25km 进行核算；\n2、产品的委外加工地点在本市，距离本工厂不超过 20km，本报告采取保守的核算方法，取 20km 进行核算；\n3、由于缺乏明确的资料来证实危险废弃物的具体处理方式，本报告采取保守的核算方法，假设所有危险废弃物均采用焚烧方式进行处理。');
-    const [rptLimitations, setRptLimitations] = useState('依据 ISO 14067:2018 标准附录 A 的要求，本报告对目标产品碳足迹研究的局限性做出如下说明：\n此次产品碳足迹评价出于了解和掌握基本数据的目的，将气候变化作为单一影响类别。产品碳足迹反映了随着时间的推移对全球辐射能量平衡的潜在影响，即 GHG 排放量和产品系统的移除量之和，与源材料采购、设计、生产、运输相关。产品碳足迹可能是影响“气候变化”关注领域的产品生命周期的一个重要环境方面，除此之外，产品生命周期可能会对其他相关领域产生影响（例如：资源枯竭、空气、水、土壤和生态系统）。产品碳足迹引起的气候变化只是产品生命周期可能产生的各种环境影响之一，不同影响的相对重要性因产品而异。仅基于单一环境问题的产品影响决策可能与其他环境问题相关的目标相冲突。\n根据 LCA 方法计算 CFP。ISO 14040 和 ISO 14044 解决了其固有的局限性和权衡。这包括建立一个功能或声明的单元和系统边界、适当数据源的可用性和选择、分配程序以及有关传输的假设。选用的部分数据可能只适用于特定的地理区域，例如国家电网的数据，这可能限制了其普遍适用性。同时，这些数据也可能随着时间而变化，比如受季节性波动的影响。此外，在构建生命周期模型的过程中，需要做出一些数值上的决策，比如确定功能单位、声明单位以及分配程序的选择，这些选择可能会对模型的最终结果产生影响。因此，定量 CFP 的准确性有限，也难以评估。');
+    const handleUpload = () => {
+        setStatus('uploading');
+        setTimeout(() => setStatus('done'), 600);
+    };
 
-    // 3. Module 3: 研究结论 State
-    const [rptConclusion, setRptConclusion] = useState('基于本报告的计算与分析，2024年01月01日至2024年12月31日期间，演示五金制品有限公司所生产的 1kg 铝铆钉产品（789）“从摇篮到大门”温室气体排放量为 11.36 kgCO₂e，不确定性范围为 0.00%～0.00%。\n报告基于对演示五金制品有限公司特定产品“从摇篮到大门”的生命周期分步步骤进行。总体报告遵循温室气体协议标准 ISO 14067，并遵循以下原则：准确性、完整性、一致性、相关性和透明度。');
-
-    // 4. Module 4: 改进建议 State
-    const [rptSuggestions, setRptSuggestions] = useState('综上所述，演示五金制品有限公司生产的铝铆钉（型号789）在原材料生产与获取的过程中，原材料的生产是造成该产品碳足迹的主要来源。演示五金制品有限公司可在原材料的采购等方面开展进一步的绿色设计和绿色产品开发和管理的工作。此外，在数据管理和质量控制层面，企业可以进行校验管理，对耗能设备采用更加精准的测量仪器，定期对仪器进行校验对维护，优化管理流程，降低人为误差，以提高数据的准确度。');
-
-    // 5. Module 5: 模型不确定性描述 State
-    const [uncertaintyList, setUncertaintyList] = useState([
-        { factors: '来自场景的不确定性', description: '在目标产品的碳足迹核算过程中，由于生产制造阶段产生的废弃物处置的场景未能明确，采取了基于保守估计的假设场景。这些假设可能会为最终的计算结果带来不确定性。' },
-        { factors: '来自模型选择的不确定性', description: '核算中使用的部分因子参数由于数据难以获取等原因，对其采用了“建模估计法”进行近似计算。这些因子模型本身具有不确定性，其作为因子参与计算时，通过模型传导影响了最终结果。' }
-    ]);
-
-    // 6. Module 6: 特殊说明 State
-    const [rptStudyDesc, setRptStudyDesc] = useState('-');
-    const [rptDataDesc, setRptDataDesc] = useState('-');
-    const [rptGhgnDesc, setRptGhgnDesc] = useState('-');
-
-    // 7. Module 7: 导出设置 State
-    const [activityValueTypes, setActivityValueTypes] = useState(['original']); // 'original', 'unit'
-    const [ghgRanges, setGhgRanges] = useState(['CO2', 'CH4', 'N2O', 'HFCs', 'PFCs', 'SF6', 'NF3']);
-    const [showAllocRule, setShowAllocRule] = useState(true);
-
-    // Other Toggles
-    const [showSpecialEmission, setShowSpecialEmission] = useState(true);
-    const [showUncertainty, setShowUncertainty] = useState(true);
-    const [showInstructions, setShowInstructions] = useState(true);
-
-    const addUncertaintyRow = () => {
-        setUncertaintyList([...uncertaintyList, { factors: '', description: '' }]);
+    const handleDelete = (e) => {
+        e.stopPropagation();
+        setStatus('empty');
     };
 
     return (
-        <div className="flex-1 flex flex-col gap-3 p-3 w-full overflow-y-auto custom-scrollbar bg-[#F5F6F8]">
-            {/* Module 1: 报告编写属性 */}
+        // 在此处传入 className="items-center" 确保 Label 和右侧内容垂直居中对齐
+        <EditableField label={label} className="items-center">
+            {status === 'empty' && (
+                <button
+                    onClick={handleUpload}
+                    // Fix: 添加 flex-row, whitespace-nowrap, h-9
+                    className="flex flex-row items-center gap-1.5 h-9 text-sm text-[#087F9C] hover:text-[#066c85] hover:underline font-medium transition-colors group whitespace-nowrap"
+                >
+                    <div className="flex items-center justify-center p-1 rounded-full bg-cyan-50 group-hover:bg-cyan-100 transition-colors">
+                        <IconFilePlus size={14} />
+                    </div>
+                    <span>点击上传文档</span>
+                </button>
+            )}
+
+            {status === 'uploading' && (
+                <div className="flex flex-row items-center gap-2 h-9 text-sm text-gray-400 whitespace-nowrap">
+                    <div className="w-3 h-3 border-2 border-[#087F9C] border-t-transparent rounded-full animate-spin"></div>
+                    <span>上传中...</span>
+                </div>
+            )}
+
+            {status === 'done' && (
+                <div className="flex flex-row items-center gap-2 h-9 group animate-fade-in-up">
+                    <div className="flex flex-row items-center gap-2 px-3 py-1 bg-cyan-50 border border-cyan-100 rounded text-sm text-[#087F9C]">
+                        <IconFileText size={14} />
+                        <span className="truncate max-w-[200px]">示例佐证材料_v1.0.pdf</span>
+                        <span className="text-xs text-gray-400 ml-1 whitespace-nowrap">(2.4MB)</span>
+                    </div>
+                    <button
+                        onClick={handleDelete}
+                        className="flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 p-1 rounded transition-colors opacity-0 group-hover:opacity-100"
+                        title="删除"
+                    >
+                        <IconX size={14} />
+                    </button>
+                </div>
+            )}
+        </EditableField>
+    );
+};
+
+// Toggle Switch
+const ToggleSwitch = ({ checked, onChange }) => (
+    <div
+        className={`relative inline-flex items-center w-9 h-5 rounded-full cursor-pointer transition-all duration-300 ease-out border ${checked ? 'bg-[#087F9C] border-[#087F9C]' : 'bg-gray-200 border-gray-200'}`}
+        onClick={(e) => {
+            e.stopPropagation();
+            onChange(!checked);
+        }}
+    >
+        <span className={`absolute left-0.5 bg-white w-4 h-4 rounded-full shadow-sm transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${checked ? 'translate-x-4' : 'translate-x-0'}`} />
+    </div>
+);
+
+// --- 主视图 ---
+
+const ReportInfo = () => {
+    // 数据状态
+    const [formData, setFormData] = useState({
+        reviewer: '报告复核人名称示例',
+        lead: '核算负责人名称示例',
+        editDate: '2025-09-29',
+        validity: '2028-09-05',
+        purpose: '本产品碳足迹核算报告的核算主体为演示五金制品有限公司的特定型号的产品。\n(1) 为本厂管理者提供决策支持；\n(2) 为下游生产商提供较为准确的上游供应链数据。',
+        basis: '本研究所依据的标准为 ISO 14067:2018《温室气体—产品碳足迹—量化要求和指南》。',
+        system: '本报告所研究的系统范围为演示五金制品有限公司所生产的特定“铝铆钉”(型号：“789”)。',
+        definition: '本报告所研究的系统范围为演示五金制品有限公司所生产的特定“铝铆钉”产品（型号：“789”）“从摇篮到大门”的整个过程。',
+        assumptions: '1、原辅料中的纸箱、缠绕膜、润滑油均为本市采购，运输距离较短，统计经济成本较高，本报告采取保守的核算方法，纸箱、缠绕膜运输距离取 20km 进行核算，润滑油运输距离取 25km 进行核算；\n2、产品的委外加工地点在本市，距离本工厂不超过 20km，本报告采取保守的核算方法，取 20km 进行核算；',
+        limitations: '依据 ISO 14067:2018 标准附录 A 的要求，本报告对目标产品碳足迹研究的局限性做出如下说明：\n此次产品碳足迹评价出于了解和掌握基本数据的目的，将气候变化作为单一影响类别。产品碳足迹反映了随着时间的推移对全球辐射能量平衡的潜在影响。',
+        conclusion: '基于本报告的计算与分析，2024年01月01日至2024年12月31日期间，演示五金制品有限公司所生产的 1kg 铝铆钉产品（789）“从摇篮到大门”温室气体排放量为 11.36 kgCO₂e。',
+        suggestions: '建议演示五金制品有限公司在原材料采购等方面开展进一步的绿色设计和绿色产品开发和管理的工作。',
+        studyDesc: '-',
+        dataDesc: '-',
+        ghgnDesc: '-'
+    });
+
+    const [uncertaintyList, setUncertaintyList] = useState([
+        { factors: '来自场景的不确定性', description: '在目标产品的碳足迹核算过程中，由于生产制造阶段产生的废弃物处置的场景未能明确，采取了基于保守估计的假设场景。' },
+        { factors: '来自模型选择的不确定性', description: '核算中使用的部分因子参数由于数据难以获取等原因，对其采用了“建模估计法”进行近似计算。' }
+    ]);
+
+    const [toggles, setToggles] = useState({
+        specialEmission: true,
+        uncertainty: true,
+        instructions: true,
+        allocRule: true
+    });
+
+    const [exportSettings, setExportSettings] = useState({
+        activityValueTypes: ['original'],
+        ghgRanges: ['CO2', 'CH4', 'N2O', 'HFCs', 'PFCs', 'SF6', 'NF3']
+    });
+
+    const updateForm = (key, val) => setFormData(prev => ({ ...prev, [key]: val }));
+    const updateToggle = (key) => setToggles(prev => ({ ...prev, [key]: !prev[key] }));
+
+    return (
+        <div className="flex-1 w-full h-full overflow-y-auto custom-scrollbar bg-[#F5F6F8] p-3 space-y-3">
+
+            {/* 1. 报告编写属性 */}
             <ContentModule>
                 <ModuleHeader title="报告编写属性" />
                 <FormBlock>
-                    <EditableField
-                        label="报告复核人"
-                        value={rptReviewer}
-                        onSave={setRptReviewer}
-                        type="text"
-                    />
-                    <EditableField
-                        label="核算负责人"
-                        value={rptLead}
-                        onSave={setRptLead}
-                        type="text"
-                    />
-                    <EditableField
-                        label="报告编辑日期"
-                        value={rptEditDate}
-                        onSave={setRptEditDate}
-                        type="date"
-                    />
-                    <EditableField
-                        label="有效期"
-                        value={rptValidity}
-                        onSave={setRptValidity}
-                        type="date"
-                    />
-                    <EditableField
-                        label="报告编辑目的"
-                        value={rptPurpose}
-                        onSave={setRptPurpose}
-                        type="textarea"
-                        rows={4}
-                    />
+                    <EditableField label="报告复核人" value={formData.reviewer} onSave={(v) => updateForm('reviewer', v)} />
+                    <EditableField label="核算负责人" value={formData.lead} onSave={(v) => updateForm('lead', v)} />
+                    <EditableField label="报告编辑日期" value={formData.editDate} onSave={(v) => updateForm('editDate', v)} type="date" />
+                    <EditableField label="有效期" value={formData.validity} onSave={(v) => updateForm('validity', v)} type="date" />
+                    <EditableField label="报告编辑目的" value={formData.purpose} onSave={(v) => updateForm('purpose', v)} type="textarea" rows={3} />
                 </FormBlock>
             </ContentModule>
 
-            {/* Module 2: 报告研究范围 */}
+            {/* 2. 报告研究范围 */}
             <ContentModule>
                 <ModuleHeader title="报告研究范围" />
                 <FormBlock>
-                    <EditableField label="投入产出图">
-                        <button className="flex items-center gap-1 text-[#087F9C] hover:underline text-sm font-medium">
-                            添加文档
-                        </button>
-                    </EditableField>
-                    <EditableField
-                        label="研究依据的标准和 PCR"
-                        value={rptBasis}
-                        onSave={setRptBasis}
-                        type="textarea"
-                    />
-                    <EditableField
-                        label="系统及功能"
-                        value={rptSystem}
-                        onSave={setRptSystem}
-                        type="textarea"
-                    />
-                    <EditableField
-                        label="定义描述"
-                        value={rptDefinition}
-                        onSave={setRptDefinition}
-                        type="textarea"
-                    />
-                    <EditableField
-                        label="假设"
-                        value={rptAssumptions}
-                        onSave={setRptAssumptions}
-                        type="textarea"
-                    />
-                    <EditableField
-                        label="研究局限性"
-                        value={rptLimitations}
-                        onSave={setRptLimitations}
-                        type="textarea"
-                    />
+                    <MockUploadField label="投入产出图" />
+                    <EditableField label="研究依据的标准" value={formData.basis} onSave={(v) => updateForm('basis', v)} type="textarea" />
+                    <EditableField label="系统及功能" value={formData.system} onSave={(v) => updateForm('system', v)} type="textarea" />
+                    <EditableField label="定义描述" value={formData.definition} onSave={(v) => updateForm('definition', v)} type="textarea" />
+                    <EditableField label="假设" value={formData.assumptions} onSave={(v) => updateForm('assumptions', v)} type="textarea" />
+                    <EditableField label="研究局限性" value={formData.limitations} onSave={(v) => updateForm('limitations', v)} type="textarea" />
                 </FormBlock>
             </ContentModule>
 
-            {/* Module 3: 特殊排放分析 (带显隐开关) */}
+            {/* 3. 特殊排放分析 */}
             <ContentModule>
                 <ModuleHeader
                     title="特殊排放分析"
-                    toggle={<ToggleSwitch checked={showSpecialEmission} onChange={setShowSpecialEmission} />}
+                    toggle={<ToggleSwitch checked={toggles.specialEmission} onChange={() => updateToggle('specialEmission')} />}
                 />
-                <div className="p-4 text-sm text-gray-400">
-                    此内容模块待确定
-                </div>
+                {toggles.specialEmission && (
+                    <div className="p-8 flex flex-col items-center justify-center text-gray-400 bg-gray-50/50 border-t border-gray-100 transition-all duration-300">
+                        <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-2">
+                            <span className="text-2xl opacity-30">🧪</span>
+                        </div>
+                        <span className="text-sm">暂无特殊排放数据分析</span>
+                    </div>
+                )}
             </ContentModule>
 
-            {/* Module 4: 研究结论 */}
+            {/* 4. 研究结论 */}
             <ContentModule>
                 <ModuleHeader title="研究结论" />
-                <div className="p-1">
+                <div className="p-3">
                     <EditableField
-                        value={rptConclusion}
-                        onSave={setRptConclusion}
+                        value={formData.conclusion}
+                        onSave={(v) => updateForm('conclusion', v)}
                         type="textarea"
-                        placeholder="请输入研究结论..."
+                        className="bg-white rounded-md p-1 border border-gray-100 hover:border-gray-300 transition-colors shadow-sm"
                     />
                 </div>
             </ContentModule>
 
-            {/* Module 5: 改进建议 */}
+            {/* 5. 改进建议 */}
             <ContentModule>
                 <ModuleHeader title="改进建议" />
-                <div className="p-1">
+                <div className="p-3">
                     <EditableField
-                        value={rptSuggestions}
-                        onSave={setRptSuggestions}
+                        value={formData.suggestions}
+                        onSave={(v) => updateForm('suggestions', v)}
                         type="textarea"
-                        placeholder="请输入改进建议..."
+                        className="bg-white rounded-md p-1 border border-gray-100 hover:border-gray-300 transition-colors shadow-sm"
                     />
                 </div>
             </ContentModule>
 
-            {/* Module 6: 模型不确定性描述 (带显隐开关 + 添加功能) */}
+            {/* 6. 模型不确定性描述 */}
             <ContentModule>
                 <ModuleHeader
                     title="模型不确定性描述"
-                    toggle={<ToggleSwitch checked={showUncertainty} onChange={setShowUncertainty} />}
-                    actions={
+                    toggle={<ToggleSwitch checked={toggles.uncertainty} onChange={() => updateToggle('uncertainty')} />}
+                    actions={toggles.uncertainty && (
                         <button
-                            onClick={addUncertaintyRow}
-                            className="flex items-center gap-1 text-xs text-[#087F9C] font-medium hover:text-[#066c85]"
+                            onClick={() => setUncertaintyList([...uncertaintyList, { factors: '', description: '' }])}
+                            className="flex items-center gap-1 text-xs text-[#087F9C] hover:text-white hover:bg-[#087F9C] px-2 py-1 rounded transition-all duration-200"
                         >
-                            <IconPlus size={14} /> 添加功能
+                            <IconPlus size={14} /> 添加条目
                         </button>
-                    }
+                    )}
                 />
-                {showUncertainty && (
-                    <div className="px-3 pb-3">
-                        <table className="w-full border-collapse text-sm">
+                {toggles.uncertainty && (
+                    <div className="px-3 pb-3 pt-1">
+                        <table className="w-full border-collapse text-sm border border-gray-200 rounded-lg overflow-hidden shadow-sm">
                             <thead>
-                                <tr className="bg-[#E9F3F5] text-gray-500">
-                                    <th className="border border-gray-100 p-2 text-left font-normal w-1/4">不确定性因素</th>
-                                    <th className="border border-gray-100 p-2 text-left font-normal">不确定性因素说明</th>
+                                <tr className="bg-[#E9F3F5] text-gray-600 font-medium">
+                                    <th className="p-2 pl-3 text-left w-1/4 border-r border-gray-200/60">不确定性因素</th>
+                                    <th className="p-2 pl-3 text-left border-r border-gray-200/60">说明</th>
+                                    <th className="w-10"></th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody className="divide-y divide-gray-100 bg-white">
                                 {uncertaintyList.map((item, index) => (
-                                    <tr key={index} className="hover:bg-gray-50">
-                                        <td className="border border-gray-100 p-0 align-top">
-                                            <EditableField
-                                                value={item.factors}
-                                                onSave={(val) => {
-                                                    const newList = [...uncertaintyList];
-                                                    newList[index].factors = val;
-                                                    setUncertaintyList(newList);
-                                                }}
-                                                type="textarea"
-                                                className="border-none hover:bg-transparent"
-                                            />
+                                    <tr key={index} className="group hover:bg-cyan-50/30 transition-colors">
+                                        <td className="p-0 border-r border-gray-100 align-top relative">
+                                            <div className="min-h-[42px] h-full">
+                                                <EditableField
+                                                    value={item.factors}
+                                                    onSave={(val) => {
+                                                        const n = [...uncertaintyList];
+                                                        n[index].factors = val;
+                                                        setUncertaintyList(n);
+                                                    }}
+                                                    type="textarea"
+                                                    className="w-full h-full p-2 pl-3"
+                                                    placeholder="点击输入..."
+                                                />
+                                            </div>
                                         </td>
-                                        <td className="border border-gray-100 p-0 align-top">
-                                            <EditableField
-                                                value={item.description}
-                                                onSave={(val) => {
-                                                    const newList = [...uncertaintyList];
-                                                    newList[index].description = val;
-                                                    setUncertaintyList(newList);
-                                                }}
-                                                type="textarea"
-                                                className="border-none hover:bg-transparent"
-                                            />
+                                        <td className="p-0 border-r border-gray-100 align-top relative">
+                                            <div className="min-h-[42px] h-full">
+                                                <EditableField
+                                                    value={item.description}
+                                                    onSave={(val) => {
+                                                        const n = [...uncertaintyList];
+                                                        n[index].description = val;
+                                                        setUncertaintyList(n);
+                                                    }}
+                                                    type="textarea"
+                                                    className="w-full h-full p-2 pl-3"
+                                                    placeholder="点击输入详细说明..."
+                                                />
+                                            </div>
+                                        </td>
+                                        <td className="text-center align-middle">
+                                            <button
+                                                onClick={() => setUncertaintyList(uncertaintyList.filter((_, i) => i !== index))}
+                                                className="text-gray-300 hover:text-red-500 p-1.5 rounded-full hover:bg-red-50 transition-all opacity-0 group-hover:opacity-100"
+                                            >
+                                                <IconTrash size={14} />
+                                            </button>
                                         </td>
                                     </tr>
                                 ))}
@@ -239,86 +265,61 @@ const ReportInfo = () => {
                 )}
             </ContentModule>
 
-            {/* Module 6: 特殊说明  */}
+            {/* 7. 特殊说明 */}
             <ContentModule>
-                <ModuleHeader
-                    title="特殊说明"
-                    toggle={<ToggleSwitch checked={showInstructions} onChange={setShowInstructions} />}
-                />
-                {showInstructions && (
+                <ModuleHeader title="特殊说明" toggle={<ToggleSwitch checked={toggles.instructions} onChange={() => updateToggle('instructions')} />} />
+                {toggles.instructions && (
                     <FormBlock>
-                        <EditableField
-                            label="报告研究补充说明"
-                            value={rptStudyDesc}
-                            onSave={setRptStudyDesc}
-                            type="textarea"
-                        />
-                        <EditableField label="报告研究补充文档">
-                            <button className="flex items-center gap-1 text-[#087F9C] hover:underline text-sm font-medium">
-                                添加文档
-                            </button>
-                        </EditableField>
-                        <EditableField
-                            label="数据收集与处理补充说明"
-                            value={rptDataDesc}
-                            onSave={setRptDataDesc}
-                            type="textarea"
-                        />
-                        <EditableField label="数据收集与处理补充文档">
-                            <button className="flex items-center gap-1 text-[#087F9C] hover:underline text-sm font-medium">
-                                添加文档
-                            </button>
-                        </EditableField>
-                        <EditableField
-                            label="温室气体量化补充说明"
-                            value={rptGhgnDesc}
-                            onSave={setRptGhgnDesc}
-                            type="textarea"
-                        />
-                        <EditableField label="温室气体量化补充文档">
-                            <button className="flex items-center gap-1 text-[#087F9C] hover:underline text-sm font-medium">
-                                添加文档
-                            </button>
-                        </EditableField>
+                        <EditableField label="报告研究补充说明" value={formData.studyDesc} onSave={(v) => updateForm('studyDesc', v)} type="textarea" />
+                        <MockUploadField label="报告研究补充文档" />
+                        <div className="h-px bg-gray-100 my-1 mx-4" />
+                        <EditableField label="数据收集补充说明" value={formData.dataDesc} onSave={(v) => updateForm('dataDesc', v)} type="textarea" />
+                        <MockUploadField label="数据收集补充文档" />
+                        <div className="h-px bg-gray-100 my-1 mx-4" />
+                        <EditableField label="GHG量化补充说明" value={formData.ghgnDesc} onSave={(v) => updateForm('ghgnDesc', v)} type="textarea" />
+                        <MockUploadField label="GHG量化补充文档" />
                     </FormBlock>
                 )}
             </ContentModule>
 
-            {/* Module 7: 导出设置 */}
+            {/* 8. 导出设置 */}
             <ContentModule>
                 <ModuleHeader title="导出设置" />
-                <div className="flex flex-col">
+                <div className="flex flex-col gap-2">
                     <FormBlock>
                         <EditableField label="活动数据展示数值">
-                            <div className="flex items-center gap-4 py-1">
+                            <div className="flex items-center gap-4 py-1.5">
                                 <Checkbox
                                     label="原始数值"
-                                    checked={activityValueTypes.includes('original')}
+                                    checked={exportSettings.activityValueTypes.includes('original')}
                                     onChange={(e) => {
-                                        if (e.target.checked) setActivityValueTypes([...activityValueTypes, 'original']);
-                                        else setActivityValueTypes(activityValueTypes.filter(t => t !== 'original'));
+                                        const s = new Set(exportSettings.activityValueTypes);
+                                        e.target.checked ? s.add('original') : s.delete('original');
+                                        setExportSettings({ ...exportSettings, activityValueTypes: [...s] });
                                     }}
                                 />
                                 <Checkbox
                                     label="单位产品对应数值"
-                                    checked={activityValueTypes.includes('unit')}
+                                    checked={exportSettings.activityValueTypes.includes('unit')}
                                     onChange={(e) => {
-                                        if (e.target.checked) setActivityValueTypes([...activityValueTypes, 'unit']);
-                                        else setActivityValueTypes(activityValueTypes.filter(t => t !== 'unit'));
+                                        const s = new Set(exportSettings.activityValueTypes);
+                                        e.target.checked ? s.add('unit') : s.delete('unit');
+                                        setExportSettings({ ...exportSettings, activityValueTypes: [...s] });
                                     }}
                                 />
                             </div>
                         </EditableField>
                         <EditableField label="温室气体范围设置">
-                            <div className="flex items-center gap-3 py-1 flex-wrap">
+                            <div className="flex flex-wrap gap-x-4 gap-y-2 py-1.5">
                                 {['CO2', 'CH4', 'N2O', 'HFCs', 'PFCs', 'SF6', 'NF3'].map(gas => (
                                     <Checkbox
                                         key={gas}
                                         label={gas}
-                                        checked={ghgRanges.includes(gas)}
+                                        checked={exportSettings.ghgRanges.includes(gas)}
                                         onChange={(e) => {
-                                            if (e.target.checked) setGhgRanges([...ghgRanges, gas]);
-                                            else setGhgRanges(ghgRanges.filter(g => g !== gas));
+                                            const s = new Set(exportSettings.ghgRanges);
+                                            e.target.checked ? s.add(gas) : s.delete(gas);
+                                            setExportSettings({ ...exportSettings, ghgRanges: [...s] });
                                         }}
                                     />
                                 ))}
@@ -327,27 +328,32 @@ const ReportInfo = () => {
                     </FormBlock>
 
                     <div className="px-3 pb-3">
-                        <div className="text-sm text-gray-500 mb-2">是否导出分配规则：</div>
-                        <table className="w-full border-collapse text-sm">
-                            <thead>
-                                <tr className="bg-[#E9F3F5] text-gray-500">
-                                    <th className="border border-gray-100 p-2 text-left font-normal w-24">是否导出</th>
-                                    <th className="border border-gray-100 p-2 text-left font-normal">分配规则</th>
-                                    <th className="border border-gray-100 p-2 text-left font-normal">公式</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr className="hover:bg-gray-50">
-                                    <td className="border border-gray-100 p-2 text-center">
-                                        <ToggleSwitch checked={showAllocRule} onChange={setShowAllocRule} />
-                                    </td>
-                                    <td className="border border-gray-100 p-2 text-gray-600">全厂产品间按重量分配</td>
-                                    <td className="border border-gray-100 p-2 text-gray-600 font-mono">
-                                        E(本产品) = E(总额) × (Q(本产品) / Q(年度))
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div className="flex items-center gap-2 mb-2">
+                            <span className="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-0.5 rounded">高级选项</span>
+                            <span className="text-xs text-gray-400">是否导出分配规则：</span>
+                        </div>
+                        <div className="border border-gray-200 rounded-lg overflow-hidden">
+                            <table className="w-full text-sm">
+                                <thead className="bg-gray-50 text-gray-500 border-b border-gray-200">
+                                    <tr>
+                                        <th className="p-2 font-medium w-24 text-center">导出</th>
+                                        <th className="p-2 font-medium text-left border-l border-gray-200">分配规则</th>
+                                        <th className="p-2 font-medium text-left border-l border-gray-200">公式</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="bg-white">
+                                    <tr>
+                                        <td className="p-2 text-center">
+                                            <ToggleSwitch checked={toggles.allocRule} onChange={() => updateToggle('allocRule')} />
+                                        </td>
+                                        <td className="p-2 border-l border-gray-100 text-gray-700">全厂产品间按重量分配</td>
+                                        <td className="p-2 border-l border-gray-100 text-gray-500 font-mono text-xs">
+                                            E(本产品) = E(总额) × (Q(本产品) / Q(年度))
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </ContentModule>

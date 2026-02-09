@@ -1,3 +1,11 @@
+/**
+ * Footer - 全局底部栏 (Dock)
+ * 
+ * 🏢 角色：工具栏/Dock (Global Dock)
+ * 📝 职责：
+ * 1. 提供全局性的快捷入口（如“文档”、“数据源”）。
+ * 2. 通过 Modal 或 Drawer 弹出辅助工具，而不打断当前主画面的工作流。
+ */
 import { IconInfoCircle, IconPackage, IconDatabase, IconServer, IconFileText, IconMapPin, IconFlask, IconActivity, IconStack2, IconBook, IconCpu } from '@tabler/icons-react';
 
 export default function Footer({ onOpenModal, activeAction }) {

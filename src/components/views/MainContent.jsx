@@ -1,3 +1,11 @@
+/**
+ * MainContent - 主内容区 (路由分发)
+ * 
+ * 🏢 角色：领位员 (Router / Dispatcher)
+ * 📝 职责：
+ * 1. 根据当前的状态，决定显示 Dashboard, BusinessContent 还是 ProjectLayout。
+ * 2. 它是一个“哑组件”(Dumb Component)，只根据传入的 Props 进行渲染选择。
+ */
 import Dashboard from '../views/Dashboard';
 import BusinessContent from '../views/BusinessContent';
 import ProjectLayout from '../views/ProjectLayout';

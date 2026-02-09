@@ -1,10 +1,16 @@
+/**
+ * StandardBusinessLayout - 标准背景数据页面布局
+ * 
+ * 🏢 角色：标准作业车间 (Standard Workshop)
+ * 📝 职责：提供一个统一的“筛选器+表格”模板。
+ * 1. 自动处理 Header 的搜索框和筛选按钮逻辑。
+ * 2. 也是 CanvasPage 的一种具体实现。
+ */
 import React, { useState, useEffect } from 'react';
 import { IconPlus, IconFilter, IconSearch } from '@tabler/icons-react';
 import { CanvasPage } from '../layout/PageLayouts';
 
 /**
- * StandardBusinessLayout - 标准背景数据页面布局
- * 
  * 用于创建带有筛选器+表格的标准背景数据页面
  * 复用 StandardFooter 的结构，但适配为全页面布局
  * 
@@ -12,7 +18,7 @@ import { CanvasPage } from '../layout/PageLayouts';
  * - title: 页面标题
  * - filterOptions: 筛选器配置 { types: [], statuses: [] }
  * - showSearch: 是否显示搜索框
- * - setHeaderActions: Header action setter from useHeaderContext
+ * - setHeaderActions: Header action setter from usePagePresentation
  */
 const StandardBusinessLayout = ({
     title,

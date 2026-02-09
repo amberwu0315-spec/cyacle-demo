@@ -1,9 +1,17 @@
+/**
+ * ModelPage - 建模主页
+ * 
+ * 🏢 角色：装配车间 (Modeling Assembly)
+ * 📝 职责：
+ * 1. 提供产品的结构化建模视图（BOM结构）。
+ * 2. 也是进入具体过程单元（Process Unit）进行详细建模的入口。
+ */
 import React, { useEffect, useState } from 'react';
-import { useHeaderContext } from '../../../context/HeaderContext';
+import { usePagePresentation } from '../../../context/PagePresentationContext';
 import { IconFilter, IconGrid4x4, IconNetwork, IconHierarchy, IconBox, IconPlus, IconWand } from '@tabler/icons-react';
 
 const ModelPage = () => {
-    const { setActions, setTitleOverride, setLayoutConfig } = useHeaderContext();
+    const { setActions, setTitleOverride, setLayoutConfig } = usePagePresentation();
 
     // 层级1：筛选器状态
     const [filterType, setFilterType] = useState('all');

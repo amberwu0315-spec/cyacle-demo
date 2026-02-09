@@ -1,6 +1,13 @@
+/**
+ * PagePresentationContext - 页面展示上下文 (原 HeaderContext)
+ * 
+ * 🏢 角色：装修队 / 场景布置
+ * 📝 职责：不关心业务，只关心“怎么摆好看”。管理 Header 上的按钮、标题、面包屑等显示元素。
+ * 🔧 包含：actions (Header按钮), titleOverride (自定义标题), layoutConfig (布局模式).
+ */
 import React, { createContext, useState, useContext, useCallback, useEffect } from 'react';
 
-const HeaderContext = createContext({
+const PagePresentationContext = createContext({
   actions: null,
   setActions: () => { },
   titleOverride: null,
@@ -9,9 +16,9 @@ const HeaderContext = createContext({
   setShowHeader: () => { },
 });
 
-export const useHeaderContext = () => useContext(HeaderContext);
+export const usePagePresentation = () => useContext(PagePresentationContext);
 
-export const HeaderProvider = ({ children }) => {
+export const PagePresentationProvider = ({ children }) => {
   const [actions, setActions] = useState(null);
   const [titleOverride, setTitleOverride] = useState(null);
   const [layoutConfig, setLayoutConfig] = useState('title-only');
@@ -20,7 +27,7 @@ export const HeaderProvider = ({ children }) => {
   const [showHeader, setShowHeader] = useState(true);
 
   return (
-    <HeaderContext.Provider value={{
+    <PagePresentationContext.Provider value={{
       actions, setActions,
       titleOverride, setTitleOverride,
       layoutConfig, setLayoutConfig,
@@ -28,13 +35,13 @@ export const HeaderProvider = ({ children }) => {
       showHeader, setShowHeader
     }}>
       {children}
-    </HeaderContext.Provider>
+    </PagePresentationContext.Provider>
   );
 };
 
 // Component to inject actions into the header
 export const HeaderActionPortal = ({ children }) => {
-  const { setActions } = useHeaderContext();
+  const { setActions } = usePagePresentation();
 
   useEffect(() => {
     setActions(children);

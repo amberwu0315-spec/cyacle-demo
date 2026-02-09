@@ -1,3 +1,12 @@
+/**
+ * ProjectLayout - 项目视图布局
+ * 
+ * 🏢 角色：项目指挥部 (Project HQ)
+ * 📝 职责：
+ * 1. 负责渲染具体的 L2 模块页面（如 AllocationPage, BasisPage, ModelPage）。
+ * 2. 它的结构通常是：Sidebar(L2) + Header + L2 Page Content。
+ * 3. 它是“项目模式”下的主要容器。
+ */
 import NavigationPage from './l2/NavigationPage';
 import BasisPage from './l2/BasisPage';
 import AllocationPage from './l2/AllocationPage';

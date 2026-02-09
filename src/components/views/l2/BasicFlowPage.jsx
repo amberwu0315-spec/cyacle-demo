@@ -1,9 +1,17 @@
+/**
+ * BasicFlowPage - 基本流管理
+ * 
+ * 🏢 角色：原材料库 (Elementary Flows)
+ * 📝 职责：管理最基础的物质流数据（如 CO2, CH4, 水）。
+ * 1. 通常作为背景数据被引用。
+ * 2. 属于 DatabaseManagement 的子模块。
+ */
 import React from 'react';
 import StandardBusinessLayout from '../StandardBusinessLayout';
-import { useHeaderContext } from '../../../context/HeaderContext';
+import { usePagePresentation } from '../../../context/PagePresentationContext';
 
 const BasicFlowPage = () => {
-    const { setActions } = useHeaderContext();
+    const { setActions } = usePagePresentation();
 
     const filterOptions = {
         types: [

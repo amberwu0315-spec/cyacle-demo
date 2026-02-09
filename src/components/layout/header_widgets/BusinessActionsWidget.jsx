@@ -1,8 +1,8 @@
 import React from 'react';
-import { useHeaderContext } from '../../../context/HeaderContext';
+import { usePagePresentation } from '../../../context/PagePresentationContext';
 
 const BusinessActionsWidget = () => {
-    const { actions } = useHeaderContext();
+    const { actions } = usePagePresentation();
     return (
         <div className="flex items-center gap-2">
             {actions}

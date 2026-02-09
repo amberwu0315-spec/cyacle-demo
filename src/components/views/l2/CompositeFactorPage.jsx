@@ -1,9 +1,16 @@
+/**
+ * CompositeFactorPage - 复合因子管理
+ * 
+ * 🏢 角色：配方库 (Composite Factors)
+ * 📝 职责：管理组合的环境影响因子（如“中国电网混合排放因子”）。
+ * 1. 它通常由多个基本流组合而成。
+ */
 import React from 'react';
 import StandardBusinessLayout from '../StandardBusinessLayout';
-import { useHeaderContext } from '../../../context/HeaderContext';
+import { usePagePresentation } from '../../../context/PagePresentationContext';
 
 const CompositeFactorPage = () => {
-    const { setActions } = useHeaderContext();
+    const { setActions } = usePagePresentation();
 
     const filterOptions = {
         types: [

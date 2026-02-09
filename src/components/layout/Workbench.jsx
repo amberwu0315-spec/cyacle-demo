@@ -1,3 +1,12 @@
+/**
+ * Workbench - 工作台 (二级布局)
+ * 
+ * 🏢 角色：部门经理 / 分区总管 (Zone Manager)
+ * 📝 职责：
+ * 1. 管理二级侧边栏 (L2Sidebar)，决定显示项目菜单还是业务菜单。
+ * 2. 也是 AppNavigationContext 和 View 层 (MainContent) 之间的关键桥梁。
+ * 3. 它决定了当前是“项目模式”还是“业务模式”。
+ */
 import { useState, useEffect } from 'react';
 import L2Sidebar from './L2Sidebar';
 import Header from './Header';
@@ -6,45 +15,43 @@ import Footer from './Footer';
 import Modal from './Modal';
 import ViewActionGroup from './ViewActionGroup';
 import { NavigationProvider, useNavigation } from '../../context/NavigationContext';
-
-import { useHeaderContext } from '../../context/HeaderContext'; // Import Context
+import { useAppNavigation } from '../../context/AppNavigationContext'; // New Hook
+import { useData } from '../../context/DataContext'; // New Hook
+import { usePagePresentation } from '../../context/PagePresentationContext';
 
 /**
  * Inner Component to Consume Navigation Context
  * This bridges the prop-driven "activeL2" with the Context-driven "activeDimension"
  */
 const WorkbenchContent = ({
-    mode,
-    activeL1,
-    activeL2,
-    activeL3,
-    onL2Change,
-    onL3Change,
-    isProjectLayout,
-    isBusinessLayout,
-    onProjectBack,
-    onProjectForward,
-    canGoBack,
-    canGoForward,
     headerTitle,
     setHeaderTitle,
     sidebarTitle,
-    setSidebarTitle,
-    // Tab & Navigation Props (from App)
-    businessTarget,
-    setBusinessTarget,
-    openedTabs,
-    onOpenTab,
-    onCloseTab,
-    // Data Props
-    projects,
-    onAddProject,
-    researchObjects,
-    onAddResearchObject
+    setSidebarTitle
 }) => {
-    // Sync activeL2 (Props) -> activeDimension (Context)
+    // 1. Consume App Navigation State
+    const {
+        activeL1, setActiveL1,
+        activeL2, setActiveL2,
+        activeL3, setActiveL3,
+        mode,
+        businessTarget, setBusinessTarget,
+        openedTabs,
+        openTab, clickTab, closeTab,
+        isProjectLayout, isBusinessLayout,
+        canGoBack, canGoForward,
+        goBack, goForward
+    } = useAppNavigation();
+
+    // 2. Consume Data State
+    const {
+        projects, addProject,
+        researchObjects, addResearchObject
+    } = useData();
+
+    // 3. Consume App-Level Navigation (Legacy Adapter)
     const { setActiveDimension, setActiveMode } = useNavigation();
-    const { showHeader } = useHeaderContext(); // Consume showHeader
+    const { showHeader } = usePagePresentation();
 
     // Derived State for Layout Switching
     const isDetailView = businessTarget && businessTarget.startsWith('detail_');
@@ -66,7 +73,7 @@ const WorkbenchContent = ({
             setActiveDimension(businessTarget);
             setActiveMode('config');
         }
-    }, [activeL2, isProjectLayout, isBusinessLayout, isDetailView, setActiveDimension, setActiveMode]);
+    }, [activeL2, isProjectLayout, isBusinessLayout, isDetailView, businessTarget, setActiveDimension, setActiveMode]);
 
     // Update header title based on context
     useEffect(() => {
@@ -147,7 +154,7 @@ const WorkbenchContent = ({
         } else {
             setHeaderTitle('Dashboard');
         }
-    }, [effectiveL1, activeL2, isProjectLayout, isBusinessLayout, businessTarget, isDetailView, openedTabs, setHeaderTitle]);
+    }, [effectiveL1, activeL2, isProjectLayout, isBusinessLayout, businessTarget, isDetailView, openedTabs, setHeaderTitle, setSidebarTitle]);
 
     // Auto-Close Modal
     useEffect(() => {
@@ -180,9 +187,9 @@ const WorkbenchContent = ({
                         activeL2={(isProjectLayout || isDetailView) ? activeL2 : businessTarget}
                         onSelect={(id) => {
                             if (isProjectLayout || isDetailView) {
-                                onL2Change(id);
+                                setActiveL2(id); // Use Hook
                             } else {
-                                setBusinessTarget(id);
+                                setBusinessTarget(id); // Use Hook
                             }
                         }}
                         enterpriseName={sidebarTitle}
@@ -202,10 +209,10 @@ const WorkbenchContent = ({
                                 <ViewActionGroup
                                     key="view-group"
                                     showDivider={false} // Divider handled by Header logic
-                                    onBack={onProjectBack}
-                                    onForward={onProjectForward}
-                                    canBack={canGoBack}
-                                    canForward={canGoForward}
+                                    onBack={goBack} // Use Hook
+                                    onForward={goForward} // Use Hook
+                                    canBack={canGoBack} // Use Hook
+                                    canForward={canGoForward} // Use Hook
                                 />
                             ] : []}
                         />
@@ -217,15 +224,15 @@ const WorkbenchContent = ({
                             activeL1={activeL1}
                             activeL2={activeL2}
                             activeL3={activeL3}
-                            onL3Change={onL3Change}
+                            onL3Change={setActiveL3} // Use Hook
                             businessTarget={businessTarget}
-                            onOpenTab={onOpenTab} // Pass open handler from props
-                            openedTabs={openedTabs}   // Pass tabs data from props
+                            onOpenTab={openTab} // Use Hook
+                            openedTabs={openedTabs} // Use Hook
                             // Data Props
                             projects={projects}
-                            onAddProject={onAddProject}
+                            onAddProject={addProject}
                             researchObjects={researchObjects}
-                            onAddResearchObject={onAddResearchObject}
+                            onAddResearchObject={addResearchObject}
                         />
                     </div>
 
@@ -242,22 +249,29 @@ const WorkbenchContent = ({
 };
 
 // Wrapper Export to Provide Context
-export default function Workbench(props) {
+export default function Workbench() {
     // Only manage local UI state like Header Title here
     const [headerTitle, setHeaderTitle] = useState('');
     const [sidebarTitle, setSidebarTitle] = useState('');
 
-    // businessTarget and openedTabs are now PROPS passed from App.jsx
+    const { activeL2, setBusinessTarget, isProjectLayout, setActiveL2 } = useAppNavigation();
+
+    // Adapter for inner NavigationProvider
+    const handleNavigationEvent = (id) => {
+        // This is a bit tricky, L2Sidebar calls strict onSelect.
+        // We need to mirror checking logic if we want to support any 'onNavigate' callback here?
+        // Actually the inner L2Sidebar calls setActiveL2 directly in my new code above.
+        // But NavigationProvider expects an 'onNavigate' prop sometimes.
+        // Let's keep it simple: if NavigationProvider calls onNavigate, it's usually from internal logic.
+        // But we are driving everything from AppNavigationContext now.
+    }
 
     return (
-        <NavigationProvider onNavigate={props.onL2Change}>
-            <WorkbenchContent
-                {...props}
-                headerTitle={headerTitle}
-                setHeaderTitle={setHeaderTitle}
-                sidebarTitle={sidebarTitle}
-                setSidebarTitle={setSidebarTitle}
-            />
-        </NavigationProvider>
+        <WorkbenchContent
+            headerTitle={headerTitle}
+            setHeaderTitle={setHeaderTitle}
+            sidebarTitle={sidebarTitle}
+            setSidebarTitle={setSidebarTitle}
+        />
     );
 }

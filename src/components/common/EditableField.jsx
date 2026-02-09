@@ -1,3 +1,11 @@
+/**
+ * EditableField - 可编辑字段
+ * 
+ * 🏢 角色：微型编辑器 (Micro Editor)
+ * 📝 职责：
+ * 1. 提供“点击即编辑”、“失焦即保存”的交互体验。
+ * 2. 支持文本、数字等不同类型的输入。
+ */
 import React, { useState, useRef, useEffect } from 'react';
 import { TextInput, NumberInput, Select, Textarea, useCombobox } from '@mantine/core';
 import { IconPencil, IconCheck, IconX, IconRotate, IconTextPlus, IconInfoCircle, IconLoader2 } from '@tabler/icons-react';

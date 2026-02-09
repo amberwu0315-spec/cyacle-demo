@@ -1,9 +1,17 @@
+/**
+ * AllocationPage - 分配模型页面
+ * 
+ * 🏢 角色：分配规则配置 (Allocation Rules)
+ * 📝 职责：
+ * 1. 管理产品/副产品的环境影响分配比例（如质量分配、经济分配）。
+ * 2. 提供可视化的分配系数编辑界面。
+ */
 import React, { useEffect, useState } from 'react';
-import { useHeaderContext } from '../../../context/HeaderContext';
+import { usePagePresentation } from '../../../context/PagePresentationContext';
 import { IconFilter, IconBox, IconCheck, IconPlus } from '@tabler/icons-react';
 
 const AllocationPage = () => {
-    const { setActions, setTitleOverride, setLayoutConfig } = useHeaderContext();
+    const { setActions, setTitleOverride, setLayoutConfig } = usePagePresentation();
 
     // 层级1：筛选器状态
     const [filterType, setFilterType] = useState('all');

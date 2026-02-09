@@ -1,9 +1,16 @@
+/**
+ * LiteraturePage - 文献管理
+ * 
+ * 🏢 角色：图书馆 (Library)
+ * 📝 职责：管理所有的参考文献（PDF/Link）。
+ * 1. 作为数据来源的凭证。
+ */
 import React from 'react';
 import StandardBusinessLayout from '../StandardBusinessLayout';
-import { useHeaderContext } from '../../../context/HeaderContext';
+import { usePagePresentation } from '../../../context/PagePresentationContext';
 
 const LiteraturePage = () => {
-    const { setActions } = useHeaderContext();
+    const { setActions } = usePagePresentation();
 
     const filterOptions = {
         types: [

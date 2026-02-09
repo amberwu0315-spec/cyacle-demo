@@ -1,7 +1,24 @@
+/**
+ * L1Sidebar - 一级导航侧边栏
+ * 
+ * 🏢 角色：主电梯 / 楼层索引 (Main Elevator)
+ * 📝 职责：
+ * 1. 管理应用最顶层模块的切换 (Active L1)，如 workspace, background_data, enterprise。
+ * 2. 也是 "Opened Tabs" (多标签页) 的停靠港湾。
+ */
 import { IconUserCircle, IconDatabase, IconLayoutKanban, IconBuilding, IconFileCode, IconBell, IconSettings, IconFileText, IconX, IconShield } from '@tabler/icons-react';
 import Tooltip from '../common/Tooltip';
+import { useAppNavigation } from '../../context/AppNavigationContext';
 
-export default function L1Sidebar({ activeL1, onSelect, openedTabs = [], activeTarget, onSelectTab, onCloseTab }) {
+export default function L1Sidebar() {
+    const {
+        activeL1,
+        setActiveL1,
+        openedTabs,
+        businessTarget,
+        clickTab,
+        closeTab
+    } = useAppNavigation();
 
     const navItems = [
         { id: 'home', icon: IconUserCircle, label: '工作空间 (Workspace)' },
@@ -18,7 +35,7 @@ export default function L1Sidebar({ activeL1, onSelect, openedTabs = [], activeT
                     return (
                         <Tooltip key={item.id} content={item.label} placement="right">
                             <button
-                                onClick={() => onSelect(item.id)}
+                                onClick={() => setActiveL1(item.id)}
                                 className={`group relative p-3 rounded-lg transition-colors ${isActive ? 'bg-white/10' : 'hover:bg-white/10'}`}
                             >
                                 <item.icon
@@ -34,7 +51,7 @@ export default function L1Sidebar({ activeL1, onSelect, openedTabs = [], activeT
                 {/* Project Tag */}
                 <Tooltip content="项目标签 (Project Tag)" placement="right">
                     <button
-                        onClick={() => onSelect('project_tag')}
+                        onClick={() => setActiveL1('project_tag')}
                         className={`group relative p-3 rounded-lg transition-colors ${activeL1 === 'project_tag' ? 'bg-white/10' : 'hover:bg-white/10'}`}
                     >
                         <IconFileCode className={`w-6 h-6 transition-colors text-[#10B981] ${activeL1 === 'project_tag' ? '' : 'group-hover:text-[#34D399]'}`} />
@@ -47,7 +64,7 @@ export default function L1Sidebar({ activeL1, onSelect, openedTabs = [], activeT
                         <div className="h-px bg-white/10 w-8 mx-auto my-[4px] mt-2"></div>
                         <div className="flex flex-col gap-[2px] w-full items-center">
                             {openedTabs.map(tab => {
-                                const isActive = activeTarget === tab.id;
+                                const isActive = businessTarget === tab.id;
                                 // Determine Icon based on context
                                 let TabIcon = IconFileText;
                                 if (tab.l1Context === 'project_mgmt') TabIcon = IconLayoutKanban;
@@ -57,7 +74,7 @@ export default function L1Sidebar({ activeL1, onSelect, openedTabs = [], activeT
                                     <Tooltip key={tab.id} content={tab.title} placement="right">
                                         <div className="relative group">
                                             <button
-                                                onClick={() => onSelectTab && onSelectTab(tab.id)}
+                                                onClick={() => clickTab(tab.id)}
                                                 className={`p-3 rounded-lg transition-colors ${isActive ? 'bg-[#087F9C]/20 border border-[#087F9C]/50' : 'hover:bg-white/5 border border-transparent'}`}
                                             >
                                                 <TabIcon
@@ -68,7 +85,7 @@ export default function L1Sidebar({ activeL1, onSelect, openedTabs = [], activeT
                                             <button
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    onCloseTab && onCloseTab(tab.id, e);
+                                                    closeTab(tab.id, e);
                                                 }}
                                                 className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-[1px] opacity-0 group-hover:opacity-100 transition-opacity shadow-sm hover:scale-110"
                                             >

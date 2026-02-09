@@ -1,5 +1,13 @@
+/**
+ * ModelLevelPage - 模型层级视图
+ * 
+ * 🏢 角色：装配线监控 (Assembly Line Monitor)
+ * 📝 职责：
+ * 1. 处理具体某个层级（如 L3）的模型展示。
+ * 2. 包含左侧的结构树 (L3Sidebar) 和右侧的详情 (L3DetailPanel)。
+ */
 import React, { useEffect } from 'react';
-import { useHeaderContext } from '../../../context/HeaderContext';
+import { usePagePresentation } from '../../../context/PagePresentationContext';
 import { useNavigation } from '../../../context/NavigationContext';
 import L3Sidebar from '../../layout/L3Sidebar';
 

@@ -1,15 +1,23 @@
-import React from 'react';
+/**
+ * CreateProjectPage - 创建项目页面
+ * 
+ * 🏢 角色：立项办公室 (Project Initiation)
+ * 📝 职责：
+ * 1. 提供创建新项目的表单向导。
+ * 2. 收集项目的基本信息（如名称、行业、时间范围）。
+ */
+import React, { useState, useEffect } from 'react';
 import { DoubleColumnPage } from '../../layout/PageLayouts';
 import { ContentModule, ModuleHeader } from '../../common/ContentModule';
 import FormBlock from '../../common/FormBlock';
 import EditableField from '../../common/EditableField';
 import { IconDeviceFloppy } from '@tabler/icons-react';
 
-import { useHeaderContext } from '../../../context/HeaderContext';
+import { usePagePresentation } from '../../../context/PagePresentationContext';
 import { researchObjectData } from '../../../data/mockData';
 
 const CreateProjectPage = ({ onCancel, onSave }) => {
-    const { setShowHeader } = useHeaderContext();
+    const { setShowHeader } = usePagePresentation();
 
     // Mock Data
     const RESEARCH_OBJECTS = researchObjectData || [];

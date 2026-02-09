@@ -1,4 +1,12 @@
-import React from 'react';
+/**
+ * CenterModal - 居中模态框
+ * 
+ * 🏢 角色：标准对话框 (Standard Dialog)
+ * 📝 职责：
+ * 1. 提供标准的居中弹窗样式（遮罩、圆角、阴影）。
+ * 2. 用于重要信息的确认或复杂表单的填写。
+ */
+import React, { useEffect } from 'react';
 import { IconX } from '@tabler/icons-react';
 
 export default function CenterModal({ isOpen, onClose, title, children, footer }) {

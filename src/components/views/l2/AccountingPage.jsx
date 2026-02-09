@@ -1,6 +1,14 @@
+/**
+ * AccountingPage - 核算模型主页
+ * 
+ * 🏢 角色：核算工作室 (Accounting Studio)
+ * 📝 职责：
+ * 1. 提供"清单"、"计算"、"结果"三级视图的切换。
+ * 2. 是核心的业务生产页面之一。
+ */
 import React, { useEffect, useState } from 'react';
 import { IconLoader2 } from '@tabler/icons-react'; // [新增] 用于 Loading 图标
-import { useHeaderContext } from '../../../context/HeaderContext';
+import { useHeaderContext } from '../../../context/PagePresentationContext';
 import { useNavigation } from '../../../context/NavigationContext';
 import L3Sidebar from '../../layout/L3Sidebar';
 import InnerDrawer from '../../common/InnerDrawer';
@@ -15,7 +23,7 @@ import ReportExport from '../l3/ReportExport';
 
 // Wrapper for L3 Routing Logic
 const AccountingPage = ({ activeL3, onL3Change }) => {
-    const { setActions } = useHeaderContext();
+    const { setActions } = usePagePresentation();
     const { activeMode } = useNavigation();
 
     // [新增] 页面加载状态：用于模拟切换 Tab 时的接口请求延迟

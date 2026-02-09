@@ -1,3 +1,11 @@
+/**
+ * Dashboard - 仪表盘
+ * 
+ * 🏢 角色：大厅展示 (Lobby Display)
+ * 📝 职责：
+ * 1. 显示全局概览数据（目前是静态占位符）。
+ * 2. 最基础的基础视图。
+ */
 export default function Dashboard() {
     return (
         <div className="w-full h-full flex flex-col p-8 overflow-y-auto bg-[#F5F6F8]">

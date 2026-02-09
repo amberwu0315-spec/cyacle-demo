@@ -1,3 +1,10 @@
+/**
+ * StandardFooter - 标准底部栏引用
+ * 
+ * 🏢 角色：可复用的底部栏 (Reusable Footer)
+ * 📝 职责：为那些不需要自定义底部栏的页面提供统一的 Footer 实例。
+ * 1. 通常直接引用全局 Layout 中的 Footer。
+ */
 import React, { useState } from 'react';
 import { IconPlus, IconFilter } from '@tabler/icons-react';
 import FooterModal from './FooterModal';

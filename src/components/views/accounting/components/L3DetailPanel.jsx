@@ -1,3 +1,11 @@
+/**
+ * L3DetailPanel - L3 详情面板
+ * 
+ * 🏢 角色：多态工作台 (Polymorphic Workbench)
+ * 📝 职责：
+ * 1. 根据选中的节点类型 (Product/Phase/Module/Process) 渲染不同的编辑器。
+ * 2. 也是 "积木系统" (Bricks) 的组装容器。
+ */
 import React from 'react';
 import {
     HeaderBrick,

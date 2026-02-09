@@ -1,3 +1,11 @@
+/**
+ * ProjectDetailView - 项目详情页
+ * 
+ * 🏢 角色：项目档案卡 (Project Dossier)
+ * 📝 职责：
+ * 1. 展示单个项目的详细信息（ID, 类型, 状态）。
+ * 2. 是 "Opened Tabs" 中最常见的详情视图类型。
+ */
 import React from 'react';
 import { IconArrowLeft } from '@tabler/icons-react';
 

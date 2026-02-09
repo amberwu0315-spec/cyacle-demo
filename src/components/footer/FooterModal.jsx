@@ -1,3 +1,11 @@
+/**
+ * FooterModal - 底部弹窗容器
+ * 
+ * 🏢 角色：快捷工具箱 (Quick Toolbox)
+ * 📝 职责：
+ * 1. 响应 Footer 按钮点击，从底部弹出的半屏窗口。
+ * 2. 用于展示辅助信息（如文档、数据源详情）。
+ */
 import React from 'react';
 import { IconHistory, IconTrash, IconExternalLink, IconX, IconPlus } from '@tabler/icons-react';
 

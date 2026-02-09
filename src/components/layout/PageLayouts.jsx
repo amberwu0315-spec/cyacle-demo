@@ -1,3 +1,12 @@
+/**
+ * PageLayouts - 通用页面布局模板
+ * 
+ * 🏢 角色：样板间设计 (Layout Templates)
+ * 📝 职责：提供复用性极高的页面结构，确保全站设计一致性。
+ * - SingleColumnPage: 简单单栏。
+ * - DoubleColumnPage: 左右分栏 (Master-Detail)。
+ * - CanvasPage: 全屏画布。
+ */
 import React from 'react';
 import ViewContainer from './ViewContainer';
 import { IconLogout, IconChevronLeft } from '@tabler/icons-react'; // Changed IconX to IconLogout

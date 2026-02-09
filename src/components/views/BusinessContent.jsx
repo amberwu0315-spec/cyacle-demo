@@ -1,7 +1,15 @@
+/**
+ * BusinessContent - 业务内容容器
+ * 
+ * 🏢 角色：多功能厅 (Multi-function Hall)
+ * 📝 职责：
+ * 1. 负责渲染所有的“非项目”页面（如数据库管理、文献库、企业设置）。
+ * 2. 根据 `target` (L2 ID) 动态切换渲染的子页面 (ComponentPage, LiteraturePage 等)。
+ */
 import React, { useEffect } from 'react';
 import { IconStack2, IconFilter, IconSearch, IconPlus, IconLayoutGrid, IconShield, IconMapPin } from '@tabler/icons-react';
 import StandardBusinessLayout from './StandardBusinessLayout';
-import { useHeaderContext } from '../../context/HeaderContext';
+import { useHeaderContext } from '../../context/PagePresentationContext';
 import ComponentPage from './l2/ComponentPage';
 import BasicFlowPage from './l2/BasicFlowPage';
 import CompositeFactorPage from './l2/CompositeFactorPage';
@@ -10,11 +18,12 @@ import LiteraturePage from './l2/LiteraturePage';
 import DatabaseManagementPage from './l2/DatabaseManagementPage';
 import CreateProjectPage from './l2/CreateProjectPage';
 import CreateResearchObjectPage from './l2/CreateResearchObjectPage';
+import { usePagePresentation } from '../../context/PagePresentationContext';
 
 import { researchObjectData } from '../../data/mockData';
 
 export default function BusinessContent({ activeL1, target, onOpenTab, openedTabs = [], projects = [], onAddProject, researchObjects = [], onAddResearchObject }) {
-    const { setActions } = useHeaderContext();
+    const { setActions } = usePagePresentation();
 
     // State for Research Object View Mode
     const [objectLimitMode, setObjectLimitMode] = React.useState('list'); // 'list' | 'create'

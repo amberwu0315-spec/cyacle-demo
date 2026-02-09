@@ -1,3 +1,11 @@
+/**
+ * ViewActionGroup - 视图操作按钮组
+ * 
+ * 🏢 角色：可复用的导航控件 (Reusable Nav Controls)
+ * 📝 职责：
+ * 1. 提供标准的“后退”、“前进”、“新窗口打开”按钮。
+ * 2. 通常嵌入在 Header 中，由 PagePresentationContext 传递。
+ */
 import React from 'react';
 import { IconChevronLeft, IconChevronRight, IconExternalLink } from '@tabler/icons-react';
 import Tooltip from '../common/Tooltip';

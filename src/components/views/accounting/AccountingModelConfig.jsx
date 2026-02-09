@@ -1,3 +1,12 @@
+/**
+ * AccountingModelConfig - 核算模型配置 (L3主控台)
+ * 
+ * 🏢 角色：BOM 结构设计师 (BOM Designer)
+ * 📝 职责：
+ * 1. 管理核心的树状结构 (L3AdvancedTree)。
+ * 2. 协调左侧树与右侧详情面板 (L3DetailPanel) 的交互。
+ * 3. 处理增删改查、拖拽移动等核心数据操作。
+ */
 import React, { useState, useMemo } from 'react';
 // 1. 确保路径正确引入组件
 import L3AdvancedTree from './components/L3AdvancedTree';

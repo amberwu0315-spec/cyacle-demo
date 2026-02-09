@@ -1,9 +1,17 @@
+/**
+ * DatabaseManagementPage - 数据库管理主页
+ * 
+ * 🏢 角色：总仓储中心 (Central Warehouse)
+ * 📝 职责：
+ * 1. 作为所有背景数据（基础流、因子、元件）的统一入口。
+ * 2. 提供子模块的导航菜单。
+ */
 import React, { useEffect } from 'react';
 import { IconFilter, IconSearch, IconPlus } from '@tabler/icons-react';
-import { useHeaderContext } from '../../../context/HeaderContext';
+import { usePagePresentation } from '../../../context/PagePresentationContext';
 
 const DatabaseManagementPage = () => {
-    const { setActions } = useHeaderContext();
+    const { setActions } = usePagePresentation();
 
     // 设置Header的创建按钮
     useEffect(() => {

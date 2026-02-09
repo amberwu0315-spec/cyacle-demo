@@ -1,8 +1,8 @@
 import React from 'react';
-import { useHeaderContext } from '../../../context/HeaderContext';
+import { usePagePresentation } from '../../../context/PagePresentationContext';
 
 const TitleWidget = ({ title }) => {
-    const { titleOverride } = useHeaderContext();
+    const { titleOverride } = usePagePresentation();
     return (
         <h1 className="text-base font-medium text-gray-800 tracking-tight">
             {titleOverride || title || 'Project'}
