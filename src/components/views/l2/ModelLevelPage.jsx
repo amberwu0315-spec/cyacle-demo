@@ -19,7 +19,7 @@ import FactorDataView from '../shared/FactorDataView';
 
 // THIS IS DIMENSION B: MODEL LEVEL (The detailed view)
 const ModelLevelPage = ({ activeL3, onL3Change }) => {
-    const { setActions, setLayoutConfig } = useHeaderContext();
+    const { setActions, setLayoutConfig } = usePagePresentation();
     const { activeMode } = useNavigation();
 
     // Default Selection Logic

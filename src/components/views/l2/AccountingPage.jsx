@@ -8,10 +8,11 @@
  */
 import React, { useEffect, useState } from 'react';
 import { IconLoader2 } from '@tabler/icons-react'; // [新增] 用于 Loading 图标
-import { useHeaderContext } from '../../../context/PagePresentationContext';
+import { usePagePresentation } from '../../../context/PagePresentationContext';
 import { useNavigation } from '../../../context/NavigationContext';
 import L3Sidebar from '../../layout/L3Sidebar';
 import InnerDrawer from '../../common/InnerDrawer';
+import ComingSoon from '../../common/ComingSoon';
 
 // L3 Views
 import AccountingBasic from '../l3/AccountingBasic';
@@ -62,19 +63,19 @@ const AccountingPage = ({ activeL3, onL3Change }) => {
         switch (activeL3) {
             case 'acct_basic': return <AccountingBasic />;
             case 'acct_model_config': return <AccountingModelConfig />;
-            case 'acct_calc': return <div className="p-10 text-gray-400">计算与分析 Placeholder</div>;
-            case 'acct_tools': return <div className="p-10 text-gray-400">分析工具 Placeholder</div>;
+            case 'acct_calc': return <ComingSoon title="计算与分析" />;
+            case 'acct_tools': return <ComingSoon title="分析工具" />;
             case 'acct_pers_activity': return <ActivityDataView />;
             case 'acct_pers_factor': return <FactorDataView />;
             case 'rpt_info': return <ReportInfo />;
             case 'rpt_export': return <ReportExport />;
-            case 'rpt_voucher': return <div className="p-10 text-gray-400">凭证管理 Placeholder</div>;
-            case 'rpt_sheet': return <div className="p-10 text-gray-400">计算表 Placeholder</div>;
-            case 'app_cpcd': return <div className="p-10 text-gray-400">CPCD 申请单 Placeholder</div>;
-            case 'cmp_list': return <div className="p-10 text-gray-400">对比列表 Placeholder</div>;
-            case 'cmp_config': return <div className="p-10 text-gray-400">对比配置 Placeholder</div>;
-            case 'cmp_detail': return <div className="p-10 text-gray-400">对比详情 Placeholder</div>;
-            case 'cmp_result': return <div className="p-10 text-gray-400">对比结果 Placeholder</div>;
+            case 'rpt_voucher': return <ComingSoon title="凭证管理" />;
+            case 'rpt_sheet': return <ComingSoon title="计算表" />;
+            case 'app_cpcd': return <ComingSoon title="CPCD信息" />;
+            case 'cmp_list': return <ComingSoon title="对比核算列表" />;
+            case 'cmp_config': return <ComingSoon title="对比配置调整" />;
+            case 'cmp_detail': return <ComingSoon title="对比标识详情" />;
+            case 'cmp_result': return <ComingSoon title="对比分析结果" />;
             default: return <AccountingBasic />;
         }
     };

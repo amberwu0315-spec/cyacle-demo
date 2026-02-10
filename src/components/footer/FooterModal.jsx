@@ -11,16 +11,13 @@ import { IconHistory, IconTrash, IconExternalLink, IconX, IconPlus } from '@tabl
 
 /**
  * FooterModal 通用组件
- * 
- * 为所有 Footer 悬浮窗提供标准化的顶部栏和容器结构
- * 
- * 定位规则（来自 product_logic.md）：
+ * * 为所有 Footer 悬浮窗提供标准化的顶部栏和容器结构
+ * * 定位规则（来自 product_logic.md）：
  * - Position: absolute top-0 left-0 bottom-[40px] right-0 (相对于 #right-zone)
  * - 覆盖范围：Header + L3 Sidebar + Main Content
  * - 必须显示：L1 Sidebar + L2 Sidebar + Footer
  * - 样式：4px 青色边框
- * 
- * Props:
+ * * Props:
  * - title: 标题文字
  * - businessActions: 业务功能组 (版本历史/删除/添加等)
  * - onClose: 关闭回调
@@ -33,7 +30,8 @@ const FooterModal = ({ title, businessActions, onClose, children }) => {
     };
 
     return (
-        <div className="absolute top-0 left-0 bottom-[40px] right-0 bg-white/95 backdrop-blur-sm z-50 flex flex-col shadow-2xl border-4 border-[#087F9C] rounded-t-lg">
+        // ✅ 修复点 1: border-[#087F9C] -> border-primary
+        <div className="absolute top-0 left-0 bottom-[40px] right-0 bg-white/95 backdrop-blur-sm z-50 flex flex-col shadow-2xl border-4 border-primary rounded-t-lg">
             {/* 顶部栏 */}
             <div className="h-10 bg-gray-50 border-b border-gray-200 flex items-center justify-between px-3 shrink-0">
                 {/* 左侧标题 */}
@@ -52,7 +50,8 @@ const FooterModal = ({ title, businessActions, onClose, children }) => {
                     <div className="flex items-center gap-1">
                         <button
                             onClick={handleOpenWindow}
-                            className="p-1.5 text-gray-600 hover:text-[#087F9C] hover:bg-gray-100 rounded transition-colors"
+                            // ✅ 修复点 2: hover:text-[#087F9C] -> hover:text-primary
+                            className="p-1.5 text-gray-600 hover:text-primary hover:bg-gray-100 rounded transition-colors"
                             title="打开独立窗口"
                         >
                             <IconExternalLink size={16} />

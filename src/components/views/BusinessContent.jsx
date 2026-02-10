@@ -9,7 +9,7 @@
 import React, { useEffect } from 'react';
 import { IconStack2, IconFilter, IconSearch, IconPlus, IconLayoutGrid, IconShield, IconMapPin } from '@tabler/icons-react';
 import StandardBusinessLayout from './StandardBusinessLayout';
-import { useHeaderContext } from '../../context/PagePresentationContext';
+
 import ComponentPage from './l2/ComponentPage';
 import BasicFlowPage from './l2/BasicFlowPage';
 import CompositeFactorPage from './l2/CompositeFactorPage';

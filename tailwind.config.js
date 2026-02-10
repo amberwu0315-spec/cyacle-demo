@@ -9,8 +9,8 @@ export default {
             colors: {
                 primary: {
                     DEFAULT: '#087F9C',
-                    hover: '#066c85', // Legacy, can be refined
-                    light: '#0a98ba', // Legacy
+                    hover: '#087F9C', // Legacy, can be refined
+                    light: '#087F9C', // Legacy
                 },
                 'sidebar-dark': '#1E2A32',
                 'accent-green': '#10B981',
