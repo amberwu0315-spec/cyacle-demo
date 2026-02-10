@@ -8,7 +8,9 @@
  */
 import { IconUserCircle, IconDatabase, IconLayoutKanban, IconBuilding, IconFileCode, IconBell, IconSettings, IconFileText, IconX, IconShield } from '@tabler/icons-react';
 import Tooltip from '../common/Tooltip';
+import { useEffect, useState } from 'react';
 import { useAppNavigation } from '../../context/AppNavigationContext';
+import { useUser } from '../../context/UserContext';
 
 export default function L1Sidebar() {
     const {
@@ -20,17 +22,37 @@ export default function L1Sidebar() {
         closeTab
     } = useAppNavigation();
 
-    const navItems = [
-        { id: 'home', icon: IconUserCircle, label: '工作空间 (Workspace)' },
-        { id: 'background_data', icon: IconDatabase, label: '背景数据 (Background Data)' },
-        { id: 'project_mgmt', icon: IconLayoutKanban, label: '项目管理 (Project Management)' },
-        { id: 'enterprise', icon: IconBuilding, label: '研究对象 (Enterprise)' },
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+    const { isL1Allowed, getL1Label } = useUser();
+
+    // Redirect to home if current activeL1 is not allowed
+    // except 'project_tag' which is common
+    useEffect(() => {
+        if (activeL1 !== 'project_tag' && !isL1Allowed(activeL1)) {
+            setActiveL1('home');
+        }
+    }, [activeL1, isL1Allowed, setActiveL1]);
+
+    // Define all possible items with their default labels
+    const allNavItems = [
+        { id: 'home', icon: IconUserCircle, label: '首页' },
+        { id: 'background_data', icon: IconDatabase, label: '背景数据' },
+        { id: 'project_mgmt', icon: IconLayoutKanban, label: '项目管理' },
+        { id: 'enterprise', icon: IconBuilding, label: '服务企业' },
     ];
+
+    // Filter and map items based on permissions
+    const visibleNavItems = allNavItems
+        .filter(item => isL1Allowed(item.id))
+        .map(item => ({
+            ...item,
+            label: getL1Label(item.id, item.label)
+        }));
 
     return (
         <nav className="fixed left-0 top-0 bottom-0 w-fit flex flex-col items-center pt-4 pb-6 z-50 bg-sidebar-dark">
             <div className="flex flex-col gap-[2px] w-full items-center px-1">
-                {navItems.map((item) => {
+                {visibleNavItems.map((item) => {
                     const isActive = activeL1 === item.id;
                     return (
                         <Tooltip key={item.id} content={item.label} placement="right">
@@ -49,7 +71,7 @@ export default function L1Sidebar() {
                 <div className="h-px bg-white/10 w-8 mx-auto my-[4px]"></div>
 
                 {/* Project Tag */}
-                <Tooltip content="项目标签 (Project Tag)" placement="right">
+                <Tooltip content="项目标签" placement="right">
                     <button
                         onClick={() => setActiveL1('project_tag')}
                         className={`group relative p-3 rounded-lg transition-colors ${activeL1 === 'project_tag' ? 'bg-white/10' : 'hover:bg-white/10'}`}
@@ -101,18 +123,66 @@ export default function L1Sidebar() {
             </div>
 
             <div className="mt-auto flex flex-col gap-[2px] w-full items-center px-1">
-                <Tooltip content="通知中心 (Notifications)" placement="right">
+                <Tooltip content="通知中心" placement="right">
                     <button className="group relative p-3 hover:text-white transition-colors">
                         <IconBell className="w-6 h-6 text-white/70" />
                     </button>
                 </Tooltip>
 
-                <Tooltip content="设置 (Settings)" placement="right">
-                    <button className="group relative p-3 hover:text-white transition-colors">
-                        <IconSettings className="w-6 h-6 text-white/70" />
-                    </button>
+                <Tooltip content="设置" placement="right">
+                    <div className="relative">
+                        <button
+                            onClick={() => setIsSettingsOpen(!isSettingsOpen)}
+                            className={`group relative p-3 transition-colors ${isSettingsOpen ? 'text-white bg-white/10 rounded-lg' : 'hover:text-white text-white/70'}`}
+                        >
+                            <IconSettings className="w-6 h-6" />
+                        </button>
+
+                        {/* Settings Popover */}
+                        {isSettingsOpen && (
+                            <>
+                                {/* Backdrop to close */}
+                                <div
+                                    className="fixed inset-0 z-[60]"
+                                    onClick={() => setIsSettingsOpen(false)}
+                                ></div>
+
+                                {/* Popover Content */}
+                                <div className="absolute left-full bottom-0 ml-2 w-64 bg-[#1E2A32] border border-gray-700 shadow-xl rounded-lg p-4 z-[70] text-sm">
+                                    <div className="text-white font-medium mb-3 pb-2 border-b border-gray-700">
+                                        系统设置
+                                    </div>
+
+                                    {/* Role Switcher Section */}
+                                    <div className="mb-4">
+                                        <div className="text-gray-400 text-xs mb-2">演示：切换角色</div>
+                                        <RoleSwitcher />
+                                    </div>
+
+                                    <div className="text-gray-500 text-xs italic">
+                                        更多设置功能开发中...
+                                    </div>
+                                </div>
+                            </>
+                        )}
+                    </div>
                 </Tooltip>
             </div>
         </nav>
+    );
+}
+
+// Internal component for the switcher to keep it self-contained
+function RoleSwitcher() {
+    const { currentRole, setCurrentRole } = useUser();
+    return (
+        <select
+            value={currentRole}
+            onChange={(e) => setCurrentRole(e.target.value)}
+            className="w-full bg-black/20 border border-gray-600 rounded px-3 py-2 outline-none text-white text-xs cursor-pointer focus:border-[#087F9C] transition-colors"
+        >
+            <option value="ENTERPRISE">🏢 企业账号 (服务企业)</option>
+            <option value="INDIVIDUAL">👤 个人/服务商 (研究对象)</option>
+        </select>
     );
 }

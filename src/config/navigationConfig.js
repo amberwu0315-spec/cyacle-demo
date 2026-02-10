@@ -50,7 +50,7 @@ export const NAV_SCHEME = {
         modes: {
             config: {
                 headerWidgets: ['breadcrumb', 'methodology', 'overview', 'mode_switch', 'view_actions'],
-                sidebarGroups: ['acct_group', 'output_group', 'additional_group']
+                sidebarGroups: ['acct_group', 'acct_perspective_group', 'output_group', 'additional_group']
             },
             version: {
                 headerWidgets: ['breadcrumb', 'methodology', 'mode_switch', 'view_actions'],
@@ -172,6 +172,11 @@ export const SIDEBAR_GROUPS = {
             { id: 'acct_model_config', label: '模型配置与结果', icon: IconSettings },
             { id: 'acct_tools', label: '分析工具', icon: IconCalculator },
             { id: 'acct_calc', label: '计算与分析', icon: IconChartBar },
+        ]
+    },
+    acct_perspective_group: {
+        title: '透视',
+        items: [
             { id: 'acct_pers_activity', label: '活动数据', icon: IconDatabase, isPerspective: true },
             { id: 'acct_pers_factor', label: '因子数据', icon: IconShare, isPerspective: true }
         ]

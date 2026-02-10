@@ -18,20 +18,41 @@ const UserContext = createContext({
 // Custom hook to use the context
 export const useUser = () => useContext(UserContext);
 
+// Import permission config
+import { USER_ROLES, DEFAULT_ROLE } from '../config/permissionConfig';
+
 // Provider component
 export const UserProvider = ({ children }) => {
-    const [currentUser, setCurrentUser] = useState(null);
-    const [permissions, setPermissions] = useState([]);
+    // 1. [New] 角色状态管理
+    const [currentRole, setCurrentRole] = useState(DEFAULT_ROLE);
 
-    // Placeholder for future logic: checking local storage for token, etc.
+    // 计算当前权限
+    const roleConfig = USER_ROLES[currentRole];
+    const permissions = roleConfig?.allowedL1 || []; // renamed from allowedIds to match context interface
+    const labelOverrides = roleConfig?.labelOverrides || {};
+
+    const [currentUser, setCurrentCurrentUser] = useState(null); // kept for future use
+
+    // Exposed context value
+    const value = {
+        currentUser,
+        setCurrentUser: setCurrentCurrentUser,
+
+        // Role & Permissions
+        currentRole,
+        setCurrentRole, // Expose setter for the switcher
+        permissions,
+        labelOverrides,
+
+        // Helper to check if an L1 is allowed
+        isL1Allowed: (l1Id) => permissions.includes(l1Id),
+
+        // Helper to get display label
+        getL1Label: (l1Id, defaultLabel) => labelOverrides[l1Id] || defaultLabel
+    };
 
     return (
-        <UserContext.Provider value={{
-            currentUser,
-            setCurrentUser,
-            permissions,
-            setPermissions
-        }}>
+        <UserContext.Provider value={value}>
             {children}
         </UserContext.Provider>
     );
