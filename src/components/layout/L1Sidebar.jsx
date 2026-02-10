@@ -28,7 +28,7 @@ export default function L1Sidebar() {
     ];
 
     return (
-        <nav className="fixed left-0 top-0 bottom-0 w-fit flex flex-col items-center pt-4 pb-6 z-50 bg-[#1E2A32]">
+        <nav className="fixed left-0 top-0 bottom-0 w-fit flex flex-col items-center pt-4 pb-6 z-50 bg-sidebar-dark">
             <div className="flex flex-col gap-[2px] w-full items-center px-1">
                 {navItems.map((item) => {
                     const isActive = activeL1 === item.id;
@@ -54,7 +54,7 @@ export default function L1Sidebar() {
                         onClick={() => setActiveL1('project_tag')}
                         className={`group relative p-3 rounded-lg transition-colors ${activeL1 === 'project_tag' ? 'bg-white/10' : 'hover:bg-white/10'}`}
                     >
-                        <IconFileCode className={`w-6 h-6 transition-colors text-[#10B981] ${activeL1 === 'project_tag' ? '' : 'group-hover:text-[#34D399]'}`} />
+                        <IconFileCode className={`w-6 h-6 transition-colors text-accent-green ${activeL1 === 'project_tag' ? '' : 'group-hover:text-[#34D399]'}`} />
                     </button>
                 </Tooltip>
 
@@ -75,10 +75,10 @@ export default function L1Sidebar() {
                                         <div className="relative group">
                                             <button
                                                 onClick={() => clickTab(tab.id)}
-                                                className={`p-3 rounded-lg transition-colors ${isActive ? 'bg-[#087F9C]/20 border border-[#087F9C]/50' : 'hover:bg-white/5 border border-transparent'}`}
+                                                className={`p-3 rounded-lg transition-colors ${isActive ? 'bg-primary/20 border border-primary/50' : 'hover:bg-white/5 border border-transparent'}`}
                                             >
                                                 <TabIcon
-                                                    className={`w-6 h-6 transition-colors ${isActive ? 'text-[#087F9C]' : 'text-white/60 group-hover:text-white'}`}
+                                                    className={`w-6 h-6 transition-colors ${isActive ? 'text-primary' : 'text-white/60 group-hover:text-white'}`}
                                                 />
                                             </button>
                                             {/* Close Button - Top Right Badge Style */}

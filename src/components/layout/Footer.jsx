@@ -16,7 +16,7 @@ export default function Footer({ onOpenModal, activeAction }) {
         return (
             <button
                 onClick={() => onOpenModal(action, title)}
-                className={`h-full px-2 flex items-center gap-2 text-xs transition-colors ${isActive ? 'bg-[#087F9C] text-white' : 'text-gray-700 hover:bg-gray-50'}`}
+                className={`h-full px-2 flex items-center gap-2 text-xs transition-colors ${isActive ? 'bg-primary text-white' : 'text-gray-700 hover:bg-gray-50'}`}
             >
                 <Icon className="w-3.5 h-3.5" /> {title}
             </button>
