@@ -29,7 +29,7 @@ const CarbonPanoramaPage = () => {
             <div className="flex-1 p-4 flex gap-4 overflow-hidden">
                 {/* Visual Map Area */}
                 <div className="flex-[2] bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col relative overflow-hidden group">
-                    <div className="absolute top-4 left-4 z-10 bg-white/90 backdrop-blur px-3 py-2 rounded-lg shadow-sm border border-gray-100">
+                    <div className="absolute top-4 left-4 z-10 bg-white/90 backdrop-blur px-3 py-2 rounded-md shadow-sm border border-gray-100">
                         <div className="text-xs text-gray-500 font-medium uppercase tracking-wider">Total Emissions</div>
                         <div className="text-xl font-bold text-[#087F9C]">842,931 <span className="text-sm font-normal text-gray-500">tCO2e</span></div>
                     </div>

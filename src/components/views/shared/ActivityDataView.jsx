@@ -5,8 +5,8 @@ const ActivityDataView = () => {
     const { activeDimension } = useNavigation();
 
     return (
-        <div className="p-6">
-            <h2 className="text-xl font-bold mb-4">Activity Data (透视)</h2>
+        <div className="p-3">
+            <h2 className="text-xl font-bold mb-3">Activity Data (透视)</h2>
             <div className="bg-white p-4 rounded shadow-sm border border-gray-200">
                 <p className="text-gray-600 mb-2">
                     Current Scope: <span className="font-semibold text-[#087F9C] uppercase">{activeDimension}</span>

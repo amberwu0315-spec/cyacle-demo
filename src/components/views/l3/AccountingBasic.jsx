@@ -61,7 +61,7 @@ const AccountingBasic = () => {
                 {/* Module 1: 输出产品设置 (Output Product Settings) */}
                 <ContentModule>
                     <ModuleHeader title="输出产品设置" />
-                    <div className="p-3 text-sm text-gray-400">
+                    <div className="p-4 text-sm text-gray-400">
                         此模块内容待定
                     </div>
                 </ContentModule>
@@ -266,7 +266,7 @@ const AccountingBasic = () => {
                         iconBadgeTooltip="此内容属于模型信息，编辑后会同步至当前模型下的所有核算"
                     />
                     {isAdvancedOpen && (
-                        <div className="p-3 text-sm text-gray-400">
+                        <div className="p-4 text-sm text-gray-400">
                             此模块内容待定
                         </div>
                     )}

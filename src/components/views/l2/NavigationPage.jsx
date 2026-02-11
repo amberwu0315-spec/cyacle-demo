@@ -1,114 +1,253 @@
 /**
- * NavigationPage - 项目导航页 (L2 Dashboard)
+ * NavigationPage - L2 导航页 (Project Dashboard)
  * 
- * 🏢 角色：项目大厅 (Project Lobby)
+ * 🏢 角色：项目的“驾驶舱”
  * 📝 职责：
- * 1. 作为进入某个具体项目后的“首页”。
- * 2. 提供该项目下各模块（基础、模型、核算）的快捷入口和概览状态。
+ * 1. 展示项目核心信息概览。
+ * 2. 提供核算任务的进度追踪。
+ * 3. 显示操作日志。
  */
 import React, { useEffect, useState } from 'react';
 import { usePagePresentation } from '../../../context/PagePresentationContext';
-import { IconStar, IconTrash, IconStarFilled } from '@tabler/icons-react'; // Added Filled Star
-import { IconArrowRight, IconBox, IconLayoutBoard, IconChartPie, IconReportMedical, IconDatabase } from '@tabler/icons-react';
-import CenterModal from '../../common/CenterModal';
-import Tooltip from '../../common/Tooltip';
-import { SingleColumnPage } from '../../layout/PageLayouts';
+import {
+    IconChartPie,
+    IconListCheck,
+    IconInfoCircle,
+    IconHistory,
+    IconArrowRight,
+    IconLoader2
+} from '@tabler/icons-react';
+
+// Mock Data for Demo
+const MOCK_PROJECT = {
+    name: '演示门窗有限公司-产品碳足迹认证',
+    id: 'PRJ-20260211-001',
+    manager: 'Sarah Chen',
+    deadline: '2026-03-15',
+    status: '进行中',
+    progress: 65,
+    description: '针对2025年度生产的铝合金门窗产品进行全生命周期碳足迹核算，旨在满足欧盟出口合规要求。'
+};
+
+const MOCK_ACCOUNTS = [
+    { id: 1, name: '主产品生产阶段核算', status: '进行中', progress: 80, owner: 'Mike' },
+    { id: 2, name: '上游原材料运输核算', status: '已完成', progress: 100, owner: 'Sarah' },
+    { id: 3, name: '废弃处置阶段模拟', status: '待开始', progress: 0, owner: 'Pending' },
+];
+
+const MOCK_LOGS = [
+    { id: 1, user: 'Mike', action: '更新了模型参数', time: '10分钟前', type: 'update' },
+    { id: 2, user: 'Sarah', action: '完成了运输核算', time: '2小时前', type: 'complete' },
+    { id: 3, user: 'System', action: '自动备份数据', time: 'Yesterday', type: 'system' },
+    { id: 4, user: 'Mike', action: '创建了新项目', time: '2天前', type: 'create' },
+];
 
 const NavigationPage = () => {
-    const { setActions, setTitleOverride, setLayoutConfig } = usePagePresentation();
+    const { setActions, setLayoutConfig } = usePagePresentation();
 
-    // UI State
-    const [isStarred, setIsStarred] = useState(false);
-    const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+    // 模拟加载效果
+    const [loading, setLoading] = useState(true);
+    useEffect(() => {
+        const timer = setTimeout(() => setLoading(false), 500);
+        return () => clearTimeout(timer);
+    }, []);
 
-    // Business Logic Handlers
-    const toggleStar = () => setIsStarred(!isStarred);
-    const handleDeleteClick = () => setIsDeleteOpen(true);
-    const handleConfirmDelete = () => {
-        console.log('Item Deleted');
-        setIsDeleteOpen(false);
-        // Toast or logic here
+    // 头部配置
+    useEffect(() => {
+        setActions(null);
+    }, [setActions]);
+
+    // 组件：进度条
+    const ProgressBar = ({ value, color = 'bg-[#087F9C]' }) => (
+        <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+            <div
+                className={`h-full ${color} transition-all duration-500`}
+                style={{ width: `${value}%` }}
+            />
+        </div>
+    );
+
+    // 组件：状态标签
+    const StatusBadge = ({ status }) => {
+        const styles = {
+            '进行中': 'bg-blue-50 text-blue-700',
+            '已完成': 'bg-green-50 text-green-700',
+            '待开始': 'bg-gray-100 text-gray-600',
+        };
+        return (
+            <span className={`px-2 py-0.5 rounded text-xs font-medium ${styles[status] || styles['待开始']}`}>
+                {status}
+            </span>
+        );
     };
 
-    useEffect(() => {
-        // 1. Set Title (None - handled by Workbench/Header)
-        setLayoutConfig('title-only');
-
-        // 2. Set Actions (Re-run when state changes)
-        setActions(
-            <div className="flex items-center gap-1">
-                <Tooltip content={isStarred ? "取消关注" : "关注 (Star)"}>
-                    <button
-                        onClick={toggleStar}
-                        className={`p-1.5 rounded-lg transition-colors ${isStarred
-                            ? 'text-yellow-500 hover:bg-yellow-50'
-                            : 'text-gray-500 hover:text-yellow-500 hover:bg-yellow-50'
-                            }`}
-                    >
-                        {isStarred ? <IconStarFilled size={18} /> : <IconStar size={18} />}
-                    </button>
-                </Tooltip>
-
-                <Tooltip content="删除 (Delete)">
-                    <button
-                        onClick={handleDeleteClick}
-                        className="p-1.5 text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                    >
-                        <IconTrash size={18} />
-                    </button>
-                </Tooltip>
+    if (loading) {
+        return (
+            <div className="w-full h-full flex items-center justify-center bg-[#F5F6F8]">
+                <div className="flex flex-col items-center gap-2 text-gray-400">
+                    <IconLoader2 className="animate-spin" size={24} />
+                    <span className="text-sm">加载项目数据...</span>
+                </div>
             </div>
         );
-
-        return () => {
-            setActions(null);
-            setTitleOverride(null);
-        };
-    }, [setActions, setTitleOverride, setLayoutConfig, isStarred]); // Add isStarred dependency
+    }
 
     return (
-        <SingleColumnPage className="p-3">
-            <h2 className="text-xl font-bold mb-4">导航 (Navigation)</h2>
-            <p className="text-gray-600">这里是项目导航仪表盘的内容区域。</p>
+        <div className="w-full h-full p-3 bg-[#F5F6F8] overflow-y-auto">
+            <div className="max-w-7xl mx-auto h-full grid grid-cols-12 gap-3">
 
-            {/* Project Navigation Content */}
-            <div className="grid grid-cols-3 gap-4 mt-6">
-                <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 overflow-hidden">
-                    <h3 className="font-medium text-gray-800">模块 A</h3>
+                {/* Left Column: Main Business (8 cols) */}
+                <div className="col-span-8 flex flex-col gap-3">
+
+                    {/* 1. Project Progress Card */}
+                    <div className="bg-white rounded-md border border-gray-200 p-4 shadow-sm">
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="font-semibold text-gray-800 flex items-center gap-2">
+                                <IconChartPie size={20} className="text-[#087F9C]" />
+                                项目总进度
+                            </h3>
+                            <span className="text-2xl font-bold text-[#087F9C]">{MOCK_PROJECT.progress}%</span>
+                        </div>
+                        <div className="space-y-4">
+                            <div>
+                                <div className="flex justify-between text-sm mb-1">
+                                    <span className="text-gray-600">整体完成度</span>
+                                    <span className="text-gray-900 font-medium">65/100</span>
+                                </div>
+                                <ProgressBar value={65} />
+                            </div>
+                            <div className="grid grid-cols-3 gap-4 mt-4 pt-4 border-t border-gray-100">
+                                <div className="text-center">
+                                    <div className="text-xs text-gray-500 mb-1">数据收集</div>
+                                    <div className="text-sm font-medium text-green-600">90%</div>
+                                </div>
+                                <div className="text-center border-l border-gray-100">
+                                    <div className="text-xs text-gray-500 mb-1">模型构建</div>
+                                    <div className="text-sm font-medium text-blue-600">60%</div>
+                                </div>
+                                <div className="text-center border-l border-gray-100">
+                                    <div className="text-xs text-gray-500 mb-1">报告编制</div>
+                                    <div className="text-sm font-medium text-gray-400">0%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* 2. Accounting List Card */}
+                    <div className="bg-white rounded-md border border-gray-200 flex-1 shadow-sm flex flex-col">
+                        <div className="px-4 py-3 border-b border-gray-100 flex justify-between items-center h-14 shrink-0">
+                            <h3 className="font-semibold text-gray-800 flex items-center gap-2">
+                                <IconListCheck size={20} className="text-[#087F9C]" />
+                                核算任务列表
+                            </h3>
+                            <button className="text-xs text-[#087F9C] hover:underline flex items-center gap-1">
+                                查看全部 <IconArrowRight size={12} />
+                            </button>
+                        </div>
+                        <div className="flex-1 overflow-auto">
+                            <table className="w-full text-left text-sm">
+                                <thead className="bg-gray-50 text-gray-500 font-medium border-b border-gray-100">
+                                    <tr>
+                                        <th className="px-4 py-3">任务名称</th>
+                                        <th className="px-4 py-3">负责人</th>
+                                        <th className="px-4 py-3">进度</th>
+                                        <th className="px-4 py-3 w-28">状态</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-50">
+                                    {MOCK_ACCOUNTS.map(task => (
+                                        <tr key={task.id} className="hover:bg-gray-50 transition-colors hidden-action-row">
+                                            <td className="px-4 py-3 font-medium text-gray-700">{task.name}</td>
+                                            <td className="px-4 py-3 text-gray-500">{task.owner}</td>
+                                            <td className="px-4 py-3 w-1/3">
+                                                <div className="flex items-center gap-2">
+                                                    <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                                                        <div
+                                                            className="h-full bg-blue-500 rounded-full"
+                                                            style={{ width: `${task.progress}%` }}
+                                                        />
+                                                    </div>
+                                                    <span className="text-xs text-gray-400 w-8">{task.progress}%</span>
+                                                </div>
+                                            </td>
+                                            <td className="px-4 py-3">
+                                                <StatusBadge status={task.status} />
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
-                <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 overflow-hidden">
-                    <h3 className="font-medium text-gray-800">模块 B</h3>
+
+                {/* Right Column: Info & Logs (4 cols) */}
+                <div className="col-span-4 flex flex-col gap-3">
+
+                    {/* 1. Project Info Card */}
+                    <div className="bg-white rounded-md border border-gray-200 p-4 shadow-sm">
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="font-semibold text-gray-800 flex items-center gap-2">
+                                <IconInfoCircle size={20} className="text-gray-600" />
+                                项目信息
+                            </h3>
+                            <button className="text-xs text-gray-400 hover:text-gray-600">编辑</button>
+                        </div>
+                        <div className="space-y-4">
+                            <div>
+                                <label className="text-xs text-gray-400 block mb-1">项目名称</label>
+                                <div className="text-sm font-medium text-gray-800">{MOCK_PROJECT.name}</div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="text-xs text-gray-400 block mb-1">负责人</label>
+                                    <div className="text-sm text-gray-800">{MOCK_PROJECT.manager}</div>
+                                </div>
+                                <div>
+                                    <label className="text-xs text-gray-400 block mb-1">截止日期</label>
+                                    <div className="text-sm text-gray-800">{MOCK_PROJECT.deadline}</div>
+                                </div>
+                            </div>
+                            <div>
+                                <label className="text-xs text-gray-400 block mb-1">描述</label>
+                                <div className="text-xs text-gray-600 leading-relaxed bg-gray-50 p-2 rounded">
+                                    {MOCK_PROJECT.description}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* 2. Logs Card */}
+                    <div className="bg-white rounded-md border border-gray-200 flex-1 shadow-sm flex flex-col">
+                        <div className="px-4 py-3 border-b border-gray-100 h-14 flex items-center shrink-0">
+                            <h3 className="font-semibold text-gray-800 flex items-center gap-2">
+                                <IconHistory size={20} className="text-gray-600" />
+                                相关日志
+                            </h3>
+                        </div>
+                        <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+                            <div className="relative pl-4 space-y-6">
+                                {/* Timeline Line */}
+                                <div className="absolute left-1.5 top-2 bottom-2 w-0.5 bg-gray-100"></div>
+
+                                {MOCK_LOGS.map(log => (
+                                    <div key={log.id} className="relative pl-4">
+                                        {/* Dot */}
+                                        <div className="absolute left-0 top-1.5 w-3 h-3 rounded-full bg-white border-2 border-blue-400 z-10"></div>
+
+                                        <div className="text-sm text-gray-800">
+                                            <span className="font-medium text-blue-600">{log.user}</span> {log.action}
+                                        </div>
+                                        <div className="text-xs text-gray-400 mt-0.5">{log.time}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
             </div>
-
-            {/* Delete Confirmation Modal */}
-            <CenterModal
-                isOpen={isDeleteOpen}
-                onClose={() => setIsDeleteOpen(false)}
-                title="删除确认"
-                footer={
-                    <>
-                        <button
-                            onClick={() => setIsDeleteOpen(false)}
-                            className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-200 rounded-lg transition-colors"
-                        >
-                            取消
-                        </button>
-                        <button
-                            onClick={handleConfirmDelete}
-                            className="px-4 py-2 text-sm text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors shadow-sm"
-                        >
-                            确认删除
-                        </button>
-                    </>
-                }
-            >
-                <div className="flex flex-col items-center justify-center text-center py-2">
-                    <p className="text-base text-gray-700 font-medium mb-1">您确定要删除此项目吗？</p>
-                    <p className="text-gray-500 text-xs">此操作无法撤销。</p>
-                </div>
-            </CenterModal>
-        </SingleColumnPage>
+        </div>
     );
 };
 

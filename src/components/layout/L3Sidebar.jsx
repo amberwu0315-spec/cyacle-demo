@@ -32,7 +32,7 @@ export default function L3Sidebar({ activeL3, onSelect }) {
                         <li key={item.id}>
                             <button
                                 onClick={() => onSelect(item.id)}
-                                className={`w-full h-[32px] flex items-center gap-2 px-3 text-[13px] rounded-lg text-left transition-colors ${activeL3 === item.id
+                                className={`w-full h-[32px] flex items-center gap-2 px-3 text-[13px] rounded-md text-left transition-colors ${activeL3 === item.id
                                     ? 'bg-[#087F9C] text-white shadow-sm'
                                     : 'text-gray-600 hover:bg-gray-100'
                                     }`}

@@ -86,7 +86,7 @@ const StandardBusinessLayout = ({
         }
 
         return (
-            <div className="flex items-center gap-3 p-3 bg-white rounded border border-gray-200 mb-3">
+            <div className="flex items-center gap-3 p-4 bg-white rounded border border-gray-200 mb-3">
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                     <IconFilter size={14} />
                     <span className="text-xs font-medium">筛选：</span>

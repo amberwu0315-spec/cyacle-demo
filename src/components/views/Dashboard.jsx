@@ -13,9 +13,9 @@ export default function Dashboard() {
                 <h1 className="text-[16px] font-bold text-[#1F2937]">仪表盘 (Dashboard)</h1>
             </div>
             <div className="grid grid-cols-3 gap-6">
-                <div className="bg-[#F5F6F8] p-6 rounded-lg h-48 border border-gray-100"></div>
-                <div className="bg-[#F5F6F8] p-6 rounded-lg h-48 border border-gray-100"></div>
-                <div className="bg-[#F5F6F8] p-6 rounded-lg h-48 border border-gray-100"></div>
+                <div className="bg-[#F5F6F8] p-6 rounded-md h-48 border border-gray-100"></div>
+                <div className="bg-[#F5F6F8] p-6 rounded-md h-48 border border-gray-100"></div>
+                <div className="bg-[#F5F6F8] p-6 rounded-md h-48 border border-gray-100"></div>
             </div>
         </div>
     );

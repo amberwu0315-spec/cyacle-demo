@@ -73,10 +73,10 @@ const BasisPage = () => {
                 {/* 研究对象 - 只读 */}
                 <ContentModule>
                     <ModuleHeader title="所属研究对象" />
-                    <div className="p-3">
+                    <div className="p-4">
                         <div className="space-y-0.5">
                             {/* 名称 - 带链接 */}
-                            <div className="flex items-center min-h-9 px-3">
+                            <div className="flex items-center min-h-9">
                                 <span className="text-sm text-gray-500 w-24">名称：</span>
                                 <a
                                     href={researchObject.nameLink}
@@ -87,25 +87,25 @@ const BasisPage = () => {
                             </div>
 
                             {/* 地址 */}
-                            <div className="flex items-center min-h-9 px-3">
+                            <div className="flex items-center min-h-9">
                                 <span className="text-sm text-gray-500 w-24">地址：</span>
                                 <span className="flex-1 text-sm text-gray-800">{researchObject.address}</span>
                             </div>
 
                             {/* 联系人名称 */}
-                            <div className="flex items-center min-h-9 px-3">
+                            <div className="flex items-center min-h-9">
                                 <span className="text-sm text-gray-500 w-24">联系人姓名：</span>
                                 <span className="flex-1 text-sm text-gray-800">{researchObject.contact_name}</span>
                             </div>
 
                             {/* 联系人邮箱 */}
-                            <div className="flex items-center min-h-9 px-3">
+                            <div className="flex items-center min-h-9">
                                 <span className="text-sm text-gray-500 w-24">联系人邮箱：</span>
                                 <span className="flex-1 text-sm text-gray-800">{researchObject.contact_email}</span>
                             </div>
 
                             {/* 介绍 */}
-                            <div className="flex items-start min-h-9 px-3">
+                            <div className="flex items-start min-h-9">
                                 <span className="text-sm text-gray-500 w-24 pt-0.5">企业简介：</span>
                                 <span className="flex-1 text-sm text-gray-800">{researchObject.introduction}</span>
                             </div>
@@ -127,7 +127,7 @@ const BasisPage = () => {
                             </button>
                         }
                     />
-                    <div className="p-3">
+                    <div className="p-4">
                         {/* Standard Table with EditableField */}
                         <table className="w-full border-collapse">
                             <colgroup>
@@ -137,16 +137,16 @@ const BasisPage = () => {
                             </colgroup>
                             <thead>
                                 <tr className="bg-gray-50 border-b border-gray-200">
-                                    <th className="text-left py-2 px-3 text-sm font-medium text-gray-700">来源</th>
-                                    <th className="text-left py-2 px-3 text-sm font-medium text-gray-700">一级类型</th>
-                                    <th className="text-left py-2 px-3 text-sm font-medium text-gray-700">二级类型</th>
+                                    <th className="text-left py-2 px-4 text-sm font-medium text-gray-700">来源</th>
+                                    <th className="text-left py-2 px-4 text-sm font-medium text-gray-700">一级类型</th>
+                                    <th className="text-left py-2 px-4 text-sm font-medium text-gray-700">二级类型</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {typeViewList.map((item) => (
                                     <tr key={item.id} className="border-b border-gray-100 group">
                                         {/* 来源 - 标签形式 (暂不支持编辑，只读展示) */}
-                                        <td className="py-2 px-3 align-middle">
+                                        <td className="py-2 px-4 align-middle">
                                             <span className="inline-block px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded">
                                                 {item.source}
                                             </span>
@@ -180,10 +180,10 @@ const BasisPage = () => {
                 {/* 基础信息 */}
                 <ContentModule>
                     <ModuleHeader title="基础信息" />
-                    <div className="p-3">
+                    <div className="p-4">
                         <div className="space-y-0.5">
                             {/* 需求类型 - 只读 */}
-                            <div className="flex items-center min-h-9 px-3">
+                            <div className="flex items-center min-h-9">
                                 <span className="text-sm text-gray-500 w-28">需求类型：</span>
                                 <span className="flex-1 text-sm text-gray-800">
                                     {projectData.type === 'CFP' ? '产品碳足迹 (CFP)' : '组织碳足迹 (CFO)'}
@@ -191,25 +191,25 @@ const BasisPage = () => {
                             </div>
 
                             {/* 创建人 - 只读 */}
-                            <div className="flex items-center min-h-9 px-3">
+                            <div className="flex items-center min-h-9">
                                 <span className="text-sm text-gray-500 w-28">创建人：</span>
                                 <span className="flex-1 text-sm text-gray-800">{projectData.owner}</span>
                             </div>
 
                             {/* 创建时间 - 只读 */}
-                            <div className="flex items-center min-h-9 px-3">
+                            <div className="flex items-center min-h-9">
                                 <span className="text-sm text-gray-500 w-28">创建时间：</span>
                                 <span className="flex-1 text-sm text-gray-800">{projectData.created_at}</span>
                             </div>
 
                             {/* 更新时间 - 只读 */}
-                            <div className="flex items-center min-h-9 px-3">
+                            <div className="flex items-center min-h-9">
                                 <span className="text-sm text-gray-500 w-28">更新时间：</span>
                                 <span className="flex-1 text-sm text-gray-800">{projectData.updated_at}</span>
                             </div>
 
                             {/* 项目描述 - 可编辑 */}
-                            <div className="px-3 pt-2">
+                            <div className="pt-2">
                                 <EditableField
                                     label="项目描述"
                                     value={projectData.description}

@@ -169,7 +169,7 @@ const ReportInfo = () => {
             {/* 4. 研究结论 */}
             <ContentModule>
                 <ModuleHeader title="研究结论" />
-                <div className="p-3">
+                <div className="p-4">
                     <EditableField
                         value={formData.conclusion}
                         onSave={(v) => updateForm('conclusion', v)}
@@ -182,7 +182,7 @@ const ReportInfo = () => {
             {/* 5. 改进建议 */}
             <ContentModule>
                 <ModuleHeader title="改进建议" />
-                <div className="p-3">
+                <div className="p-4">
                     <EditableField
                         value={formData.suggestions}
                         onSave={(v) => updateForm('suggestions', v)}
@@ -207,12 +207,12 @@ const ReportInfo = () => {
                     )}
                 />
                 {toggles.uncertainty && (
-                    <div className="px-3 pb-3 pt-1">
-                        <table className="w-full border-collapse text-sm border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+                    <div className="px-4 pb-4 pt-1">
+                        <table className="w-full border-collapse text-sm border border-gray-200 rounded-md overflow-hidden shadow-sm">
                             <thead>
                                 <tr className="bg-[#E9F3F5] text-gray-600 font-medium">
-                                    <th className="p-2 pl-3 text-left w-1/4 border-r border-gray-200/60">不确定性因素</th>
-                                    <th className="p-2 pl-3 text-left border-r border-gray-200/60">说明</th>
+                                    <th className="p-2 px-4 text-left w-1/4 border-r border-gray-200/60">不确定性因素</th>
+                                    <th className="p-2 px-4 text-left border-r border-gray-200/60">说明</th>
                                     <th className="w-10"></th>
                                 </tr>
                             </thead>
@@ -229,7 +229,7 @@ const ReportInfo = () => {
                                                         setUncertaintyList(n);
                                                     }}
                                                     type="textarea"
-                                                    className="w-full h-full p-2 pl-3"
+                                                    className="w-full h-full p-2 px-4"
                                                     placeholder="点击输入..."
                                                 />
                                             </div>
@@ -244,7 +244,7 @@ const ReportInfo = () => {
                                                         setUncertaintyList(n);
                                                     }}
                                                     type="textarea"
-                                                    className="w-full h-full p-2 pl-3"
+                                                    className="w-full h-full p-2 px-4"
                                                     placeholder="点击输入详细说明..."
                                                 />
                                             </div>
@@ -327,27 +327,27 @@ const ReportInfo = () => {
                         </EditableField>
                     </FormBlock>
 
-                    <div className="px-3 pb-3">
+                    <div className="px-4 pb-4">
                         <div className="flex items-center gap-2 mb-2">
                             <span className="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-0.5 rounded">高级选项</span>
                             <span className="text-xs text-gray-400">是否导出分配规则：</span>
                         </div>
-                        <div className="border border-gray-200 rounded-lg overflow-hidden">
+                        <div className="border border-gray-200 rounded-md overflow-hidden">
                             <table className="w-full text-sm">
-                                <thead className="bg-gray-50 text-gray-500 border-b border-gray-200">
+                                <thead>
                                     <tr>
-                                        <th className="p-2 font-medium w-24 text-center">导出</th>
-                                        <th className="p-2 font-medium text-left border-l border-gray-200">分配规则</th>
-                                        <th className="p-2 font-medium text-left border-l border-gray-200">公式</th>
+                                        <th className="px-4 py-3 font-medium w-24 text-center">导出</th>
+                                        <th className="px-4 py-3 font-medium text-left border-l border-gray-200">分配规则</th>
+                                        <th className="px-4 py-3 font-medium text-left border-l border-gray-200">公式</th>
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white">
                                     <tr>
-                                        <td className="p-2 text-center">
+                                        <td className="px-4 py-3 text-center">
                                             <ToggleSwitch checked={toggles.allocRule} onChange={() => updateToggle('allocRule')} />
                                         </td>
-                                        <td className="p-2 border-l border-gray-100 text-gray-700">全厂产品间按重量分配</td>
-                                        <td className="p-2 border-l border-gray-100 text-gray-500 font-mono text-xs">
+                                        <td className="px-4 py-3 border-l border-gray-100 text-gray-700">全厂产品间按重量分配</td>
+                                        <td className="px-4 py-3 border-l border-gray-100 text-gray-500 font-mono text-xs">
                                             E(本产品) = E(总额) × (Q(本产品) / Q(年度))
                                         </td>
                                     </tr>

@@ -22,7 +22,7 @@ const WorkbenchHomePage = () => {
                             <h1 className="text-2xl font-bold mb-2">欢迎回来，管理员</h1>
                             <p className="text-blue-50 opacity-90">今天是 2024年10月24日，星期四。您有 5 个待处理事项。</p>
                         </div>
-                        <div className="p-3 bg-white/10 rounded-lg backdrop-blur-sm">
+                        <div className="p-3 bg-white/10 rounded-md backdrop-blur-sm">
                             <IconLayoutDashboard size={32} stroke={1.5} />
                         </div>
                     </div>
@@ -32,7 +32,7 @@ const WorkbenchHomePage = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {stats.map((stat, index) => (
                         <div key={index} className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4 hover:shadow-md transition-shadow cursor-default">
-                            <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${stat.bg} ${stat.color}`}>
+                            <div className={`w-12 h-12 rounded-md flex items-center justify-center ${stat.bg} ${stat.color}`}>
                                 <stat.icon size={24} stroke={1.5} />
                             </div>
                             <div>
@@ -51,7 +51,7 @@ const WorkbenchHomePage = () => {
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {projectData.slice(0, 6).map((item) => (
-                            <div key={item.id} className="p-4 border border-gray-100 rounded-lg hover:border-[#087F9C] hover:bg-blue-50/30 transition-all cursor-pointer group">
+                            <div key={item.id} className="p-4 border border-gray-100 rounded-md hover:border-[#087F9C] hover:bg-blue-50/30 transition-all cursor-pointer group">
                                 <div className="flex justify-between items-start mb-2">
                                     <div className="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-1 rounded">{item.type}</div>
                                     <span className="text-gray-400 text-xs">{item.updateTime}</span>

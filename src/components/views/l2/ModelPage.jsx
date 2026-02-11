@@ -1,210 +1,239 @@
 /**
- * ModelPage - 建模主页
+ * ModelPage - 模型管理主页 (Model Management)
  * 
- * 🏢 角色：装配车间 (Modeling Assembly)
+ * 🏢 角色：模型库 (Model Library)
  * 📝 职责：
- * 1. 提供产品的结构化建模视图（BOM结构）。
- * 2. 也是进入具体过程单元（Process Unit）进行详细建模的入口。
+ * 1. 管理所有“单元过程”模型。
+ * 2. 展示模型与核算任务的关联关系（1个模型 -> N个核算场景）。
+ * 3. 提供多维度视图：总览、引用关系、继承关系。
  */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { usePagePresentation } from '../../../context/PagePresentationContext';
-import { IconFilter, IconGrid4x4, IconNetwork, IconHierarchy, IconBox, IconPlus, IconWand } from '@tabler/icons-react';
+import {
+    IconPlus,
+    IconFilter,
+    IconBox,
+    IconLayoutGrid,
+    IconSitemap,
+    IconGitBranch,
+    IconChartBar,
+    IconDots,
+    IconArrowRight,
+    IconInfoCircle // Imported correctly
+} from '@tabler/icons-react';
+import { ContentModule, ModuleHeader } from '../../common/ContentModule';
+
+// Mock Data: Model Groups (Model -> Accountings)
+const MOCK_MODEL_GROUPS = [
+    {
+        id: 'm1',
+        name: '注塑工艺模型 (通用)',
+        type: 'Process',
+        description: '标准注塑工艺，包含电力消耗与冷却水循环。',
+        creator: 'User A',
+        updateTime: '2026-02-10',
+        accountings: [ // 子核算卡片
+            { id: 'a1', name: '2024 年度回顾核算', value: '12.5 kgCO2e', status: '已完成' },
+            { id: 'a2', name: '工艺优化预演-V2', value: '10.2 kgCO2e', status: '进行中' }
+        ]
+    },
+    {
+        id: 'm2',
+        name: '公路运输-柴油货车',
+        type: 'Transport',
+        description: '国V标准，载重10吨，满载率80%。',
+        creator: 'User B',
+        updateTime: '2026-02-08',
+        accountings: [
+            { id: 'a3', name: '华东区物流核算', value: '0.15 kgCO2e/km', status: '已完成' }
+        ]
+    },
+    {
+        id: 'm3',
+        name: 'PET颗粒生产',
+        type: 'Material',
+        description: '聚酯切片生产过程，上游数据引用 Ecoinvent。',
+        creator: 'System',
+        updateTime: '2026-01-20',
+        accountings: [] // 无核算任务
+    }
+];
 
 const ModelPage = () => {
-    const { setActions, setTitleOverride, setLayoutConfig } = usePagePresentation();
+    const { setActions, setLayoutConfig } = usePagePresentation();
 
-    // 层级1：筛选器状态
+    // UI State
+    const [activeTab, setActiveTab] = useState('overview'); // overview | reference | inheritance
     const [filterType, setFilterType] = useState('all');
-    const [filterStatus, setFilterStatus] = useState('all');
 
-    // 层级2：视图类型切换
-    const [activeView, setActiveView] = useState('overview'); // 'overview' | 'reference' | 'inheritance'
+    // Memoize Header Actions to prevent infinite loops
+    const headerActions = useMemo(() => (
+        <div className="flex items-center gap-2">
+            <button className="flex items-center gap-1 px-3 py-1.5 bg-[#087F9C] text-white text-sm font-medium rounded hover:bg-[#076F8A] transition-colors shadow-sm">
+                <IconPlus size={16} />
+                <span>新建模型</span>
+            </button>
+        </div>
+    ), []);
 
+    // Header Actions Effect
     useEffect(() => {
-        // Init Actions
-        setActions(
-            <div className="flex items-center gap-2">
-                <button className="flex items-center gap-1 px-3 py-1.5 bg-[#087F9C] text-white text-sm font-medium rounded hover:bg-[#076F8A] transition-colors shadow-sm">
-                    <IconPlus size={16} />
-                    <span>创建模型</span>
+        setActions(headerActions);
+        return () => setActions(null);
+    }, [setActions, headerActions]);
+
+    // Render Components
+    const renderFilterBar = () => (
+        <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between sticky top-0 z-10">
+            {/* Tabs */}
+            <div className="flex items-center gap-1 bg-gray-100 p-1 rounded-md">
+                <button
+                    onClick={() => setActiveTab('overview')}
+                    className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all flex items-center gap-2 ${activeTab === 'overview'
+                        ? 'bg-white text-[#087F9C] shadow-sm'
+                        : 'text-gray-500 hover:text-gray-700'
+                        }`}
+                >
+                    <IconLayoutGrid size={16} />
+                    总览视图
                 </button>
-                <button className="flex items-center gap-1 px-3 py-1.5 bg-purple-600 text-white text-sm font-medium rounded hover:bg-purple-700 transition-colors shadow-sm">
-                    <IconWand size={16} />
-                    <span>AI生成</span>
+                <button
+                    onClick={() => setActiveTab('reference')}
+                    className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all flex items-center gap-2 ${activeTab === 'reference'
+                        ? 'bg-white text-[#087F9C] shadow-sm'
+                        : 'text-gray-500 hover:text-gray-700'
+                        }`}
+                >
+                    <IconSitemap size={16} />
+                    引用视图
+                </button>
+                <button
+                    onClick={() => setActiveTab('inheritance')}
+                    className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all flex items-center gap-2 ${activeTab === 'inheritance'
+                        ? 'bg-white text-[#087F9C] shadow-sm'
+                        : 'text-gray-500 hover:text-gray-700'
+                        }`}
+                >
+                    <IconGitBranch size={16} />
+                    继承视图
                 </button>
             </div>
-        );
 
-        return () => {
-            setActions(null);
-        };
-    }, [setActions]);
-
-    // 模拟数据
-    const models = [
-        { id: 1, name: '门窗系统模型', type: '产品模型', status: '已发布', version: 'V1.2' },
-        { id: 2, name: '电机模型', type: '部件模型', status: '草稿', version: 'V0.8' },
-        { id: 3, name: '铝合金框架', type: '材料模型', status: '已发布', version: 'V2.0' }
-    ];
-
-    // 渲染筛选器
-    const renderFilters = () => (
-        <div className="flex items-center gap-3 p-3 bg-white border-b border-gray-200">
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-                <IconFilter size={16} />
-                <span className="font-medium">筛选：</span>
+            {/* Filter */}
+            <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 text-sm text-gray-500">
+                    <IconFilter size={16} />
+                    <span>筛选:</span>
+                </div>
+                <select
+                    value={filterType}
+                    onChange={(e) => setFilterType(e.target.value)}
+                    className="text-sm border-gray-200 rounded-md focus:border-[#087F9C] focus:ring-0 bg-gray-50 py-1.5 px-3"
+                >
+                    <option value="all">所有类型</option>
+                    <option value="process">过程 (Process)</option>
+                    <option value="transport">运输 (Transport)</option>
+                    <option value="material">物料 (Material)</option>
+                </select>
             </div>
-
-            <select
-                value={filterType}
-                onChange={(e) => setFilterType(e.target.value)}
-                className="px-3 py-1.5 text-sm border border-gray-200 rounded hover:border-[#087F9C] focus:outline-none focus:border-[#087F9C] transition-colors"
-            >
-                <option value="all">全部类型</option>
-                <option value="product">产品模型</option>
-                <option value="component">部件模型</option>
-                <option value="material">材料模型</option>
-            </select>
-
-            <select
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-                className="px-3 py-1.5 text-sm border border-gray-200 rounded hover:border-[#087F9C] focus:outline-none focus:border-[#087F9C] transition-colors"
-            >
-                <option value="all">全部状态</option>
-                <option value="published">已发布</option>
-                <option value="draft">草稿</option>
-            </select>
         </div>
     );
 
-    // 渲染视图切换Tab
-    const renderViewTabs = () => {
-        const tabs = [
-            { id: 'overview', label: '总览视图', icon: IconGrid4x4 },
-            { id: 'reference', label: '引用视图', icon: IconNetwork },
-            { id: 'inheritance', label: '继承视图', icon: IconHierarchy }
-        ];
-
-        return (
-            <div className="flex items-center gap-1 p-3 bg-gray-50 border-b border-gray-200">
-                {tabs.map((tab) => (
-                    <button
-                        key={tab.id}
-                        onClick={() => setActiveView(tab.id)}
-                        className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded transition-colors ${activeView === tab.id
-                            ? 'bg-white text-[#087F9C] shadow-sm border border-gray-200'
-                            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-                            }`}
-                    >
-                        <tab.icon size={16} />
-                        <span>{tab.label}</span>
-                    </button>
-                ))}
-            </div>
-        );
-    };
-
-    // 层级3：总览视图 - 大卡片列表
-    const renderOverviewView = () => (
-        <div className="p-6">
-            <div className="grid grid-cols-3 gap-6">
-                {models.map((model) => (
-                    <div
-                        key={model.id}
-                        className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm hover:shadow-md hover:border-[#087F9C] cursor-pointer transition-all group"
-                    >
-                        <div className="flex items-center justify-between mb-4">
-                            <div className="p-3 bg-blue-50 text-[#087F9C] rounded-lg">
-                                <IconBox size={32} />
-                            </div>
-                            <span className="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">
-                                {model.version}
-                            </span>
+    // View 1: Overview (Grouped Cards)
+    const renderOverview = () => (
+        <div className="p-3 grid grid-cols-1 gap-3">
+            {MOCK_MODEL_GROUPS.map((model) => (
+                <ContentModule key={model.id} className="hover:shadow-md transition-shadow">
+                    {/* Parent Card Header (Model) */}
+                    <ModuleHeader
+                        title={model.name}
+                        subTitle={model.type}
+                        actions={
+                            <button className="text-gray-400 hover:text-gray-600 p-1">
+                                <IconDots size={20} />
+                            </button>
+                        }
+                    />
+                    <div className="p-4 flex items-start gap-4 bg-gray-50/50 border-b border-gray-100">
+                        <div className="p-3 bg-blue-100 text-blue-600 rounded-md shrink-0">
+                            <IconBox size={24} />
                         </div>
-
-                        <h3 className="font-semibold text-lg text-gray-800 group-hover:text-[#087F9C] mb-2">
-                            {model.name}
-                        </h3>
-
-                        <div className="space-y-2 text-sm">
-                            <div className="flex items-center justify-between">
-                                <span className="text-gray-500">类型：</span>
-                                <span className="text-gray-700">{model.type}</span>
-                            </div>
-                            <div className="flex items-center justify-between">
-                                <span className="text-gray-500">状态：</span>
-                                <span className={`px-2 py-0.5 rounded text-xs ${model.status === '已发布'
-                                    ? 'bg-green-100 text-green-700'
-                                    : 'bg-yellow-100 text-yellow-700'
-                                    }`}>
-                                    {model.status}
-                                </span>
-                            </div>
+                        <div>
+                            <p className="text-sm text-gray-500">{model.description}</p>
                         </div>
                     </div>
-                ))}
-            </div>
+
+                    {/* Children Cards (Accountings) */}
+                    <div className="p-4 bg-white">
+                        <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 px-2">关联核算任务 ({model.accountings.length})</h4>
+
+                        {model.accountings.length > 0 ? (
+                            <div className="grid grid-cols-2 gap-4">
+                                {model.accountings.map(acct => (
+                                    <div key={acct.id} className="flex items-center justify-between p-4 rounded-md border border-gray-100 hover:border-blue-200 hover:bg-blue-50 cursor-pointer group transition-all">
+                                        <div className="flex items-center gap-3">
+                                            <div className="p-2 bg-purple-50 text-purple-600 rounded-md">
+                                                <IconChartBar size={18} />
+                                            </div>
+                                            <div>
+                                                <div className="text-sm font-medium text-gray-700 group-hover:text-blue-700">{acct.name}</div>
+                                                <div className="text-xs text-gray-500 mt-0.5">结果: {acct.value}</div>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-3">
+                                            <span className={`text-xs px-2 py-0.5 rounded ${acct.status === '已完成' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>
+                                                {acct.status}
+                                            </span>
+                                            <IconArrowRight size={14} className="text-gray-300 group-hover:text-blue-400" />
+                                        </div>
+                                    </div>
+                                ))}
+                                {/* Add New Accounting Placeholder */}
+                                <button className="flex items-center justify-center gap-2 p-4 rounded-md border border-dashed border-gray-300 text-gray-400 hover:text-blue-600 hover:border-blue-300 hover:bg-blue-50 transition-all h-full">
+                                    <IconPlus size={18} />
+                                    <span className="text-sm">新建核算</span>
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="text-sm text-gray-400 italic px-4 py-4 flex items-center gap-2">
+                                <IconInfoCircle size={16} />
+                                暂无关联核算，请先创建。
+                            </div>
+                        )}
+                    </div>
+                </ContentModule>
+            ))}
         </div>
     );
 
-    // 层级3：引用视图 - 网状图
-    const renderReferenceView = () => (
-        <div className="p-6 flex items-center justify-center h-[600px] bg-gray-50">
-            <div className="text-center">
-                <IconNetwork size={64} className="text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-700 mb-2">引用关系网状图</h3>
-                <p className="text-sm text-gray-500">
-                    此处将显示模型之间的引用关系网络图
-                </p>
-                <p className="text-xs text-gray-400 mt-2">
-                    (需要集成图形可视化库，如 D3.js 或 Cytoscape.js)
-                </p>
-            </div>
+    // View 2: Reference (Placeholder)
+    const renderReference = () => (
+        <div className="flex-1 flex flex-col items-center justify-center text-gray-400 min-h-[400px]">
+            <IconSitemap size={64} stroke={1} className="mb-4 text-gray-200" />
+            <h3 className="text-lg font-medium text-gray-600">引用关系视图</h3>
+            <p className="text-sm mt-2">可视化展示模型之间的调用链关系 (拓扑图)。</p>
         </div>
     );
 
-    // 层级3：继承视图 - 脑图
-    const renderInheritanceView = () => (
-        <div className="p-6 flex items-center justify-center h-[600px] bg-gray-50">
-            <div className="text-center">
-                <IconHierarchy size={64} className="text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-700 mb-2">继承关系脑图</h3>
-                <p className="text-sm text-gray-500">
-                    此处将显示模型的继承层级结构思维导图
-                </p>
-                <p className="text-xs text-gray-400 mt-2">
-                    (需要集成脑图库，如 MindMap 或 Markmap)
-                </p>
-            </div>
+    // View 3: Inheritance (Placeholder)
+    const renderInheritance = () => (
+        <div className="flex-1 flex flex-col items-center justify-center text-gray-400 min-h-[400px]">
+            <IconGitBranch size={64} stroke={1} className="mb-4 text-gray-200" />
+            <h3 className="text-lg font-medium text-gray-600">继承关系视图</h3>
+            <p className="text-sm mt-2">展示模型的版本衍变与继承树 (Lineage)。</p>
         </div>
     );
-
-    // 渲染内容区
-    const renderContent = () => {
-        switch (activeView) {
-            case 'overview':
-                return renderOverviewView();
-            case 'reference':
-                return renderReferenceView();
-            case 'inheritance':
-                return renderInheritanceView();
-            default:
-                return renderOverviewView();
-        }
-    };
 
     return (
         <div className="w-full h-full flex flex-col bg-[#F5F6F8]">
-            {/* 层级1：筛选器 */}
-            {renderFilters()}
+            {/* 1. Sticky Header with Tabs & Filter */}
+            {renderFilterBar()}
 
-            {/* 层级2：视图类型切换 Tab */}
-            {renderViewTabs()}
-
-            {/* 层级3：内容区 */}
-            <div className="flex-1 overflow-y-auto">
-                {renderContent()}
+            {/* 2. Scrolling Content Area */}
+            <div className="flex-1 overflow-y-auto custom-scrollbar">
+                {activeTab === 'overview' && renderOverview()}
+                {activeTab === 'reference' && renderReference()}
+                {activeTab === 'inheritance' && renderInheritance()}
             </div>
         </div>
     );

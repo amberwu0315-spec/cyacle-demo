@@ -14,9 +14,9 @@ import { IconArrowLeft } from '@tabler/icons-react';
  */
 const ProjectDetailView = ({ data }) => {
     return (
-        <div className="h-full flex flex-col p-6 bg-white animate-fade-in">
-            <div className="flex items-center gap-4 mb-6">
-                <div className="w-12 h-12 rounded-lg bg-[#087F9C]/10 flex items-center justify-center text-[#087F9C]">
+        <div className="h-full flex flex-col p-3 bg-white animate-fade-in">
+            <div className="flex items-center gap-4 mb-3">
+                <div className="w-12 h-12 rounded-md bg-[#087F9C]/10 flex items-center justify-center text-[#087F9C]">
                     <span className="text-xl font-bold">P</span>
                 </div>
                 <div>
@@ -29,7 +29,7 @@ const ProjectDetailView = ({ data }) => {
                 </div>
             </div>
 
-            <div className="bg-gray-50 rounded-lg p-6 border border-gray-100 flex-1">
+            <div className="bg-gray-50 rounded-md p-4 border border-gray-100 flex-1">
                 <h3 className="text-lg font-medium text-gray-800 mb-4">项目详情</h3>
                 <div className="grid grid-cols-2 gap-4 max-w-2xl">
                     <div className="space-y-1">

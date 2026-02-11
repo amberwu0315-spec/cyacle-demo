@@ -141,7 +141,7 @@ const AccountingPage = ({ activeL3, onL3Change }) => {
                         {isPageLoading ? (
                             // Loading State: 居中显示加载动画，带轻微呼吸效果
                             <div className="flex-1 flex flex-col items-center justify-center bg-white/50 backdrop-blur-sm z-10 transition-all duration-300">
-                                <div className="flex flex-col items-center gap-3 p-6 rounded-lg">
+                                <div className="flex flex-col items-center gap-3 p-6 rounded-md">
                                     <IconLoader2 className="animate-spin text-[#087F9C]" size={36} stroke={1.5} />
                                     <span className="text-sm font-medium text-gray-500 animate-pulse">数据加载中...</span>
                                 </div>

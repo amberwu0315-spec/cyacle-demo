@@ -21,7 +21,7 @@ export default function CenterModal({ isOpen, onClose, title, children, footer }
             ></div>
 
             {/* Card */}
-            <div className="relative bg-white rounded-lg shadow-xl w-full max-w-md flex flex-col items-center animate-in zoom-in-95 duration-200">
+            <div className="relative bg-white rounded-md shadow-xl w-full max-w-md flex flex-col items-center animate-in zoom-in-95 duration-200">
                 {/* Header */}
                 <div className="w-full h-12 flex items-center justify-between px-4 border-b border-gray-100">
                     <h3 className="font-semibold text-gray-800">{title}</h3>

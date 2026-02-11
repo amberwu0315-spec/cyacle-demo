@@ -270,7 +270,7 @@ export default function BusinessContent({ activeL1, target, onOpenTab, openedTab
             // 默认占位符（用于其他L1的business内容）
             return (
                 <div className="h-full w-full flex flex-col p-8">
-                    <div className="flex-1 bg-white rounded-lg shadow-sm border border-gray-100 p-8 flex items-center justify-center">
+                    <div className="flex-1 bg-white rounded-md shadow-sm border border-gray-100 p-8 flex items-center justify-center">
                         <div className="text-center">
                             <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <IconStack2 className="w-8 h-8 text-gray-400" />

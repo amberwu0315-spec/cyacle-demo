@@ -10,7 +10,7 @@ export default function ComingSoon({ title = "功能建设中", subTitle = "攻�
                 </div>
                 <h3 className="text-lg font-bold text-gray-800 mb-2">{title}</h3>
                 <p className="text-sm text-gray-500 leading-relaxed">{subTitle}</p>
-                <div className="mt-6 px-4 py-2 bg-gray-100 rounded-lg text-xs text-gray-400 font-mono">
+                <div className="mt-6 px-4 py-2 bg-gray-100 rounded-md text-xs text-gray-400 font-mono">
                     Status: Pending Development
                 </div>
             </div>

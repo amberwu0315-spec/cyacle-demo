@@ -13,7 +13,7 @@ export const ContentModule = ({ children, className = '', type = 'detail', statu
 
     return (
         <div
-            className={`w-full h-auto bg-white rounded-lg shadow-sm overflow-hidden border border-gray-100 ${status ? statusClasses[status] : ''} ${className}`}
+            className={`w-full h-auto bg-white rounded-md shadow-sm overflow-hidden border border-gray-100 ${status ? statusClasses[status] : ''} ${className}`}
             data-type={type}
             data-status={status}
         >

@@ -20,7 +20,7 @@ export const HeaderBrick = ({ node }) => {
   return (
     <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-white sticky top-0 z-10 shrink-0">
       <div className="flex items-center gap-3 overflow-hidden">
-        <div className="p-2 bg-gray-50 text-gray-400 rounded-lg shrink-0">
+        <div className="p-2 bg-gray-50 text-gray-400 rounded-md shrink-0">
           <IconInfoCircle className="w-5 h-5" />
         </div>
         <div className="overflow-hidden">
@@ -81,7 +81,7 @@ export const StateBrick = ({ status, resultValue, unit = 'kgCO₂e' }) => {
   }
 
   return (
-    <div className="mx-6 mt-6 p-4 bg-amber-50 border border-amber-100 rounded-lg flex gap-3 animate-pulse-subtle">
+    <div className="mx-6 mt-6 p-4 bg-amber-50 border border-amber-100 rounded-md flex gap-3 animate-pulse-subtle">
       <IconAlertTriangle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
       <div className="text-sm text-amber-800 leading-relaxed font-medium">
         当前节点尚未配置完成，计算结果暂时不可用。请在下方完善计算参数与活动数据。
@@ -106,7 +106,7 @@ export const ConfigBrick = ({ node, readOnly }) => (
     <div className={`space-y-5 ${readOnly ? 'opacity-60 grayscale' : ''}`}>
       <div className="space-y-1.5">
         <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">计算模型 / 公式</label>
-        <div className="p-3 bg-gray-50 border border-gray-100 rounded-lg font-mono text-sm text-gray-600 flex items-center justify-between">
+        <div className="p-3 bg-gray-50 border border-gray-100 rounded-md font-mono text-sm text-gray-600 flex items-center justify-between">
           <span>Activity_Data * Emission_Factor</span>
           {!readOnly && <IconPencil className="w-3.5 h-3.5 text-gray-300" />}
         </div>
@@ -115,13 +115,13 @@ export const ConfigBrick = ({ node, readOnly }) => (
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-1.5">
           <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">分配方式</label>
-          <div className="h-10 px-3 bg-white border border-gray-200 rounded-lg flex items-center text-sm text-gray-700">
+          <div className="h-10 px-3 bg-white border border-gray-200 rounded-md flex items-center text-sm text-gray-700">
             按物理量分配 (Physical)
           </div>
         </div>
         <div className="space-y-1.5">
           <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">分配比例 (%)</label>
-          <div className="h-10 px-3 bg-white border border-gray-200 rounded-lg flex items-center text-sm font-mono text-gray-700">
+          <div className="h-10 px-3 bg-white border border-gray-200 rounded-md flex items-center text-sm font-mono text-gray-700">
             100.00
           </div>
         </div>

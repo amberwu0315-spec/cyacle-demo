@@ -31,7 +31,7 @@ const FooterModal = ({ title, businessActions, onClose, children }) => {
 
     return (
         // ✅ 修复点 1: border-[#087F9C] -> border-primary
-        <div className="absolute top-0 left-0 bottom-[40px] right-0 bg-white/95 backdrop-blur-sm z-50 flex flex-col shadow-2xl border-4 border-primary rounded-t-lg">
+        <div className="absolute top-0 left-0 bottom-[40px] right-0 bg-white/95 backdrop-blur-sm z-50 flex flex-col shadow-2xl border-4 border-primary rounded-t-md">
             {/* 顶部栏 */}
             <div className="h-10 bg-gray-50 border-b border-gray-200 flex items-center justify-between px-3 shrink-0">
                 {/* 左侧标题 */}

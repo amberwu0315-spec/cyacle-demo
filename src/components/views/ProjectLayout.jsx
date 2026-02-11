@@ -26,7 +26,7 @@ export default function ProjectLayout({ mode, activeL2, activeL3, onL3Change, ac
         // Special Case: Research Object Detail View
         if (activeL1 === 'enterprise') {
             return (
-                <div className="flex-1 flex items-center justify-center bg-white m-3 rounded-lg border border-gray-100 shadow-sm">
+                <div className="flex-1 flex items-center justify-center bg-white m-3 rounded-md border border-gray-100 shadow-sm">
                     <div className="text-center text-gray-400">
                         <p className="text-lg font-medium mb-1">研究对象详情页</p>
                         <p className="text-xs">此处将展示企业/工厂的详细信息 (Data ID: {activeL2})</p>

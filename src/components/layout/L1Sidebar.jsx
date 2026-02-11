@@ -59,7 +59,7 @@ export default function L1Sidebar() {
                         <Tooltip key={item.id} content={item.label} placement="right">
                             <button
                                 onClick={() => setActiveL1(item.id)}
-                                className={`group relative p-3 rounded-lg transition-colors ${isActive ? 'bg-white/10' : 'hover:bg-white/10'}`}
+                                className={`group relative p-3 rounded-md transition-colors ${isActive ? 'bg-white/10' : 'hover:bg-white/10'}`}
                             >
                                 <item.icon
                                     className={`w-6 h-6 transition-colors ${isActive ? 'text-white' : 'text-white/70 group-hover:text-white'}`}
@@ -75,7 +75,7 @@ export default function L1Sidebar() {
                 <Tooltip content="项目标签" placement="right">
                     <button
                         onClick={() => setActiveL1('project_tag')}
-                        className={`group relative p-3 rounded-lg transition-colors ${activeL1 === 'project_tag' ? 'bg-white/10' : 'hover:bg-white/10'}`}
+                        className={`group relative p-3 rounded-md transition-colors ${activeL1 === 'project_tag' ? 'bg-white/10' : 'hover:bg-white/10'}`}
                     >
                         <IconFileCode className={`w-6 h-6 transition-colors text-[#10B981] ${activeL1 === 'project_tag' ? '' : 'group-hover:text-[#34D399]'}`} />
                     </button>
@@ -98,7 +98,7 @@ export default function L1Sidebar() {
                                         <div className="relative group">
                                             <button
                                                 onClick={() => clickTab(tab.id)}
-                                                className={`p-3 rounded-lg transition-colors ${isActive ? 'bg-[#087F9C]/20 border border-[#087F9C]/50' : 'hover:bg-white/5 border border-transparent'}`}
+                                                className={`p-3 rounded-md transition-colors ${isActive ? 'bg-[#087F9C]/20 border border-[#087F9C]/50' : 'hover:bg-white/5 border border-transparent'}`}
                                             >
                                                 <TabIcon
                                                     className={`w-6 h-6 transition-colors ${isActive ? 'text-[#087F9C]' : 'text-white/60 group-hover:text-white'}`}
@@ -134,7 +134,7 @@ export default function L1Sidebar() {
                     <div className="relative">
                         <button
                             onClick={() => setIsSettingsOpen(!isSettingsOpen)}
-                            className={`group relative p-3 transition-colors ${isSettingsOpen ? 'text-white bg-white/10 rounded-lg' : 'hover:text-white text-white/70'}`}
+                            className={`group relative p-3 transition-colors ${isSettingsOpen ? 'text-white bg-white/10 rounded-md' : 'hover:text-white text-white/70'}`}
                         >
                             <IconSettings className="w-6 h-6" />
                         </button>
@@ -149,7 +149,7 @@ export default function L1Sidebar() {
                                 ></div>
 
                                 {/* Popover Content */}
-                                <div className="absolute left-full bottom-0 ml-2 w-64 bg-[#1E2A32] border border-gray-700 shadow-xl rounded-lg p-4 z-[70] text-sm">
+                                <div className="absolute left-full bottom-0 ml-2 w-64 bg-[#1E2A32] border border-gray-700 shadow-xl rounded-md p-4 z-[70] text-sm">
                                     <div className="text-white font-medium mb-3 pb-2 border-b border-gray-700">
                                         系统设置
                                     </div>

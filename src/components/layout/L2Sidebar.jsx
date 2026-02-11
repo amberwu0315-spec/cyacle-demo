@@ -28,7 +28,7 @@ export default function L2Sidebar({ activeL2, onSelect, activeL1, enterpriseName
                 onClick={() => onSelect(item.id)}
                 className="group w-full flex flex-col items-center gap-1"
             >
-                <div className={`w-10 h-10 rounded-lg flex items-center justify-center transition-transform hover:scale-105 ${isActive ? 'bg-[#087F9C] text-white' : 'text-gray-500'}`}>
+                <div className={`w-10 h-10 rounded-md flex items-center justify-center transition-transform hover:scale-105 ${isActive ? 'bg-[#087F9C] text-white' : 'text-gray-500'}`}>
                     <item.icon className="w-5 h-5" />
                 </div>
                 <span className={`text-[14px] font-medium whitespace-nowrap ${isActive ? 'text-[#087F9C]' : 'text-gray-500'}`}>
@@ -133,7 +133,7 @@ export default function L2Sidebar({ activeL2, onSelect, activeL1, enterpriseName
                             }
                             placement="right"
                         >
-                            <div className="bg-[#087F9C] rounded-lg p-2 text-white shadow-md flex items-center justify-center cursor-default">
+                            <div className="bg-[#087F9C] rounded-md p-2 text-white shadow-md flex items-center justify-center cursor-default">
                                 {isEnterpriseDetail ? <IconShield size={20} stroke={1.5} /> :
                                     (isBusinessList && headerConfig[activeL1]) ? (() => { const Icon = headerConfig[activeL1].icon; return <Icon size={20} stroke={1.5} />; })() :
                                         <IconCompass size={20} stroke={1.5} />
@@ -143,14 +143,14 @@ export default function L2Sidebar({ activeL2, onSelect, activeL1, enterpriseName
                     ) : (
                         // Expanded Header
                         isEnterpriseDetail ? (
-                            <div className="bg-gradient-to-br from-[#087F9C] to-[#0D9488] rounded-lg p-3 text-white shadow-md flex flex-col items-center justify-center text-center mb-1 overflow-hidden whitespace-nowrap">
-                                <div className="w-8 h-8 rounded-lg border-2 border-white/30 flex items-center justify-center mb-1.5 backdrop-blur-sm bg-white/10">
+                            <div className="bg-gradient-to-br from-[#087F9C] to-[#0D9488] rounded-md p-3 text-white shadow-md flex flex-col items-center justify-center text-center mb-1 overflow-hidden whitespace-nowrap">
+                                <div className="w-8 h-8 rounded-md border-2 border-white/30 flex items-center justify-center mb-1.5 backdrop-blur-sm bg-white/10">
                                     <IconShield size={18} stroke={1.5} />
                                 </div>
                                 <div className="font-medium text-[13px] leading-tight w-full break-words px-1 truncate">{enterpriseName}</div>
                             </div>
                         ) : (isBusinessList && headerConfig[activeL1]) ? (
-                            <div className="bg-gradient-to-br from-[#087F9C] to-[#065F75] rounded-lg p-3 text-white shadow-md flex flex-col items-center justify-center text-center mb-1 overflow-hidden">
+                            <div className="bg-gradient-to-br from-[#087F9C] to-[#065F75] rounded-md p-3 text-white shadow-md flex flex-col items-center justify-center text-center mb-1 overflow-hidden">
                                 <div className="w-8 h-8 mb-1.5 opacity-90 flex items-center justify-center">
                                     {(() => { const Icon = headerConfig[activeL1].icon; return <Icon size={28} stroke={1.5} />; })()}
                                 </div>
@@ -179,7 +179,7 @@ export default function L2Sidebar({ activeL2, onSelect, activeL1, enterpriseName
                                             key={item.id}
                                             onClick={() => onSelect(item.id)}
                                             className={`
-                                                flex items-center text-left rounded-lg transition-all duration-200 group
+                                                flex items-center text-left rounded-md transition-all duration-200 group
                                                 ${isCollapsed ? 'justify-center w-10 h-10 p-0' : 'w-full p-2 items-start'}
                                                 ${isActive ? 'bg-[#087F9C] shadow-sm' : 'hover:bg-gray-50'}
                                             `}

@@ -102,7 +102,7 @@ const ContextMenu = ({ x, y, node, onClose, onAddChild, onRename, onDelete }) =>
         <>
             <div className="fixed inset-0 z-40" onClick={onClose} onContextMenu={(e) => { e.preventDefault(); onClose(); }} />
             <div
-                className="fixed z-50 bg-white shadow-xl rounded-lg border border-gray-100 py-1 min-w-[140px] animate-in fade-in zoom-in duration-75"
+                className="fixed z-50 bg-white shadow-xl rounded-md border border-gray-100 py-1 min-w-[140px] animate-in fade-in zoom-in duration-75"
                 style={{ top: y, left: x }}
             >
                 {items.map((item, idx) => (
@@ -379,7 +379,7 @@ export default function L3AdvancedTree({ data = [], selectedId, onSelect, onAddC
     }
 
     return (
-        <div className="flex flex-col h-full bg-white rounded-lg shadow-[0_1px_2px_0_rgba(0,0,0,0.05)] border border-gray-100 overflow-hidden">
+        <div className="flex flex-col h-full bg-white rounded-md shadow-[0_1px_2px_0_rgba(0,0,0,0.05)] border border-gray-100 overflow-hidden">
             <div className="p-2 border-b border-gray-50 bg-gray-50/30">
                 <div className="relative group">
                     <IconSearch className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 group-focus-within:text-[#087F9C]" />
