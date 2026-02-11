@@ -9,6 +9,8 @@ import React from 'react';
 import StandardBusinessLayout from '../StandardBusinessLayout';
 import { usePagePresentation } from '../../../context/PagePresentationContext';
 
+import { componentData } from '../../../data/mockData';
+
 const ComponentPage = () => {
     const { setActions } = usePagePresentation();
 
@@ -24,7 +26,35 @@ const ComponentPage = () => {
         ]
     };
 
-    return <StandardBusinessLayout title="元件" filterOptions={filterOptions} setHeaderActions={setActions} />;
+    const columns = [
+        { title: '元件名称', key: 'name', width: '25%', className: 'font-medium' },
+        { title: '来源', key: 'source', width: '10%', className: 'text-sm text-gray-500' },
+        { title: '单位组', key: 'unitGroup', width: '10%', className: 'text-sm text-gray-500' },
+        {
+            title: '类型', key: 'type', width: '15%', render: (text) => (
+                <span className="text-sm px-2 py-0.5 bg-gray-100 rounded text-gray-600">{text}</span>
+            )
+        },
+        { title: '基准单位', key: 'refUnit', width: '10%', className: 'text-sm text-gray-500' },
+        { title: '更新时间', key: 'updateTime', width: '15%', className: 'text-sm text-gray-500' },
+        {
+            title: '状态', key: 'status', width: '15%', render: (text) => (
+                <span className={`text-xs px-2 py-1 rounded ${text === 'in_use' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                    {text === 'in_use' ? '使用中' : '已淘汰'}
+                </span>
+            )
+        }
+    ];
+
+    return (
+        <StandardBusinessLayout
+            title="元件库"
+            filterOptions={filterOptions}
+            setHeaderActions={setActions}
+            columns={columns}
+            data={componentData}
+        />
+    );
 };
 
 export default ComponentPage;

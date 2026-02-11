@@ -8,15 +8,15 @@
 import React from 'react';
 import StandardBusinessLayout from '../StandardBusinessLayout';
 import { usePagePresentation } from '../../../context/PagePresentationContext';
+import { literatureFactorData } from '../../../data/mockData';
 
 const LiteratureFactorPage = () => {
     const { setActions } = usePagePresentation();
 
     const filterOptions = {
         types: [
-            { value: 'gwp', label: 'GWP因子' },
-            { value: 'ap', label: 'AP因子' },
-            { value: 'ep', label: 'EP因子' }
+            { value: 'LCIA', label: 'LCIA' },
+            { value: 'LCI', label: 'LCI' }
         ],
         statuses: [
             { value: 'verified', label: '已验证' },
@@ -24,7 +24,26 @@ const LiteratureFactorPage = () => {
         ]
     };
 
-    return <StandardBusinessLayout title="文献因子" filterOptions={filterOptions} setHeaderActions={setActions} />;
+    const columns = [
+        { title: '中文名称', key: 'nameCN', width: '20%', className: 'font-medium' },
+        { title: '英文名称', key: 'nameEN', width: '20%', className: 'text-sm text-gray-500' },
+        { title: '来源', key: 'source', width: '8%', className: 'text-sm text-gray-500' },
+        { title: '来源库', key: 'sourceDB', width: '10%', className: 'text-sm text-gray-500' },
+        { title: '类型', key: 'type', width: '8%', className: 'text-sm text-gray-500' },
+        { title: '时间', key: 'time', width: '8%', className: 'text-sm text-gray-500' },
+        { title: '地理', key: 'geo', width: '10%', className: 'text-sm text-gray-500' },
+        { title: '技术', key: 'tech', width: '10%', className: 'text-sm text-gray-500' }
+    ];
+
+    return (
+        <StandardBusinessLayout
+            title="文献因子"
+            filterOptions={filterOptions}
+            setHeaderActions={setActions}
+            columns={columns}
+            data={literatureFactorData}
+        />
+    );
 };
 
 export default LiteratureFactorPage;

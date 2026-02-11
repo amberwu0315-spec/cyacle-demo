@@ -7,7 +7,11 @@ import {
     IconShare,
     IconUpload,
     IconBook,
-    IconFileSpreadsheet
+    IconFileSpreadsheet,
+    // 新增图标 (如果 Tabler 库里没有对应名字，React 会报错，这里选用通用图标)
+    IconDashboard,
+    IconMap,
+    IconWallet
 } from '@tabler/icons-react';
 
 /**
@@ -15,6 +19,36 @@ import {
  */
 
 export const NAV_SCHEME = {
+    // ==================== 新增：工作空间 (L1-Workspace) ====================
+    workspace: {
+        defaultL2: 'workbench_home', // 默认选中工作台
+        modes: {
+            config: {
+                headerWidgets: ['title'], // 顶部只显示标题，保持清爽
+                sidebarGroups: [
+                    // 第一组：工作台 (无标题)
+                    {
+                        title: null,
+                        items: [
+                            { id: 'workbench_home', label: '工作台', icon: IconDashboard || IconChartBar }
+                        ]
+                    },
+                    // 第二组：业务功能
+                    {
+                        title: '碳排放&碳资产',
+                        items: [
+                            { id: 'carbon_panorama', label: '碳排放全景图', icon: IconMap || IconShare },
+                            { id: 'carbon_asset_mgmt', label: '碳资产管理', icon: IconWallet || IconDatabase }
+                        ]
+                    }
+                ]
+            },
+            version: { headerWidgets: ['title'], sidebarGroups: [] }
+        }
+    },
+
+    // ==================== 原有配置 ====================
+
     // Dimension: Navigation (L2-Nav)
     navigation: {
         modes: {

@@ -60,7 +60,18 @@ export default function L2Sidebar({ activeL2, onSelect, activeL1, enterpriseName
     ];
 
     // 2. Business List Groups (Background, Projects, Ent List)
+    const workspaceGroups = [
+        { title: null, items: [{ id: 'workbench_home', icon: IconCompass, label: '工作台', desc: '个人工作总览与快捷入口' }] }, // Using Compass as placeholder if Dashboard not imported
+        {
+            title: '碳排放&碳资产', items: [
+                { id: 'carbon_panorama', icon: IconMapPin, label: '碳排放全景图', desc: '企业碳排放宏观分布展示' },
+                { id: 'carbon_asset_mgmt', icon: IconDatabase, label: '碳资产管理', desc: '管理配额、CCER等碳资产' }
+            ]
+        }
+    ];
+
     const businessGroups = {
+        'workspace': workspaceGroups,
         'background_data': [
             { title: '数据库', items: [{ id: 'database_mgmt', icon: IconStack2, label: '数据库管理', desc: '管理背景数据库全集' }] },
             { title: '元件', items: [{ id: 'components', icon: IconCpu, label: '元件', desc: '相同物质/活动的因子组' }] },
@@ -89,6 +100,7 @@ export default function L2Sidebar({ activeL2, onSelect, activeL1, enterpriseName
 
     // 3. Header Config (Blue Gradient Card)
     const headerConfig = {
+        'workspace': { title: '工作空间', icon: IconCompass, desc: '您的个人工作中心，概览核心指标与待办事项。' },
         'background_data': { title: '背景数据', icon: IconShare, desc: '聚焦排放因子与文献数据，为碳足迹核算提供权威依据。' },
         'project_mgmt': { title: '项目', icon: IconLayoutGrid, desc: '管理覆盖碳核算全生命周期，涵盖核算、建模及执行。' },
         'enterprise': { title: '研究对象', icon: IconShield, desc: '围绕研究对象构建数据管理体系，提供清晰的数据信息。' }
@@ -97,7 +109,7 @@ export default function L2Sidebar({ activeL2, onSelect, activeL1, enterpriseName
     // ==================== Logic Determination ====================
     const isEnterpriseDetail = activeL1 === 'enterprise' && isDetailView;
     const isProjectDetail = activeL1 === 'project_mgmt' && isDetailView;
-    const isBusinessList = ['background_data', 'project_mgmt', 'enterprise'].includes(activeL1) && !isEnterpriseDetail && !isProjectDetail;
+    const isBusinessList = ['workspace', 'background_data', 'project_mgmt', 'enterprise'].includes(activeL1) && !isEnterpriseDetail && !isProjectDetail;
 
     // Only render the Collapsible Sidebar if we are in one of these modes
     if (isEnterpriseDetail || isBusinessList) {

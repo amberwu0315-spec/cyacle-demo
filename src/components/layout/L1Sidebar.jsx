@@ -1,7 +1,6 @@
 /**
  * L1Sidebar - 一级导航侧边栏
- * 
- * 🏢 角色：主电梯 / 楼层索引 (Main Elevator)
+ * * 🏢 角色：主电梯 / 楼层索引 (Main Elevator)
  * 📝 职责：
  * 1. 管理应用最顶层模块的切换 (Active L1)，如 workspace, background_data, enterprise。
  * 2. 也是 "Opened Tabs" (多标签页) 的停靠港湾。
@@ -23,34 +22,36 @@ export default function L1Sidebar() {
     } = useAppNavigation();
 
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-    const { isL1Allowed, getL1Label } = useUser();
+    const { isL1Allowed, getL1Label, currentRole, setCurrentRole } = useUser();
 
-    // Redirect to home if current activeL1 is not allowed
-    // except 'project_tag' which is common
+    // Redirect logic
     useEffect(() => {
-        if (activeL1 !== 'project_tag' && !isL1Allowed(activeL1)) {
-            setActiveL1('home');
+        // [修复] 这里的逻辑是：如果当前不在 'project_tag' 也不在 'workspace'，且没有权限，才跳回 workspace
+        // 防止系统因为不认识 'workspace' ID 而陷入死循环
+        if (activeL1 !== 'project_tag' && activeL1 !== 'workspace' && !isL1Allowed(activeL1)) {
+            setActiveL1('workspace');
         }
     }, [activeL1, isL1Allowed, setActiveL1]);
 
-    // Define all possible items with their default labels
+    // Define all possible items
     const allNavItems = [
-        { id: 'home', icon: IconUserCircle, label: '首页' },
+        { id: 'workspace', icon: IconUserCircle, label: '工作空间' },
         { id: 'background_data', icon: IconDatabase, label: '背景数据' },
         { id: 'project_mgmt', icon: IconLayoutKanban, label: '项目管理' },
         { id: 'enterprise', icon: IconBuilding, label: '服务企业' },
     ];
 
-    // Filter and map items based on permissions
+    // [关键修复] 强制显示 workspace，即使 isL1Allowed 返回 false
     const visibleNavItems = allNavItems
-        .filter(item => isL1Allowed(item.id))
+        .filter(item => item.id === 'workspace' || isL1Allowed(item.id))
         .map(item => ({
             ...item,
-            label: getL1Label(item.id, item.label)
+            // 只有非 workspace 的项目才去尝试获取动态标签，防止报错
+            label: item.id === 'workspace' ? item.label : getL1Label(item.id, item.label)
         }));
 
     return (
-        <nav className="fixed left-0 top-0 bottom-0 w-fit flex flex-col items-center pt-4 pb-6 z-50 bg-sidebar-dark">
+        <nav className="fixed left-0 top-0 bottom-0 w-fit flex flex-col items-center pt-4 pb-6 z-50 bg-[#1E2A32]">
             <div className="flex flex-col gap-[2px] w-full items-center px-1">
                 {visibleNavItems.map((item) => {
                     const isActive = activeL1 === item.id;
@@ -76,7 +77,7 @@ export default function L1Sidebar() {
                         onClick={() => setActiveL1('project_tag')}
                         className={`group relative p-3 rounded-lg transition-colors ${activeL1 === 'project_tag' ? 'bg-white/10' : 'hover:bg-white/10'}`}
                     >
-                        <IconFileCode className={`w-6 h-6 transition-colors text-accent-green ${activeL1 === 'project_tag' ? '' : 'group-hover:text-[#34D399]'}`} />
+                        <IconFileCode className={`w-6 h-6 transition-colors text-[#10B981] ${activeL1 === 'project_tag' ? '' : 'group-hover:text-[#34D399]'}`} />
                     </button>
                 </Tooltip>
 
@@ -97,10 +98,10 @@ export default function L1Sidebar() {
                                         <div className="relative group">
                                             <button
                                                 onClick={() => clickTab(tab.id)}
-                                                className={`p-3 rounded-lg transition-colors ${isActive ? 'bg-primary/20 border border-primary/50' : 'hover:bg-white/5 border border-transparent'}`}
+                                                className={`p-3 rounded-lg transition-colors ${isActive ? 'bg-[#087F9C]/20 border border-[#087F9C]/50' : 'hover:bg-white/5 border border-transparent'}`}
                                             >
                                                 <TabIcon
-                                                    className={`w-6 h-6 transition-colors ${isActive ? 'text-primary' : 'text-white/60 group-hover:text-white'}`}
+                                                    className={`w-6 h-6 transition-colors ${isActive ? 'text-[#087F9C]' : 'text-white/60 group-hover:text-white'}`}
                                                 />
                                             </button>
                                             {/* Close Button - Top Right Badge Style */}
@@ -156,7 +157,8 @@ export default function L1Sidebar() {
                                     {/* Role Switcher Section */}
                                     <div className="mb-4">
                                         <div className="text-gray-400 text-xs mb-2">演示：切换角色</div>
-                                        <RoleSwitcher />
+                                        {/* Use Internal Component */}
+                                        <RoleSwitcher currentRole={currentRole} setCurrentRole={setCurrentRole} />
                                     </div>
 
                                     <div className="text-gray-500 text-xs italic">
@@ -173,8 +175,7 @@ export default function L1Sidebar() {
 }
 
 // Internal component for the switcher to keep it self-contained
-function RoleSwitcher() {
-    const { currentRole, setCurrentRole } = useUser();
+function RoleSwitcher({ currentRole, setCurrentRole }) {
     return (
         <select
             value={currentRole}

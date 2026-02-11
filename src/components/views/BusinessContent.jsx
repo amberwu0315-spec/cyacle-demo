@@ -20,6 +20,10 @@ import CreateProjectPage from './l2/CreateProjectPage';
 import CreateResearchObjectPage from './l2/CreateResearchObjectPage';
 import { usePagePresentation } from '../../context/PagePresentationContext';
 
+import WorkbenchHomePage from './l2/WorkbenchHomePage';
+import CarbonPanoramaPage from './l2/CarbonPanoramaPage';
+import CarbonAssetMgmtPage from './l2/CarbonAssetMgmtPage';
+
 import { researchObjectData } from '../../data/mockData';
 
 export default function BusinessContent({ activeL1, target, onOpenTab, openedTabs = [], projects = [], onAddProject, researchObjects = [], onAddResearchObject }) {
@@ -223,6 +227,15 @@ export default function BusinessContent({ activeL1, target, onOpenTab, openedTab
 
     // ==================== 路由逻辑 ====================
     switch (target) {
+        // ==================== Workspace ====================
+        case 'workbench_home':
+            return <WorkbenchHomePage />;
+        case 'carbon_panorama':
+            return <CarbonPanoramaPage />;
+        case 'carbon_asset_mgmt':
+            return <CarbonAssetMgmtPage />;
+
+        // ==================== Background Data ====================
         case 'database_mgmt':
             return <DatabaseManagementPage />;
 

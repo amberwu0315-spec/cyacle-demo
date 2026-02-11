@@ -1,7 +1,6 @@
 /**
  * Workbench - 工作台 (二级布局)
- * 
- * 🏢 角色：部门经理 / 分区总管 (Zone Manager)
+ * * 🏢 角色：部门经理 / 分区总管 (Zone Manager)
  * 📝 职责：
  * 1. 管理二级侧边栏 (L2Sidebar)，决定显示项目菜单还是业务菜单。
  * 2. 也是 AppNavigationContext 和 View 层 (MainContent) 之间的关键桥梁。
@@ -73,10 +72,28 @@ const WorkbenchContent = ({
             setActiveDimension(businessTarget);
             setActiveMode('config');
         }
-    }, [activeL2, isProjectLayout, isBusinessLayout, isDetailView, businessTarget, setActiveDimension, setActiveMode]);
+        // [New] Workspace Logic
+        if (activeL1 === 'workspace') {
+            setActiveDimension('workspace');
+            setActiveMode('config');
+        }
+    }, [activeL1, activeL2, isProjectLayout, isBusinessLayout, isDetailView, businessTarget, setActiveDimension, setActiveMode]);
 
     // Update header title based on context
     useEffect(() => {
+        // [New] 优先处理 Workspace 模式
+        if (activeL1 === 'workspace') {
+            const workspaceTitleMap = {
+                'workbench_home': '工作台',
+                'carbon_panorama': '碳排放全景图',
+                'carbon_asset_mgmt': '碳资产管理'
+            };
+            setHeaderTitle(workspaceTitleMap[activeL2] || '工作空间');
+            setSidebarTitle('工作空间');
+            return; // 结束，不执行后续逻辑
+        }
+
+
         // Unified Logic for Project Layout AND Detail Views (Tabs)
         if (isProjectLayout || isDetailView) {
             // 1. Determine Project Name (Context)
@@ -154,7 +171,7 @@ const WorkbenchContent = ({
         } else {
             setHeaderTitle('Dashboard');
         }
-    }, [effectiveL1, activeL2, isProjectLayout, isBusinessLayout, businessTarget, isDetailView, openedTabs, setHeaderTitle, setSidebarTitle]);
+    }, [effectiveL1, activeL1, activeL2, isProjectLayout, isBusinessLayout, businessTarget, isDetailView, openedTabs, setHeaderTitle, setSidebarTitle]);
 
     // Auto-Close Modal
     useEffect(() => {
@@ -181,12 +198,15 @@ const WorkbenchContent = ({
             <div className="flex-1 flex flex-row overflow-hidden relative">
                 {/* Project L2 Sidebar (50px) - Show for Project Tag OR Detail Views */}
                 {/* L2 Sidebar: Unified for Project, Detail, and Business List */}
-                {(isProjectLayout || isDetailView || (isBusinessLayout && !isDetailView)) && (
+                {/* [Updated] Added isWorkspace check implicitly by ensuring activeL1 matches logic */}
+                {(isProjectLayout || isDetailView || (isBusinessLayout && !isDetailView) || activeL1 === 'workspace') && (
                     <L2Sidebar
-                        activeL1={effectiveL1}
+                        activeL1={activeL1 === 'workspace' ? 'workspace' : effectiveL1}
                         activeL2={(isProjectLayout || isDetailView) ? activeL2 : businessTarget}
                         onSelect={(id) => {
-                            if (isProjectLayout || isDetailView) {
+                            if (activeL1 === 'workspace') {
+                                setActiveL2(id);
+                            } else if (isProjectLayout || isDetailView) {
                                 setActiveL2(id); // Use Hook
                             } else {
                                 setBusinessTarget(id); // Use Hook
@@ -200,7 +220,8 @@ const WorkbenchContent = ({
                 {/* Right Column: Header + Content + Footer */}
                 <div className="flex-1 flex flex-col h-full overflow-hidden relative">
                     {/* Header: Visible for Project & Business, Hidden for Dashboard */}
-                    {(isProjectLayout || isBusinessLayout) && showHeader && (
+                    {/* [Updated] Allow Header for workspace */}
+                    {((isProjectLayout || isBusinessLayout || activeL1 === 'workspace') && showHeader) && (
                         <Header
                             title={headerTitle}
                             // For Legacy Pages (Basis, Navigation), we still pass default actions here

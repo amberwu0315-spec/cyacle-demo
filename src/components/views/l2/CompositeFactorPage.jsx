@@ -8,6 +8,7 @@
 import React from 'react';
 import StandardBusinessLayout from '../StandardBusinessLayout';
 import { usePagePresentation } from '../../../context/PagePresentationContext';
+import { compositeFactorData } from '../../../data/mockData';
 
 const CompositeFactorPage = () => {
     const { setActions } = usePagePresentation();
@@ -24,7 +25,25 @@ const CompositeFactorPage = () => {
         ]
     };
 
-    return <StandardBusinessLayout title="复合因子" filterOptions={filterOptions} setHeaderActions={setActions} />;
+    const columns = [
+        { title: '中文名称', key: 'nameCN', width: '25%', className: 'font-medium' },
+        { title: '英文名称', key: 'nameEN', width: '25%', className: 'text-sm text-gray-500' },
+        { title: '关联元件', key: 'refComponent', width: '15%', className: 'text-sm text-gray-500' },
+        { title: '来源库', key: 'sourceDB', width: '15%', className: 'text-sm text-gray-500' },
+        { title: '时间', key: 'time', width: '10%', className: 'text-sm text-gray-500' },
+        { title: '地理', key: 'geo', width: '10%', className: 'text-sm text-gray-500' },
+        { title: '技术', key: 'tech', width: '10%', className: 'text-sm text-gray-500' }
+    ];
+
+    return (
+        <StandardBusinessLayout
+            title="复合因子"
+            filterOptions={filterOptions}
+            setHeaderActions={setActions}
+            columns={columns}
+            data={compositeFactorData}
+        />
+    );
 };
 
 export default CompositeFactorPage;

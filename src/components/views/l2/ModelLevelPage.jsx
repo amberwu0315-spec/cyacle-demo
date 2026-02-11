@@ -9,7 +9,9 @@
 import React, { useEffect } from 'react';
 import { usePagePresentation } from '../../../context/PagePresentationContext';
 import { useNavigation } from '../../../context/NavigationContext';
+import { useViewActions } from '../../../context/ViewActionsContext'; // [新增]
 import L3Sidebar from '../../layout/L3Sidebar';
+import InnerDrawer from '../../common/InnerDrawer'; // [新增]
 
 // Views
 import AccountingBasic from '../l3/AccountingBasic';
@@ -17,10 +19,14 @@ import ModelEntityConfig from '../model/ModelEntityConfig';
 import ActivityDataView from '../shared/ActivityDataView';
 import FactorDataView from '../shared/FactorDataView';
 
+// Data
+import { modelData } from '../../../data/mockData';
+
 // THIS IS DIMENSION B: MODEL LEVEL (The detailed view)
 const ModelLevelPage = ({ activeL3, onL3Change }) => {
-    const { setActions, setLayoutConfig } = usePagePresentation();
+    const { setActions, setLayoutConfig, setBreadcrumbData } = usePagePresentation();
     const { activeMode } = useNavigation();
+    const { activeModal, closeModal } = useViewActions(); // [新增]
 
     // Default Selection Logic
     useEffect(() => {
@@ -30,14 +36,33 @@ const ModelLevelPage = ({ activeL3, onL3Change }) => {
     }, [activeL3, onL3Change]);
 
     useEffect(() => {
-        // Use Breadcrumb Layout
-        setLayoutConfig('breadcrumb');
+        // [修改] Activate 'model_level' dimension layout
+        setLayoutConfig({ activeDimension: 'model_level', activeMode: activeMode || 'config' });
+
+        // [新增] Set Breadcrumb
+        setBreadcrumbData([
+            { label: '核算', icon: null }, // Root
+            { label: getL3Label(activeL3) || '当前模块' } // Child
+        ]);
+
         setActions(null);
         return () => {
             setActions(null);
             setLayoutConfig('title-only');
+            setBreadcrumbData([]);
         };
-    }, [setActions, setLayoutConfig]);
+    }, [setActions, setLayoutConfig, setBreadcrumbData, activeMode, activeL3]);
+
+    // Helper
+    const getL3Label = (id) => {
+        const map = {
+            'mod_basic': '基本信息',
+            'mod_model_config': '模型配置',
+            'mod_pers_activity': '活动数据',
+            'mod_pers_factor': '因子数据',
+        };
+        return map[id];
+    };
 
     const renderL3Content = () => {
         switch (activeL3) {
@@ -67,6 +92,23 @@ const ModelLevelPage = ({ activeL3, onL3Change }) => {
                 ) : (
                     renderL3Content()
                 )}
+
+                {/* Drawers triggered by Header Widgets via ViewActionsContext */}
+                <InnerDrawer
+                    isOpen={activeModal?.id === 'acct_methodology'}
+                    onClose={closeModal}
+                    title="方法学设置"
+                >
+                    <div className="p-4">
+                        <h3 className="font-medium mb-2">选择核算标准</h3>
+                        <div className="space-y-2">
+                            <div className="p-3 bg-gray-50 rounded text-sm text-gray-500">
+                                模型层级继承自上级核算配置。
+                            </div>
+                        </div>
+                    </div>
+                </InnerDrawer>
+
             </main>
         </div>
     );

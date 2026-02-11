@@ -10,6 +10,8 @@ import React, { useEffect, useState } from 'react';
 import { usePagePresentation } from '../../../context/PagePresentationContext';
 import { IconFilter, IconBox, IconCheck, IconPlus } from '@tabler/icons-react';
 
+import { allocationData } from '../../../data/mockData';
+
 const AllocationPage = () => {
     const { setActions, setTitleOverride, setLayoutConfig } = usePagePresentation();
 
@@ -31,11 +33,7 @@ const AllocationPage = () => {
     }, [setActions]);
 
     // 模拟数据
-    const allocations = [
-        { id: 1, name: '按产量分配', type: '数量分配', status: '已启用', description: '根据产品产量进行碳排放分配' },
-        { id: 2, name: '按价值分配', type: '经济分配', status: '已启用', description: '根据产品经济价值进行分配' },
-        { id: 3, name: '按质量分配', type: '物理分配', status: '草稿', description: '根据产品质量进行物理分配' }
-    ];
+    const allocations = allocationData;
 
     // 渲染筛选器
     const renderFilters = () => (
