@@ -77,6 +77,11 @@ export const AppNavigationProvider = ({ children }) => {
 
     // --- Actions ---
 
+    // Keep detail entry behavior consistent across "open new tab" and "click existing tab".
+    const getDetailDefaultL2 = (l1Context) => (
+        l1Context === 'enterprise' ? 'ent_projects' : 'navigation'
+    );
+
     const handleL1Change = (val) => {
         const nextL2 = val === 'project_tag' ? 'navigation' : null;
         const nextL3 = 'acct_basic';
@@ -123,6 +128,7 @@ export const AppNavigationProvider = ({ children }) => {
     // Tab Interface
     const handleOpenTab = (item) => {
         const tabId = `detail_${item.id}`;
+        const detailL2 = getDetailDefaultL2(activeL1);
         if (!openedTabs.find(t => t.id === tabId)) {
             const newTab = {
                 id: tabId,
@@ -134,7 +140,7 @@ export const AppNavigationProvider = ({ children }) => {
             setOpenedTabs(prev => [...prev, newTab]);
         }
         setBusinessTarget(tabId);
-        setActiveL2('navigation');
+        setActiveL2(detailL2);
     };
 
     const handleCloseTab = (tabId, e) => {
@@ -154,11 +160,7 @@ export const AppNavigationProvider = ({ children }) => {
         const tab = openedTabs.find(t => t.id === tabId);
         if (tab) {
             setBusinessTarget(tabId);
-            if (tab.l1Context === 'enterprise') {
-                setActiveL2('ent_projects');
-            } else {
-                setActiveL2('navigation');
-            }
+            setActiveL2(getDetailDefaultL2(tab.l1Context));
         }
     };
 
