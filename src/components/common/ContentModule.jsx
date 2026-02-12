@@ -13,7 +13,7 @@ export const ContentModule = ({ children, className = '', type = 'detail', statu
 
     return (
         <div
-            className={`w-full h-auto bg-white rounded-lg shadow-sm overflow-hidden border border-gray-100 ${status ? statusClasses[status] : ''} ${className}`}
+            className={`w-full h-auto bg-white rounded-lg shadow-sm overflow-visible border border-gray-100 ${status ? statusClasses[status] : ''} ${className}`}
             data-type={type}
             data-status={status}
         >
@@ -97,7 +97,7 @@ export const ModuleHeader = ({
     };
 
     return (
-        <div className={`flex items-center justify-between px-3 py-2 bg-white min-h-[48px] ${showBorder ? 'border-b border-gray-100' : ''}`}>
+        <div className={`flex flex-wrap items-center justify-between px-3 py-2 bg-white min-h-[48px] gap-y-2 ${showBorder ? 'border-b border-gray-100' : ''}`}>
             {/* Zone L: Title Variants + Toggle */}
             <div className={`flex items-center gap-2 ${isAccordion ? 'cursor-pointer' : ''}`} onClick={isAccordion ? onToggle : undefined}>
                 {isAccordion && (
