@@ -764,7 +764,7 @@ const DataGrid = ({
     };
 
     return (
-        <div ref={gridRef} className={`relative bg-white border border-slate-200 rounded-lg flex flex-col min-h-0 ${className}`}>
+        <div ref={gridRef} className={`relative bg-white border border-slate-200 rounded-md flex flex-col min-h-0 overflow-hidden ${className}`}>
             {showToolbar && (
                 <div className="h-9 px-3 border-b border-slate-200 flex items-center justify-between bg-white">
                     <div className="flex items-center gap-2 text-[11px] text-slate-500">
@@ -853,17 +853,17 @@ const DataGrid = ({
             )}
 
             <div className="flex-1 overflow-auto">
-                <table className="text-[13px] border-collapse table-fixed min-w-full" style={{ width: `${Math.max(totalWidth, minTableWidth)}px` }}>
+                <table className="text-xs border-collapse table-fixed min-w-full" style={{ width: `${Math.max(totalWidth, minTableWidth)}px` }}>
                     <colgroup>
                         {showCheckboxSelection && <col style={{ width: `${SELECTION_COLUMN_WIDTH}px` }} />}
                         {visibleColumns.map((col) => (
                             <col key={col.key} style={{ width: `${col.width}px` }} />
                         ))}
                     </colgroup>
-                    <thead className="bg-white text-slate-600 border-b border-slate-200">
+                    <thead className="bg-table-head text-slate-600 border-b border-slate-200 text-xxs">
                         <tr>
                             {showCheckboxSelection && (
-                                <th className="h-8 px-2 sticky left-0 z-20 bg-white">
+                                <th className="h-8 px-2 sticky left-0 z-20 bg-inherit whitespace-nowrap">
                                     <input
                                         ref={(node) => {
                                             if (!node) return;
@@ -886,7 +886,7 @@ const DataGrid = ({
                                 return (
                                     <th
                                         key={col.key}
-                                        className={`group relative h-8 px-2 font-medium ${isSticky ? 'sticky z-20 bg-white' : ''}`}
+                                        className={`group relative h-8 px-2 font-medium ${isSticky ? 'sticky z-20 bg-inherit' : 'bg-inherit'}`}
                                         style={isSticky ? { left: stickyLeft } : undefined}
                                     >
                                         <div className="h-full flex items-center justify-between gap-2 min-w-0">

@@ -12,7 +12,12 @@ export default {
                     hover: '#E8FBFD',   // Primary 0
                     emphasize: '#0C8893', // Primary 2
                     strong: '#02657A',  // Primary 3
+                    action: '#087F9C',  // Extracted from views
                 },
+                canvas: {
+                    DEFAULT: '#F5F6F8', // Page background
+                },
+                'table-head': '#EFFDFE', // Table header background (cyan.0)
                 neutral: {
                     white: '#FFFFFF',
                     black: '#000000',

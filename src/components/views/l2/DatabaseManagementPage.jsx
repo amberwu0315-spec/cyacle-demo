@@ -1,6 +1,7 @@
 import React from 'react';
 import StandardBusinessLayout from '../StandardBusinessLayout';
 import { usePagePresentation } from '../../../context/PagePresentationContext';
+import Tag from '../../common/Tag';
 
 import { databaseData } from '../../../data/mockData';
 
@@ -34,16 +35,16 @@ const DatabaseManagementPage = () => {
         },
         {
             title: '来源', key: 'source', width: '10%', render: (text) => (
-                <span className={`px-2 py-0.5 rounded text-xs ${text === '标准' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>
+                <Tag variant={text === '标准' ? 'success' : 'primary'} size="sm">
                     {text}
-                </span>
+                </Tag>
             )
         },
         { title: '版本', key: 'version', width: '10%', className: 'text-gray-500 text-sm' },
         { title: '年份', key: 'year', width: '10%', className: 'text-gray-500 text-sm' },
         {
             title: '权限', key: 'permission', width: '10%', render: (text) => (
-                <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">{text}</span>
+                <Tag variant="neutral" size="sm">{text}</Tag>
             )
         },
         { title: '条目数', key: 'count', width: '10%', className: 'text-gray-500 text-sm' },

@@ -1,4 +1,6 @@
 import { IconFilter, IconDownload, IconPlus } from '@tabler/icons-react';
+import Tag from '../../common/Tag';
+import StatusChip from '../../common/StatusChip';
 
 export default function PerspectiveData({ title }) {
     return (
@@ -23,9 +25,9 @@ export default function PerspectiveData({ title }) {
                             <tr key={i} className="hover:bg-gray-50 transition-colors">
                                 <td className="px-6 py-3 font-mono text-xs">DAT-00{i}</td>
                                 <td className="px-6 py-3 text-gray-800 font-medium">示例数据项 {i}</td>
-                                <td className="px-6 py-3"><span className="px-2 py-0.5 rounded bg-gray-100 text-xs">Raw Material</span></td>
+                                <td className="px-6 py-3"><Tag variant="neutral" size="sm">{i % 2 === 0 ? 'Energy' : 'Raw Material'}</Tag></td>
                                 <td className="px-6 py-3 font-mono">1,20{i}.50</td>
-                                <td className="px-6 py-3"><span className="text-green-600 text-xs flex items-center gap-1">● Active</span></td>
+                                <td className="px-6 py-3"><StatusChip status="Active" /></td>
                                 <td className="px-6 py-3 text-right text-[#087F9C] cursor-pointer hover:underline">Edit</td>
                             </tr>
                         ))}

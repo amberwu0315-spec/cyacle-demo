@@ -47,7 +47,7 @@ export const ContentModule = ({ children, className = '', type = 'auto', status 
 
     return (
         <div
-            className={`w-full bg-white rounded-lg shadow-sm overflow-visible ${typeClasses[resolvedType] || typeClasses.detail} ${status ? statusClasses[status] : ''} ${className}`}
+            className={`w-full bg-white rounded-sm shadow-sm overflow-hidden ${typeClasses[resolvedType] || typeClasses.detail} ${status ? statusClasses[status] : ''} ${className}`}
             data-type={resolvedType}
             data-status={status}
             data-has-header={hasHeader ? 'true' : 'false'}

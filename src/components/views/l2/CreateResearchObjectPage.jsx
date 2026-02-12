@@ -293,7 +293,7 @@ const CreateResearchObjectPage = ({ onCancel, onSave }) => {
                     <>
                         <button
                             onClick={onCancel}
-                            className="px-3 py-1.5 text-xs text-gray-600 hover:bg-gray-100 rounded transition-colors"
+                            className="px-3 py-1.5 text-xs text-gray-600 hover:bg-gray-100 rounded-md transition-colors"
                         >
                             取消
                         </button>
@@ -305,7 +305,7 @@ const CreateResearchObjectPage = ({ onCancel, onSave }) => {
                                 }
                                 onSave && onSave(formData);
                             }}
-                            className={`px-3 py-1.5 text-xs text-white rounded transition-colors flex items-center gap-1 ${isValid
+                            className={`px-3 py-1.5 text-xs text-white rounded-md transition-colors flex items-center gap-1 ${isValid
                                 ? 'bg-[#087f9c] hover:bg-[#076a82]'
                                 : 'bg-gray-300 cursor-not-allowed'
                                 }`}

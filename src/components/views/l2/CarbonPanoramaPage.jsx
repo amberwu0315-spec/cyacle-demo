@@ -10,6 +10,8 @@ import {
     RefreshCw
 } from 'lucide-react';
 import { ContentModule, ModuleHeader } from '../../common/ContentModule';
+import Tag from '../../common/Tag';
+
 
 const years = ['2020', '2021', '2022', '2023', '2024'];
 
@@ -53,7 +55,7 @@ const getMockData = (year) => {
 
 const MetricCard = ({ title, value, unit, trend, icon: Icon, footer, progress }) => {
     return (
-        <div className="rounded-lg shadow-sm border border-slate-200 bg-white p-4 min-h-[116px] flex flex-col justify-between group hover:border-[#7dd3df] transition-colors">
+        <div className="rounded-sm shadow-sm border border-slate-200 bg-white p-4 min-h-[116px] flex flex-col justify-between group hover:border-[#7dd3df] transition-colors">
             <div className="flex items-start justify-between gap-2">
                 <div>
                     <p className="text-[12px] text-slate-500">{title}</p>
@@ -62,7 +64,7 @@ const MetricCard = ({ title, value, unit, trend, icon: Icon, footer, progress })
                         <span className="ml-1 text-[12px] font-normal text-slate-500">{unit}</span>
                     </p>
                 </div>
-                <span className="w-8 h-8 rounded-md bg-slate-100 text-slate-500 flex items-center justify-center">
+                <span className="w-8 h-8 rounded-sm bg-slate-100 text-slate-500 flex items-center justify-center">
                     <Icon size={16} strokeWidth={1.8} />
                 </span>
             </div>
@@ -141,30 +143,24 @@ const CarbonPanoramaPage = () => {
     return (
         <CanvasPage className="bg-[#f3f6f8] p-3">
             <div className="h-full flex flex-col gap-3 overflow-y-auto">
-                <div className="rounded-lg shadow-sm border border-slate-200 bg-white px-3 py-2 flex flex-wrap items-center justify-between gap-2">
+                <div className="rounded-sm shadow-sm border border-slate-200 bg-white px-3 py-2 flex flex-wrap items-center justify-between gap-2">
                     <div className="flex flex-wrap items-center gap-2">
-                        <span className="h-8 px-3 rounded-md border border-[#bde8ef] bg-[#e6f7fa] text-xs text-slate-700 flex items-center gap-1.5">
-                            <Check size={14} className="text-[#0EA5B7]" strokeWidth={2} />
-                            管理状态
-                            <strong className="text-slate-900 ml-0.5">已核查</strong>
-                        </span>
-                        <span className="h-8 px-3 rounded-md border border-slate-200 bg-slate-50 text-xs text-slate-700 flex items-center gap-1.5">
-                            <FlaskConical size={14} className="text-[#22A06B]" strokeWidth={2} />
-                            核算机构
-                            <strong className="text-slate-900">SGS 通标</strong>
-                        </span>
-                        <span className="h-8 px-3 rounded-md border border-slate-200 bg-slate-50 text-xs text-slate-700 flex items-center gap-1.5">
-                            <LayoutGrid size={14} className="text-[#2F6BFF]" strokeWidth={2} />
-                            核算认证标准
-                            <strong className="text-slate-900">《企业温室气体排放核算与报告指南及电设施》</strong>
-                        </span>
+                        <Tag variant="success" size="sm" icon={Check}>
+                            管理状态：<strong>已核查</strong>
+                        </Tag>
+                        <Tag variant="primary" size="sm" icon={FlaskConical}>
+                            核算机构：<strong>SGS 通标</strong>
+                        </Tag>
+                        <Tag variant="neutral" size="sm" icon={LayoutGrid}>
+                            核算认证标准：<strong>《企业温室气体排放核算与报告指南及电设施》</strong>
+                        </Tag>
                     </div>
-                    <div className="h-8 rounded-md border border-slate-200 bg-slate-50 px-2 flex items-center gap-1">
+                    <div className="h-8 rounded-sm border border-slate-200 bg-slate-50 px-2 flex items-center gap-1">
                         {years.map((year) => (
                             <button
                                 key={year}
                                 onClick={() => setSelectedYear(year)}
-                                className={`px-3 h-6 rounded text-xs transition-colors ${selectedYear === year ? 'bg-white border border-[#bde8ef] text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-900'}`}
+                                className={`px-3 h-6 rounded-sm text-xs transition-colors ${selectedYear === year ? 'bg-white border border-[#bde8ef] text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-900'}`}
                             >
                                 {year}
                             </button>
@@ -207,7 +203,7 @@ const CarbonPanoramaPage = () => {
                         />
                     </div>
 
-                    <section className="rounded-lg shadow-sm border border-slate-200 bg-white overflow-hidden">
+                    <section className="rounded-sm shadow-sm border border-slate-200 bg-white overflow-hidden">
                         <div className="h-11 px-4 border-b border-slate-200 bg-slate-50/40 flex items-center">
                             <h3 className="text-sm font-semibold text-slate-800">排放类别占比</h3>
                         </div>
@@ -244,16 +240,16 @@ const CarbonPanoramaPage = () => {
                                         {tab}
                                     </button>
                                 ))}
-                                <div className="ml-1 h-7 px-1 rounded-md border border-slate-200 flex items-center gap-1 bg-slate-50">
+                                <div className="ml-1 h-7 px-1 rounded-sm border border-slate-200 flex items-center gap-1 bg-slate-50">
                                     <button
                                         onClick={() => setTimeDimension('year')}
-                                        className={`h-5 px-2 rounded text-xs transition-all ${timeDimension === 'year' ? 'bg-white shadow-sm border border-[#bde8ef] text-slate-900' : 'text-slate-500 hover:text-slate-900'}`}
+                                        className={`h-5 px-2 rounded-sm text-xs transition-all ${timeDimension === 'year' ? 'bg-white shadow-sm border border-[#bde8ef] text-slate-900' : 'text-slate-500 hover:text-slate-900'}`}
                                     >
                                         按年
                                     </button>
                                     <button
                                         onClick={() => setTimeDimension('month')}
-                                        className={`h-5 px-2 rounded text-xs transition-all ${timeDimension === 'month' ? 'bg-white shadow-sm border border-[#bde8ef] text-slate-900' : 'text-slate-500 hover:text-slate-900'}`}
+                                        className={`h-5 px-2 rounded-sm text-xs transition-all ${timeDimension === 'month' ? 'bg-white shadow-sm border border-[#bde8ef] text-slate-900' : 'text-slate-500 hover:text-slate-900'}`}
                                     >
                                         按月
                                     </button>
@@ -301,10 +297,10 @@ const CarbonPanoramaPage = () => {
                 </ContentModule>
 
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 pb-2">
-                    <section className="rounded-lg shadow-sm border border-slate-200 bg-white overflow-hidden flex flex-col">
+                    <section className="rounded-sm shadow-sm border border-slate-200 bg-white overflow-hidden flex flex-col">
                         <div className="h-11 px-4 border-b border-slate-200 bg-slate-50/40 flex items-center justify-between shrink-0">
                             <h3 className="text-sm font-semibold text-slate-800">产品碳足迹排放 (Top 5)</h3>
-                            <span className="text-[10px] px-2 py-0.5 rounded border border-[#bde8ef] bg-[#e6f7fa] text-[#0B7285]">产品层面</span>
+                            <Tag variant="primary" size="xs">产品层面</Tag>
                         </div>
                         <div className="p-4 space-y-4 flex-1">
                             {data.productRanking.map((item, idx) => {
@@ -338,10 +334,10 @@ const CarbonPanoramaPage = () => {
                         </div>
                     </section>
 
-                    <section className="rounded-lg shadow-sm border border-slate-200 bg-white overflow-hidden flex flex-col">
+                    <section className="rounded-sm shadow-sm border border-slate-200 bg-white overflow-hidden flex flex-col">
                         <div className="h-11 px-4 border-b border-slate-200 bg-slate-50/40 flex items-center justify-between shrink-0">
                             <h3 className="text-sm font-semibold text-slate-800">排放源排行</h3>
-                            <span className="text-[10px] px-2 py-0.5 rounded border border-emerald-200 bg-emerald-50 text-emerald-700">组织层面</span>
+                            <Tag variant="success" size="xs">组织层面</Tag>
                         </div>
                         <div className="p-4 space-y-6 flex-1">
                             {data.sourceRanking.map((item, idx) => (
@@ -353,11 +349,11 @@ const CarbonPanoramaPage = () => {
                                             </span>
                                             {item.name}
                                         </span>
-                                            <span className="font-semibold text-slate-900">
-                                                {item.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                                <span className="ml-1 text-[11px] font-normal text-slate-500">tCO₂e</span>
-                                            </span>
-                                        </div>
+                                        <span className="font-semibold text-slate-900">
+                                            {item.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                            <span className="ml-1 text-[11px] font-normal text-slate-500">tCO₂e</span>
+                                        </span>
+                                    </div>
                                     <div className="mt-2 h-1.5 rounded-full bg-slate-200 overflow-hidden">
                                         <div className="h-full rounded-full bg-emerald-500" style={{ width: `${item.percent}%` }} />
                                     </div>

@@ -167,13 +167,13 @@ const CreateProjectPage = ({ onCancel, onSave, researchObjects = [] }) => {
                     <>
                         <button
                             onClick={onCancel}
-                            className="px-3 py-1.5 text-xs text-gray-600 hover:bg-gray-100 rounded transition-colors"
+                            className="px-3 py-1.5 text-xs text-gray-600 hover:bg-gray-100 rounded-md transition-colors"
                         >
                             取消
                         </button>
                         <button
                             onClick={handleCreate}
-                            className={`px-3 py-1.5 text-xs text-white rounded transition-colors flex items-center gap-1 ${isFormValid
+                            className={`px-3 py-1.5 text-xs text-white rounded-md transition-colors flex items-center gap-1 ${isFormValid
                                 ? 'bg-[#087F9C] hover:bg-[#076A82]'
                                 : 'bg-gray-400 hover:bg-gray-500'
                                 }`}

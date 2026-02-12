@@ -2,6 +2,8 @@ import React from 'react';
 import { CanvasPage } from '../../layout/PageLayouts';
 import DataGrid from '../../common/DataGrid';
 import StatusChip from '../../common/StatusChip';
+import Tag from '../../common/Tag';
+
 import {
     ChevronRight,
     Database,
@@ -50,11 +52,19 @@ const assetRecordColumns = [
         sortable: true,
         filterable: true,
         groupable: true,
-        render: (value) => (
-            <span className={typeBadgeStyle[value] || 'qy-type-chip qy-type-chip--default'}>
-                {value}
-            </span>
-        )
+        render: (value) => {
+            const variantMap = {
+                CCER买入: 'success',
+                配额卖出: 'warning',
+                CCER置换: 'primary',
+                年度履约清缴: 'primary'
+            };
+            return (
+                <Tag variant={variantMap[value] || 'neutral'} size="sm">
+                    {value}
+                </Tag>
+            );
+        }
     },
     { title: '数量 (tCO₂e)', key: 'amount', width: 130, sortable: true, filterable: true, groupable: false, align: 'right' },
     { title: '单价 (RMB)', key: 'price', width: 130, sortable: true, filterable: true, groupable: false, align: 'right' },
@@ -93,7 +103,7 @@ const CarbonAssetMgmtPage = () => {
                         </h2>
                         <p className="text-xs text-slate-500 mt-1">动态管理配额、CCER及碳资产账户，支持履约评估与资产运营决策</p>
                     </div>
-                    <button className="h-9 px-4 rounded-md border border-slate-200 bg-white text-sm text-slate-700 font-medium shadow-sm hover:bg-slate-50">
+                    <button className="h-9 px-4 rounded-sm border border-slate-200 bg-white text-sm text-slate-700 font-medium shadow-sm hover:bg-slate-50">
                         资产交易
                     </button>
                 </div>

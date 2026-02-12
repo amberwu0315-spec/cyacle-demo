@@ -180,7 +180,7 @@ const WorkbenchHomePage = () => {
                 </div>
 
                 <div className="grid grid-cols-1 xl:grid-cols-6 gap-3">
-                    <div className="xl:col-span-4 rounded-lg border border-cyan-200 bg-gradient-to-br from-[#0b7e95] via-[#0e95ae] to-[#209fcb] px-5 py-4 text-white shadow-[0_12px_26px_rgba(14,149,174,0.24)]">
+                    <div className="xl:col-span-4 rounded-sm border border-cyan-200 bg-gradient-to-br from-[#0b7e95] via-[#0e95ae] to-[#209fcb] px-5 py-4 text-white shadow-[0_12px_26px_rgba(14,149,174,0.24)]">
                         <div className="flex items-start justify-between gap-4">
                             <div className="max-w-3xl">
                                 <div className="flex items-center gap-2">
@@ -203,7 +203,7 @@ const WorkbenchHomePage = () => {
                         <div className="text-sm font-semibold text-slate-800">运营快照</div>
                         <div className="mt-3 grid grid-cols-3 gap-3">
                             {quickIndicators.map((item) => (
-                                <div key={item.label} className="rounded-md border border-slate-200 bg-white px-3 py-2.5">
+                                <div key={item.label} className="rounded-sm border border-slate-200 bg-white px-3 py-2.5">
                                     <div className="text-[11px] text-slate-500">{item.label}</div>
                                     <div className="mt-1 text-[24px] leading-none font-semibold text-slate-900">
                                         {item.value.toLocaleString()}
@@ -329,11 +329,11 @@ const WorkbenchHomePage = () => {
                             {newsItems.map((item, idx) => (
                                 <div key={item.title} className="flex items-start gap-3">
                                     {idx < 3 ? (
-                                        <span className="w-5 h-5 rounded bg-cyan-100 text-cyan-700 text-xs font-semibold flex items-center justify-center shrink-0 mt-0.5">
+                                        <span className="w-5 h-5 rounded-sm bg-cyan-100 text-cyan-700 text-xs font-semibold flex items-center justify-center shrink-0 mt-0.5">
                                             {idx + 1}
                                         </span>
                                     ) : (
-                                        <span className="w-5 h-5 rounded border border-slate-300 text-slate-400 text-[10px] flex items-center justify-center shrink-0 mt-0.5">
+                                        <span className="w-5 h-5 rounded-sm border border-slate-300 text-slate-400 text-[10px] flex items-center justify-center shrink-0 mt-0.5">
                                             文
                                         </span>
                                     )}
@@ -360,7 +360,7 @@ const WorkbenchHomePage = () => {
                         <div className="px-4 py-3 space-y-3">
                             {helpItems.map((item) => (
                                 <div key={item} className="flex items-center gap-3 text-sm text-slate-700">
-                                    <span className="w-4 h-4 rounded-[3px] border border-slate-300 bg-white shrink-0" />
+                                    <span className="w-4 h-4 rounded-sm border border-slate-300 bg-white shrink-0" />
                                     <span>{item}</span>
                                 </div>
                             ))}

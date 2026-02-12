@@ -9,6 +9,8 @@ import React from 'react';
 import StandardBusinessLayout from '../StandardBusinessLayout';
 import { usePagePresentation } from '../../../context/PagePresentationContext';
 import StatusChip from '../../common/StatusChip';
+import Tag from '../../common/Tag';
+
 
 import { componentData } from '../../../data/mockData';
 
@@ -33,7 +35,7 @@ const ComponentPage = () => {
         { title: '单位组', key: 'unitGroup', width: '10%', className: 'text-sm text-gray-500' },
         {
             title: '类型', key: 'type', width: '15%', render: (text) => (
-                <span className="text-sm px-2 py-0.5 bg-gray-100 rounded text-gray-600">{text}</span>
+                <Tag variant="neutral" size="sm">{text}</Tag>
             )
         },
         { title: '基准单位', key: 'refUnit', width: '10%', className: 'text-sm text-gray-500' },

@@ -9,6 +9,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { TextInput, NumberInput, Select, Textarea, useCombobox } from '@mantine/core';
 import { IconPencil, IconCheck, IconX, IconRotate, IconTextPlus, IconInfoCircle } from '@tabler/icons-react';
+import Tag from './Tag';
 
 /**
  * EditableField Component (Prototype Enhanced Edition)
@@ -121,27 +122,23 @@ const EditableField = ({
         if (value === '' || value === null || value === undefined) {
             // Rule: No label -> <未命名>
             if (!label) {
-                return <span className="text-[13px] text-slate-400">&lt;未命名&gt;</span>;
+                return <span className="text-xxs text-slate-400">&lt;未命名&gt;</span>;
             }
 
             // For fields with labels, show "请输入" or "请选择" based on type
             const defaultPlaceholder = ['select', 'date', 'dataCard'].includes(type) ? '请选择' : '请输入';
             const placeholderText = rest.placeholder || defaultPlaceholder;
 
-            return <span className="text-[13px] text-slate-400">{placeholderText}</span>;
+            return <span className="text-xxs text-slate-400">{placeholderText}</span>;
         }
 
         if (type === 'dataCard' && value) {
-            return (
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded text-[13px] text-slate-700">
-                    {value.name || value}
-                </div>
-            );
+            return <Tag variant="default" size="sm" shape="rect">{value.name || value}</Tag>;
         }
 
         if (type === 'number' && unit) {
             return (
-                <span className="text-[13px] text-slate-900">
+                <span className="text-xs text-slate-900">
                     {value} <span className="text-slate-500 ml-1">{unit}</span>
                 </span>
             );
@@ -149,7 +146,7 @@ const EditableField = ({
 
         if (type === 'textarea') {
             return (
-                <span className="text-[13px] text-slate-900 whitespace-pre-wrap">
+                <span className="text-xs text-slate-900 whitespace-pre-wrap">
                     {value || '未填写'}
                 </span>
             );
@@ -157,10 +154,10 @@ const EditableField = ({
 
         if (type === 'select') {
             const selectedOption = options.find(opt => String(opt.value) === String(value));
-            return <span className="text-[13px] text-slate-900">{selectedOption?.label || value}</span>;
+            return <span className="text-xs text-slate-900">{selectedOption?.label || value}</span>;
         }
 
-        return <span className="text-[13px] text-slate-900">{value}</span>;
+        return <span className="text-xs text-slate-900">{value}</span>;
     };
 
     const shouldShowToolbar = ['textarea', 'multiSelect', 'rich-text'].includes(type);
@@ -305,11 +302,11 @@ const EditableField = ({
 
         const isMultiLine = ['textarea', 'rich-text'].includes(type);
         // Shared text styles for zero-jump
-        const textStyles = `text-[13px] font-normal ${isMultiLine ? 'leading-[1.6]' : 'leading-none h-full flex items-center'}`;
+        const textStyles = `text-xs font-normal ${isMultiLine ? 'leading-[1.6]' : 'leading-none h-full flex items-center'}`;
 
         return (
             <div
-                className={`flex items-center rounded transition-all duration-200 ease-in-out relative ${!isEditing ? 'group' : ''} ${!isMultiLine ? 'min-h-9' : ''} ${isEditing ? 'z-[60]' : ''}`}
+                className={`flex items-center rounded-md transition-all duration-200 ease-in-out relative ${!isEditing ? 'group' : ''} ${!isMultiLine ? 'min-h-9' : ''} ${isEditing ? 'z-[60]' : ''}`}
             >
                 {isEditing ? (
                     <div className={`w-full h-full flex items-center ${isMultiLine ? 'py-1' : ''}`}>
@@ -317,7 +314,7 @@ const EditableField = ({
                     </div>
                 ) : (
                     <div
-                        className={`relative flex-1 w-full ${isMultiLine ? 'min-h-[36px] items-start py-2' : 'min-h-[36px] items-center py-1'} flex px-3 border border-transparent overflow-visible group-hover:bg-slate-50 rounded cursor-pointer transition-colors duration-200`}
+                        className={`relative flex-1 w-full ${isMultiLine ? 'min-h-[36px] items-start py-2' : 'min-h-[36px] items-center py-1'} flex px-3 border border-transparent overflow-visible group-hover:bg-slate-50 rounded-md cursor-pointer transition-colors duration-200`}
                         onClick={handleEdit}
                     >
                         <div className={`pr-12 w-full whitespace-pre-wrap break-words ${textStyles}`}>
@@ -327,7 +324,7 @@ const EditableField = ({
                         <div className="absolute right-0 top-1/2 -translate-y-1/2 pl-4 bg-gradient-to-l from-slate-50 via-slate-50 to-transparent flex items-center h-[calc(100%-2px)] mr-[1px] opacity-0 group-hover:opacity-100 transition-opacity">
                             <button
                                 onClick={(e) => { e.stopPropagation(); handleEdit(); }}
-                                className="flex items-center gap-1 px-2 h-6 bg-white border border-slate-200 text-xs text-slate-600 hover:text-[#0EA5B7] hover:border-[#0EA5B7] rounded shadow-sm transition-all whitespace-nowrap"
+                                className="flex items-center gap-1 px-2 h-6 bg-white border border-slate-200 text-xs text-slate-600 hover:text-[#0EA5B7] hover:border-[#0EA5B7] rounded-md shadow-sm transition-all whitespace-nowrap"
                                 title="编辑"
                             >
                                 <IconPencil size={12} />
@@ -343,19 +340,19 @@ const EditableField = ({
     // --- LAYOUT RENDERING ---
 
     const renderToolbar = () => (
-        <div className="absolute left-0 right-0 top-full mt-1 flex items-center gap-1 px-3 py-1 bg-white border border-slate-200 rounded shadow-md z-[80]">
+        <div className="absolute left-0 right-0 top-full mt-1 flex items-center gap-1 px-3 py-1 bg-white border border-slate-200 rounded-md shadow-md z-[80]">
             {type === 'textarea' && (
                 <div className="flex items-center gap-1 mr-auto">
-                    <button className="w-6 h-6 flex items-center justify-center text-slate-600 hover:bg-slate-100 rounded transition-colors"><IconTextPlus size={16} /></button>
-                    <button className="w-6 h-6 flex items-center justify-center text-slate-600 hover:bg-slate-100 rounded transition-colors"><IconRotate size={16} /></button>
+                    <button className="w-6 h-6 flex items-center justify-center text-slate-600 hover:bg-slate-100 rounded-md transition-colors"><IconTextPlus size={16} /></button>
+                    <button className="w-6 h-6 flex items-center justify-center text-slate-600 hover:bg-slate-100 rounded-md transition-colors"><IconRotate size={16} /></button>
                 </div>
             )}
             <div className="flex items-center gap-1 ml-auto">
-                <button onClick={handleCancel} disabled={isLoading} className="w-6 h-6 flex items-center justify-center text-slate-600 hover:bg-slate-100 rounded transition-colors"><IconX size={16} /></button>
+                <button onClick={handleCancel} disabled={isLoading} className="w-6 h-6 flex items-center justify-center text-slate-600 hover:bg-slate-100 rounded-md transition-colors"><IconX size={16} /></button>
                 <button
                     onClick={handleSave}
                     disabled={isLoading}
-                    className="w-6 h-6 flex items-center justify-center text-[#22A06B] hover:bg-emerald-50 rounded transition-colors disabled:opacity-50"
+                    className="w-6 h-6 flex items-center justify-center text-[#22A06B] hover:bg-emerald-50 rounded-md transition-colors disabled:opacity-50"
                 >
                     <IconCheck size={16} />
                 </button>
@@ -368,7 +365,7 @@ const EditableField = ({
         return (
             <tr ref={containerRef}>
                 <td className={`pr-0 ${isMultiLine ? 'align-top pt-[9px]' : 'align-middle'}`}>
-                    <div className={`flex text-[13px] text-slate-500 font-normal ${!isMultiLine ? 'h-9 items-center' : ''}`}>
+                    <div className={`flex text-xxs text-slate-500 font-normal ${!isMultiLine ? 'h-9 items-center' : ''}`}>
                         {renderKeyArea()}
                     </div>
                 </td>
@@ -387,7 +384,7 @@ const EditableField = ({
     return (
         <div ref={containerRef} className={`relative flex items-start min-h-9 ${rest.className || ''}`} {...rest}>
             {label && (
-                <div className={`${labelWidth} text-[13px] text-slate-500 font-normal shrink-0 flex ${!isMultiLine ? 'h-9 items-center' : 'pt-[9px]'}`}>
+                <div className={`${labelWidth} text-xxs text-slate-500 font-normal shrink-0 flex ${!isMultiLine ? 'h-9 items-center' : 'pt-[9px]'}`}>
                     {renderKeyArea()}
                 </div>
             )}

@@ -20,6 +20,7 @@
 }
 
 @layer base {
+
   html,
   body,
   #root {
@@ -49,7 +50,7 @@
 
 @layer components {
   .qy-card {
-    @apply rounded-lg shadow-sm;
+    @apply rounded-sm shadow-sm;
     background: var(--qy-bg-surface);
     border: 1px solid var(--qy-border);
     box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
@@ -60,7 +61,7 @@
   }
 
   .qy-card-soft {
-    @apply rounded-lg shadow-sm;
+    @apply rounded-sm shadow-sm;
     background: var(--qy-bg-soft);
     border: 1px solid var(--qy-border);
   }
@@ -186,7 +187,7 @@
   }
 
   .qy-kpi-card {
-    @apply rounded-lg p-4;
+    @apply rounded-sm p-4;
     border: 1px solid var(--qy-border);
     background: linear-gradient(180deg, #ffffff 0%, #f9fcff 100%);
     box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
@@ -199,7 +200,7 @@
   }
 
   .qy-grid-card {
-    @apply rounded-lg border p-4 transition-colors;
+    @apply rounded-sm border p-4 transition-colors;
     border-color: #dbe5ec;
     background: #ffffff;
     box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);

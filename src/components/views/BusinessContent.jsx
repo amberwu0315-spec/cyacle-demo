@@ -9,6 +9,8 @@
 import React, { useEffect } from 'react';
 import { IconStack2, IconFilter, IconSearch, IconPlus, IconLayoutGrid, IconShield, IconMapPin } from '@tabler/icons-react';
 import StandardBusinessLayout from './StandardBusinessLayout';
+import Tag from '../common/Tag';
+
 
 import ComponentPage from './l2/ComponentPage';
 import BasicFlowPage from './l2/BasicFlowPage';
@@ -55,9 +57,9 @@ export default function BusinessContent({ activeL1, target, onOpenTab, openedTab
             title: '需求类型', key: 'type', width: '15%', render: (type) => {
                 const isPCF = type === 'PCF' || type === '产品碳足迹';
                 return (
-                    <span className={`px-2 py-0.5 rounded text-xs ${isPCF ? 'bg-[#E6FFFA] text-[#087F9C]' : 'bg-[#E0FCFF] text-[#00B5D8]'}`}>
+                    <Tag variant={isPCF ? 'success' : 'primary'} size="sm">
                         {isPCF ? '产品碳足迹' : '组织碳足迹'}
-                    </span>
+                    </Tag>
                 );
             }
         },
@@ -134,7 +136,7 @@ export default function BusinessContent({ activeL1, target, onOpenTab, openedTab
                 setActions(
                     <button
                         onClick={() => setProjectLimitMode('create')}
-                        className="flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium text-white bg-[#087F9C] hover:bg-[#076A82] rounded transition-colors"
+                        className="flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium text-white bg-[#087F9C] hover:bg-[#076A82] rounded-md transition-colors"
                     >
                         <IconPlus size={16} />
                         <span>创建</span>
@@ -162,7 +164,7 @@ export default function BusinessContent({ activeL1, target, onOpenTab, openedTab
         { title: '简称', key: 'shortName', width: '15%', className: 'text-gray-500' },
         {
             title: '所属行业', key: 'industry', width: '20%', render: (text) => (
-                text !== '-' ? <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded text-xs">{text}</span> : '-'
+                text !== '-' ? <Tag variant="primary" size="sm">{text}</Tag> : '-'
             )
         },
         {
@@ -217,7 +219,7 @@ export default function BusinessContent({ activeL1, target, onOpenTab, openedTab
                 setActions(
                     <button
                         onClick={() => setObjectLimitMode('create')}
-                        className="flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium text-white bg-[#087f9c] hover:bg-[#076a82] rounded transition-colors"
+                        className="flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium text-white bg-[#087f9c] hover:bg-[#076a82] rounded-md transition-colors"
                     >
                         <IconPlus size={16} />
                         <span>创建</span>

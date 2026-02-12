@@ -1,84 +1,13 @@
 import React, { useState } from 'react';
-import { IconPlus, IconFilePlus, IconTrash, IconFileText, IconX } from '@tabler/icons-react';
+import { IconPlus, IconTrash } from '@tabler/icons-react';
 import { ContentModule, ModuleHeader } from '../../common/ContentModule';
 import FormBlock from '../../common/FormBlock';
 import EditableField from '../../common/EditableField';
 import Checkbox from '../../common/Checkbox';
+import UploadField from '../../common/UploadField';
+import ToggleSwitch from '../../common/ToggleSwitch';
+import Tag from '../../common/Tag';
 
-// --- 演示专用：微交互组件 ---
-
-/**
- * 演示用上传按钮
- * Fix: 增加了 whitespace-nowrap 防止文字竖排，增加了 h-9 确保与 Label 对齐
- */
-const MockUploadField = ({ label }) => {
-    const [status, setStatus] = useState('empty'); // empty, uploading, done
-
-    const handleUpload = () => {
-        setStatus('uploading');
-        setTimeout(() => setStatus('done'), 600);
-    };
-
-    const handleDelete = (e) => {
-        e.stopPropagation();
-        setStatus('empty');
-    };
-
-    return (
-        // 在此处传入 className="items-center" 确保 Label 和右侧内容垂直居中对齐
-        <EditableField label={label} className="items-center">
-            {status === 'empty' && (
-                <button
-                    onClick={handleUpload}
-                    // Fix: 添加 flex-row, whitespace-nowrap, h-9
-                    className="flex flex-row items-center gap-1.5 h-9 text-sm text-[#087F9C] hover:text-[#066c85] hover:underline font-medium transition-colors group whitespace-nowrap"
-                >
-                    <div className="flex items-center justify-center p-1 rounded-full bg-cyan-50 group-hover:bg-cyan-100 transition-colors">
-                        <IconFilePlus size={14} />
-                    </div>
-                    <span>点击上传文档</span>
-                </button>
-            )}
-
-            {status === 'uploading' && (
-                <div className="flex flex-row items-center gap-2 h-9 text-sm text-gray-400 whitespace-nowrap">
-                    <div className="w-3 h-3 border-2 border-[#087F9C] border-t-transparent rounded-full animate-spin"></div>
-                    <span>上传中...</span>
-                </div>
-            )}
-
-            {status === 'done' && (
-                <div className="flex flex-row items-center gap-2 h-9 group animate-fade-in-up">
-                    <div className="flex flex-row items-center gap-2 px-3 py-1 bg-cyan-50 border border-cyan-100 rounded text-sm text-[#087F9C]">
-                        <IconFileText size={14} />
-                        <span className="truncate max-w-[200px]">示例佐证材料_v1.0.pdf</span>
-                        <span className="text-xs text-gray-400 ml-1 whitespace-nowrap">(2.4MB)</span>
-                    </div>
-                    <button
-                        onClick={handleDelete}
-                        className="flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 p-1 rounded transition-colors opacity-0 group-hover:opacity-100"
-                        title="删除"
-                    >
-                        <IconX size={14} />
-                    </button>
-                </div>
-            )}
-        </EditableField>
-    );
-};
-
-// Toggle Switch
-const ToggleSwitch = ({ checked, onChange }) => (
-    <div
-        className={`relative inline-flex items-center w-9 h-5 rounded-full cursor-pointer transition-all duration-300 ease-out border ${checked ? 'bg-[#087F9C] border-[#087F9C]' : 'bg-gray-200 border-gray-200'}`}
-        onClick={(e) => {
-            e.stopPropagation();
-            onChange(!checked);
-        }}
-    >
-        <span className={`absolute left-0.5 bg-white w-4 h-4 rounded-full shadow-sm transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${checked ? 'translate-x-4' : 'translate-x-0'}`} />
-    </div>
-);
 
 // --- 主视图 ---
 
@@ -123,7 +52,7 @@ const ReportInfo = () => {
     const updateToggle = (key) => setToggles(prev => ({ ...prev, [key]: !prev[key] }));
 
     return (
-        <div className="flex-1 w-full h-full overflow-y-auto custom-scrollbar bg-[#F5F6F8] p-3 space-y-3">
+        <div className="flex-1 w-full h-full overflow-y-auto custom-scrollbar bg-canvas p-3 space-y-3">
 
             {/* 1. 报告编写属性 */}
             <ContentModule>
@@ -141,7 +70,7 @@ const ReportInfo = () => {
             <ContentModule>
                 <ModuleHeader title="报告研究范围" />
                 <FormBlock>
-                    <MockUploadField label="投入产出图" />
+                    <UploadField label="投入产出图" />
                     <EditableField label="研究依据的标准" value={formData.basis} onSave={(v) => updateForm('basis', v)} type="textarea" />
                     <EditableField label="系统及功能" value={formData.system} onSave={(v) => updateForm('system', v)} type="textarea" />
                     <EditableField label="定义描述" value={formData.definition} onSave={(v) => updateForm('definition', v)} type="textarea" />
@@ -200,7 +129,7 @@ const ReportInfo = () => {
                     actions={toggles.uncertainty && (
                         <button
                             onClick={() => setUncertaintyList([...uncertaintyList, { factors: '', description: '' }])}
-                            className="flex items-center gap-1 text-xs text-[#087F9C] hover:text-white hover:bg-[#087F9C] px-2 py-1 rounded transition-all duration-200"
+                            className="flex items-center gap-1 text-xs text-primary-action hover:text-white hover:bg-primary-action px-2 py-1 rounded transition-all duration-200"
                         >
                             <IconPlus size={14} /> 添加条目
                         </button>
@@ -208,59 +137,61 @@ const ReportInfo = () => {
                 />
                 {toggles.uncertainty && (
                     <div className="px-4 pb-4 pt-1">
-                        <table className="w-full border-collapse text-sm border border-gray-200 rounded-md overflow-hidden shadow-sm">
-                            <thead>
-                                <tr className="bg-[#E9F3F5] text-gray-600 font-medium">
-                                    <th className="p-2 px-4 text-left w-1/4 border-r border-gray-200/60">不确定性因素</th>
-                                    <th className="p-2 px-4 text-left border-r border-gray-200/60">说明</th>
-                                    <th className="w-10"></th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-100 bg-white">
-                                {uncertaintyList.map((item, index) => (
-                                    <tr key={index} className="group hover:bg-cyan-50/30 transition-colors">
-                                        <td className="p-0 border-r border-gray-100 align-top relative">
-                                            <div className="min-h-[42px] h-full">
-                                                <EditableField
-                                                    value={item.factors}
-                                                    onSave={(val) => {
-                                                        const n = [...uncertaintyList];
-                                                        n[index].factors = val;
-                                                        setUncertaintyList(n);
-                                                    }}
-                                                    type="textarea"
-                                                    className="w-full h-full p-2 px-4"
-                                                    placeholder="点击输入..."
-                                                />
-                                            </div>
-                                        </td>
-                                        <td className="p-0 border-r border-gray-100 align-top relative">
-                                            <div className="min-h-[42px] h-full">
-                                                <EditableField
-                                                    value={item.description}
-                                                    onSave={(val) => {
-                                                        const n = [...uncertaintyList];
-                                                        n[index].description = val;
-                                                        setUncertaintyList(n);
-                                                    }}
-                                                    type="textarea"
-                                                    className="w-full h-full p-2 px-4"
-                                                    placeholder="点击输入详细说明..."
-                                                />
-                                            </div>
-                                        </td>
-                                        <td className="text-center align-middle">
-                                            <button
-                                                onClick={() => setUncertaintyList(uncertaintyList.filter((_, i) => i !== index))}
-                                                className="text-gray-300 hover:text-red-500 p-1.5 rounded-full hover:bg-red-50 transition-all opacity-0 group-hover:opacity-100"
-                                            >
-                                                <IconTrash size={14} />
-                                            </button>
-                                        </td>
+                        <div className="border border-gray-200 rounded-md overflow-hidden shadow-sm">
+                            <table className="w-full border-collapse text-xs">
+                                <thead>
+                                    <tr className="bg-table-head text-gray-600 font-medium text-xxs">
+                                        <th className="p-2 px-4 text-left w-1/4 border-r border-gray-200/60 uppercase tracking-wider">不确定性因素</th>
+                                        <th className="p-2 px-4 text-left border-r border-gray-200/60 uppercase tracking-wider">说明</th>
+                                        <th className="w-10"></th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody className="divide-y divide-gray-100 bg-white">
+                                    {uncertaintyList.map((item, index) => (
+                                        <tr key={index} className="group hover:bg-cyan-50/30 transition-colors">
+                                            <td className="p-0 border-r border-gray-100 align-top relative">
+                                                <div className="min-h-[42px] h-full">
+                                                    <EditableField
+                                                        value={item.factors}
+                                                        onSave={(val) => {
+                                                            const n = [...uncertaintyList];
+                                                            n[index].factors = val;
+                                                            setUncertaintyList(n);
+                                                        }}
+                                                        type="textarea"
+                                                        className="w-full h-full p-2 px-4"
+                                                        placeholder="点击输入..."
+                                                    />
+                                                </div>
+                                            </td>
+                                            <td className="p-0 border-r border-gray-100 align-top relative">
+                                                <div className="min-h-[42px] h-full">
+                                                    <EditableField
+                                                        value={item.description}
+                                                        onSave={(val) => {
+                                                            const n = [...uncertaintyList];
+                                                            n[index].description = val;
+                                                            setUncertaintyList(n);
+                                                        }}
+                                                        type="textarea"
+                                                        className="w-full h-full p-2 px-4"
+                                                        placeholder="点击输入详细说明..."
+                                                    />
+                                                </div>
+                                            </td>
+                                            <td className="text-center align-middle">
+                                                <button
+                                                    onClick={() => setUncertaintyList(uncertaintyList.filter((_, i) => i !== index))}
+                                                    className="text-gray-300 hover:text-red-500 p-1.5 rounded-full hover:bg-red-50 transition-all opacity-0 group-hover:opacity-100"
+                                                >
+                                                    <IconTrash size={14} />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 )}
             </ContentModule>
@@ -271,13 +202,13 @@ const ReportInfo = () => {
                 {toggles.instructions && (
                     <FormBlock>
                         <EditableField label="报告研究补充说明" value={formData.studyDesc} onSave={(v) => updateForm('studyDesc', v)} type="textarea" />
-                        <MockUploadField label="报告研究补充文档" />
+                        <UploadField label="报告研究补充文档" />
                         <div className="h-px bg-gray-100 my-1 mx-4" />
                         <EditableField label="数据收集补充说明" value={formData.dataDesc} onSave={(v) => updateForm('dataDesc', v)} type="textarea" />
-                        <MockUploadField label="数据收集补充文档" />
+                        <UploadField label="数据收集补充文档" />
                         <div className="h-px bg-gray-100 my-1 mx-4" />
                         <EditableField label="GHG量化补充说明" value={formData.ghgnDesc} onSave={(v) => updateForm('ghgnDesc', v)} type="textarea" />
-                        <MockUploadField label="GHG量化补充文档" />
+                        <UploadField label="GHG量化补充文档" />
                     </FormBlock>
                 )}
             </ContentModule>
@@ -329,13 +260,13 @@ const ReportInfo = () => {
 
                     <div className="px-4 pb-4">
                         <div className="flex items-center gap-2 mb-2">
-                            <span className="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-0.5 rounded">高级选项</span>
+                            <Tag variant="neutral" shape="pill" size="sm">高级选项</Tag>
                             <span className="text-xs text-gray-400">是否导出分配规则：</span>
                         </div>
-                        <div className="border border-gray-200 rounded-md overflow-hidden">
-                            <table className="w-full text-sm">
+                        <div className="border border-gray-200 rounded-md overflow-hidden shadow-sm">
+                            <table className="w-full text-xs">
                                 <thead>
-                                    <tr>
+                                    <tr className="bg-table-head text-xxs">
                                         <th className="px-4 py-3 font-medium w-24 text-center">导出</th>
                                         <th className="px-4 py-3 font-medium text-left border-l border-gray-200">分配规则</th>
                                         <th className="px-4 py-3 font-medium text-left border-l border-gray-200">公式</th>
