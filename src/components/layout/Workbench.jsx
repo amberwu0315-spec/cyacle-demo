@@ -17,6 +17,7 @@ import { NavigationProvider, useNavigation } from '../../context/NavigationConte
 import { useAppNavigation } from '../../context/AppNavigationContext'; // New Hook
 import { useData } from '../../context/DataContext'; // New Hook
 import { usePagePresentation } from '../../context/PagePresentationContext';
+import { useUser } from '../../context/UserContext';
 
 /**
  * Inner Component to Consume Navigation Context
@@ -51,11 +52,13 @@ const WorkbenchContent = ({
     // 3. Consume App-Level Navigation (Legacy Adapter)
     const { setActiveDimension, setActiveMode } = useNavigation();
     const { showHeader } = usePagePresentation();
+    const { currentRole } = useUser();
 
     // Derived State for Layout Switching
     const isDetailView = businessTarget && businessTarget.startsWith('detail_');
     const activeTab = openedTabs.find(t => t.id === businessTarget);
     const effectiveL1 = isDetailView ? activeTab?.l1Context : activeL1;
+    const hasWorkspaceL2Menu = activeL1 === 'workspace' && currentRole === 'ENTERPRISE';
 
     // Modal State
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -79,10 +82,22 @@ const WorkbenchContent = ({
         }
     }, [activeL1, activeL2, isProjectLayout, isBusinessLayout, isDetailView, businessTarget, setActiveDimension, setActiveMode]);
 
+    // Personal/service role has no workspace L2 sidebar and always lands on workbench_home.
+    useEffect(() => {
+        if (activeL1 === 'workspace' && currentRole !== 'ENTERPRISE' && activeL2 !== 'workbench_home') {
+            setActiveL2('workbench_home');
+        }
+    }, [activeL1, currentRole, activeL2, setActiveL2]);
+
     // Update header title based on context
     useEffect(() => {
         // [New] 优先处理 Workspace 模式
         if (activeL1 === 'workspace') {
+            if (currentRole !== 'ENTERPRISE') {
+                setHeaderTitle('工作台');
+                setSidebarTitle('工作空间');
+                return;
+            }
             const workspaceTitleMap = {
                 'workbench_home': '工作台',
                 'carbon_panorama': '碳排放全景图',
@@ -171,7 +186,7 @@ const WorkbenchContent = ({
         } else {
             setHeaderTitle('Dashboard');
         }
-    }, [effectiveL1, activeL1, activeL2, isProjectLayout, isBusinessLayout, businessTarget, isDetailView, openedTabs, setHeaderTitle, setSidebarTitle]);
+    }, [effectiveL1, activeL1, activeL2, isProjectLayout, isBusinessLayout, businessTarget, isDetailView, openedTabs, setHeaderTitle, setSidebarTitle, currentRole]);
 
     // Auto-Close Modal
     useEffect(() => {
@@ -199,7 +214,7 @@ const WorkbenchContent = ({
                 {/* Project L2 Sidebar (50px) - Show for Project Tag OR Detail Views */}
                 {/* L2 Sidebar: Unified for Project, Detail, and Business List */}
                 {/* [Updated] Added isWorkspace check implicitly by ensuring activeL1 matches logic */}
-                {(isProjectLayout || isDetailView || (isBusinessLayout && !isDetailView) || activeL1 === 'workspace') && (
+                {(isProjectLayout || isDetailView || (isBusinessLayout && !isDetailView) || hasWorkspaceL2Menu) && (
                     <L2Sidebar
                         activeL1={activeL1 === 'workspace' ? 'workspace' : effectiveL1}
                         activeL2={(isProjectLayout || isDetailView) ? activeL2 : businessTarget}

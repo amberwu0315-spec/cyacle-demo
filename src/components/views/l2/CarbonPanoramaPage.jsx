@@ -1,108 +1,313 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { CanvasPage } from '../../layout/PageLayouts';
-import { IconMap, IconChartPie, IconFilter } from '@tabler/icons-react';
+import {
+    IconActivity,
+    IconChartBar,
+    IconChevronRight,
+    IconCheck,
+    IconFlask,
+    IconLayoutGrid,
+    IconRotate
+} from '@tabler/icons-react';
+
+const years = ['2020', '2021', '2022', '2023', '2024'];
+const areaSeries = [50000, 41000, 39000, 36000, 30000];
+
+const productRanking = [
+    { name: '10kV配电变压器', value: 9075.12, unit: 'kgCO₂e/件' },
+    { name: '超高压海底电缆', value: 2599.67, unit: 'kgCO₂e/m' },
+    { name: 'PCB线路板', value: 109.26, unit: 'kgCO₂e/㎡' },
+    { name: '单相璧挂智能电能表', value: 59.35, unit: 'kgCO₂e/个' },
+    { name: '储能电芯', value: 36.01, unit: 'kgCO₂e/MWh' }
+];
+
+const sourceRanking = [
+    { name: '净购电力产生的排放', value: 24321.82, percent: 81.35 },
+    { name: '化石燃料燃烧排放', value: 5576.66, percent: 18.65 }
+];
+
+const MetricCard = ({ title, value, unit, trend, icon: Icon, footer, progress }) => {
+    return (
+        <div className="rounded-md border border-slate-200 bg-white p-4 min-h-[122px] flex flex-col justify-between">
+            <div className="flex items-start justify-between gap-2">
+                <div>
+                    <p className="text-xs text-slate-500">{title}</p>
+                    <p className="mt-1 text-[40px] leading-9 font-semibold text-slate-900">
+                        {value}
+                        <span className="ml-1 text-sm font-normal text-slate-500">{unit}</span>
+                    </p>
+                </div>
+                <span className="w-8 h-8 rounded-md bg-slate-100 text-slate-500 flex items-center justify-center">
+                    <Icon size={16} />
+                </span>
+            </div>
+            {progress ? (
+                <div className="mt-2">
+                    <div className="h-1.5 w-full rounded-full bg-slate-200 overflow-hidden">
+                        <div className="h-full rounded-full bg-cyan-600" style={{ width: `${progress}%` }} />
+                    </div>
+                </div>
+            ) : (
+                <div className="mt-2 flex items-center gap-2 text-xs">
+                    <span className="text-emerald-600 font-medium">↘ {trend}</span>
+                    <span className="text-slate-400">{footer}</span>
+                </div>
+            )}
+        </div>
+    );
+};
 
 const CarbonPanoramaPage = () => {
+    const chartGeometry = useMemo(() => {
+        const width = 1060;
+        const height = 290;
+        const leftPadding = 58;
+        const rightPadding = 24;
+        const topPadding = 24;
+        const bottomPadding = 44;
+        const yMax = 60000;
+        const yMin = 0;
+        const usableWidth = width - leftPadding - rightPadding;
+        const usableHeight = height - topPadding - bottomPadding;
+
+        const points = areaSeries.map((value, index) => {
+            const x = leftPadding + (usableWidth * index) / (areaSeries.length - 1);
+            const y = topPadding + ((yMax - value) / (yMax - yMin)) * usableHeight;
+            return { x, y };
+        });
+
+        const linePath = points.map((p, index) => `${index === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
+        const areaPath = `${linePath} L ${points[points.length - 1].x} ${height - bottomPadding} L ${points[0].x} ${height - bottomPadding} Z`;
+
+        return {
+            width,
+            height,
+            leftPadding,
+            topPadding,
+            bottomPadding,
+            linePath,
+            areaPath
+        };
+    }, []);
+
     return (
-        <CanvasPage className="flex flex-col h-full bg-[#F5F6F8]">
-            {/* Toolbar */}
-            <div className="h-14 bg-white border-b border-gray-200 flex items-center justify-between px-4 shrink-0">
-                <div className="flex items-center gap-4">
-                    <span className="font-bold text-gray-700 flex items-center gap-2">
-                        <IconMap size={20} className="text-[#087F9C]" />
-                        区域排放分布
-                    </span>
-                    <div className="h-4 w-px bg-gray-300"></div>
-                    <div className="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 px-3 py-1.5 rounded-md border border-gray-200 cursor-pointer hover:bg-gray-100">
-                        <span>2024年度</span>
-                        <IconFilter size={14} />
+        <CanvasPage className="bg-[#F5F6F8] p-3">
+            <div className="h-full flex flex-col gap-3 overflow-y-auto">
+                <div className="rounded-md border border-slate-200 bg-white px-3 py-2 flex flex-wrap items-center justify-between gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                        <span className="h-8 px-3 rounded-md border border-slate-200 bg-slate-50 text-xs text-slate-700 flex items-center gap-1.5">
+                            <IconCheck size={14} className="text-cyan-600" />
+                            管理状态
+                            <strong className="text-slate-900">已核查</strong>
+                        </span>
+                        <span className="h-8 px-3 rounded-md border border-slate-200 bg-slate-50 text-xs text-slate-700 flex items-center gap-1.5">
+                            <IconFlask size={14} className="text-emerald-600" />
+                            核算机构
+                            <strong className="text-slate-900">SGS 通标</strong>
+                        </span>
+                        <span className="h-8 px-3 rounded-md border border-slate-200 bg-slate-50 text-xs text-slate-700 flex items-center gap-1.5">
+                            <IconLayoutGrid size={14} className="text-sky-600" />
+                            核算认证标准
+                            <strong className="text-slate-900">《企业温室气体排放核算与报告指南及电设施》</strong>
+                        </span>
+                    </div>
+                    <div className="h-8 rounded-md border border-slate-200 bg-slate-50 px-2 flex items-center gap-1">
+                        {years.map((year) => (
+                            <button
+                                key={year}
+                                className={`px-3 h-6 rounded text-xs ${year === '2024' ? 'bg-white border border-slate-200 text-slate-900' : 'text-slate-500'}`}
+                            >
+                                {year}
+                            </button>
+                        ))}
                     </div>
                 </div>
-                <div className="flex gap-2">
-                    <button className="px-3 py-1.5 bg-[#087F9C] text-white text-sm font-medium rounded hover:bg-[#076A82] transition-colors shadow-sm">
-                        导出报告
-                    </button>
-                </div>
-            </div>
 
-            {/* Main Content Area */}
-            <div className="flex-1 p-4 flex gap-4 overflow-hidden">
-                {/* Visual Map Area */}
-                <div className="flex-[2] bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col relative overflow-hidden group">
-                    <div className="absolute top-4 left-4 z-10 bg-white/90 backdrop-blur px-3 py-2 rounded-md shadow-sm border border-gray-100">
-                        <div className="text-xs text-gray-500 font-medium uppercase tracking-wider">Total Emissions</div>
-                        <div className="text-xl font-bold text-[#087F9C]">842,931 <span className="text-sm font-normal text-gray-500">tCO2e</span></div>
+                <div className="grid grid-cols-1 xl:grid-cols-3 gap-3">
+                    <div className="xl:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <MetricCard
+                            title="年度碳排放总量"
+                            value="29,898.49"
+                            unit="tCO₂e"
+                            trend="14.9%"
+                            footer="较去年同期"
+                            icon={IconChartBar}
+                        />
+                        <MetricCard
+                            title="年度能源消耗总量"
+                            value="128,450"
+                            unit="MWh"
+                            trend="1.2%"
+                            footer="较去年同期"
+                            icon={IconActivity}
+                        />
+                        <MetricCard
+                            title="综合碳排放效益"
+                            value="0.85"
+                            unit="亿元"
+                            trend="5.6%"
+                            footer="较去年同期"
+                            icon={IconFlask}
+                        />
+                        <MetricCard
+                            title="清洁能源占比"
+                            value="81.3"
+                            unit="%"
+                            icon={IconRotate}
+                            progress={81.3}
+                        />
                     </div>
 
-                    {/* Placeholder for Map */}
-                    <div className="flex-1 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center relative">
-                        <div className="absolute inset-0 bg-[url('https://upload.wikimedia.org/wikipedia/commons/e/ec/World_map_blank_without_borders.svg')] bg-no-repeat bg-center bg-contain opacity-10 grayscale"></div>
-                        <div className="text-center z-10">
-                            <IconMap size={64} className="text-gray-300 mx-auto mb-4" />
-                            <p className="text-gray-500 font-medium">Interactive Map Visualization</p>
-                            <p className="text-gray-400 text-sm mt-1">Rendering WebGL Context...</p>
+                    <section className="rounded-md border border-slate-200 bg-white p-4">
+                        <h3 className="text-sm font-semibold text-slate-800">排放类别占比</h3>
+                        <div className="mt-3 flex justify-center">
+                            <div className="w-36 h-36 rounded-full relative" style={{ background: 'conic-gradient(#3B82F6 0 78%, #F97316 78% 100%)' }}>
+                                <div className="absolute inset-4 rounded-full bg-white" />
+                            </div>
                         </div>
-
-                        {/* Simulation Dots */}
-                        <div className="absolute top-1/3 left-1/4 w-3 h-3 bg-red-500 rounded-full animate-ping"></div>
-                        <div className="absolute top-1/3 left-1/4 w-3 h-3 bg-red-500 rounded-full"></div>
-
-                        <div className="absolute bottom-1/3 right-1/3 w-4 h-4 bg-orange-500 rounded-full animate-ping animation-delay-1000"></div>
-                        <div className="absolute bottom-1/3 right-1/3 w-4 h-4 bg-orange-500 rounded-full"></div>
-                    </div>
+                        <div className="mt-4 flex justify-center gap-4 text-xs">
+                            <span className="inline-flex items-center gap-1.5 text-blue-600">
+                                <span className="w-2 h-2 rounded-full bg-blue-500" />
+                                净购电力产生的排放
+                            </span>
+                            <span className="inline-flex items-center gap-1.5 text-orange-500">
+                                <span className="w-2 h-2 rounded-full bg-orange-500" />
+                                化石燃料燃烧排放
+                            </span>
+                        </div>
+                    </section>
                 </div>
 
-                {/* Sidebar Stats */}
-                <div className="flex-1 flex flex-col gap-4 overflow-y-auto">
-                    {/* Sector Breakdown */}
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 shrink-0">
-                        <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-                            <IconChartPie size={18} className="text-[#087F9C]" />
-                            行业排放占比
-                        </h3>
-                        <div className="space-y-3">
-                            {[
-                                { label: '能源消耗', pct: 45, color: 'bg-blue-500' },
-                                { label: '工业生产', pct: 30, color: 'bg-cyan-500' },
-                                { label: '运输物流', pct: 15, color: 'bg-teal-500' },
-                                { label: '其他', pct: 10, color: 'bg-gray-300' },
-                            ].map((item, i) => (
-                                <div key={i}>
-                                    <div className="flex justify-between text-sm mb-1">
-                                        <span className="text-gray-600">{item.label}</span>
-                                        <span className="font-medium">{item.pct}%</span>
+                <section className="rounded-md border border-slate-200 bg-white p-4">
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                            <h3 className="text-sm font-semibold text-slate-800 flex items-center gap-1.5">
+                                <IconChartBar size={14} className="text-slate-400" />
+                                碳排及能源趋势分析
+                            </h3>
+                            <p className="text-xs text-slate-500 mt-1">查看企业近期的排放与能耗动态变化</p>
+                        </div>
+                        <div className="flex flex-wrap items-center gap-2">
+                            {['总碳排放趋势', '总能源消耗趋势', '碳排放强度', '能源消耗强度', '碳排放密度', '能源消耗密度'].map((tab, idx) => (
+                                <button
+                                    key={tab}
+                                    className={`h-7 px-3 rounded-full text-xs border ${idx === 0 ? 'border-emerald-400 text-emerald-600 bg-emerald-50' : 'border-transparent text-slate-500 bg-slate-100'}`}
+                                >
+                                    {tab}
+                                </button>
+                            ))}
+                            <div className="ml-1 h-7 px-1 rounded-md border border-slate-200 flex items-center gap-1">
+                                <button className="h-5 px-2 rounded text-xs bg-slate-100 text-slate-700">按年</button>
+                                <button className="h-5 px-2 rounded text-xs text-slate-500">按月</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="mt-4">
+                        <svg viewBox={`0 0 ${chartGeometry.width} ${chartGeometry.height}`} className="w-full h-[260px]">
+                            <defs>
+                                <linearGradient id="carbonAreaFill" x1="0" x2="0" y1="0" y2="1">
+                                    <stop offset="0%" stopColor="#10B981" stopOpacity="0.35" />
+                                    <stop offset="100%" stopColor="#10B981" stopOpacity="0.06" />
+                                </linearGradient>
+                            </defs>
+                            {[60000, 45000, 30000, 15000, 0].map((tick, idx) => {
+                                const y = chartGeometry.topPadding + idx * ((chartGeometry.height - chartGeometry.topPadding - chartGeometry.bottomPadding) / 4);
+                                return (
+                                    <g key={tick}>
+                                        <line
+                                            x1={chartGeometry.leftPadding}
+                                            x2={chartGeometry.width - 24}
+                                            y1={y}
+                                            y2={y}
+                                            stroke="#DCE4EC"
+                                            strokeDasharray="4 4"
+                                        />
+                                        <text x={12} y={y + 4} fontSize="11" fill="#94A3B8">{tick.toLocaleString()}</text>
+                                    </g>
+                                );
+                            })}
+                            <path d={chartGeometry.areaPath} fill="url(#carbonAreaFill)" />
+                            <path d={chartGeometry.linePath} fill="none" stroke="#10B981" strokeWidth="3" />
+                            {years.map((year, idx) => {
+                                const x = chartGeometry.leftPadding + ((chartGeometry.width - chartGeometry.leftPadding - 24) * idx) / (years.length - 1);
+                                return (
+                                    <text key={year} x={x - 12} y={chartGeometry.height - 12} fontSize="11" fill="#94A3B8">
+                                        {year}
+                                    </text>
+                                );
+                            })}
+                        </svg>
+                    </div>
+                </section>
+
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 pb-2">
+                    <section className="rounded-md border border-slate-200 bg-white p-4">
+                        <div className="flex items-center justify-between">
+                            <h3 className="text-sm font-semibold text-slate-800">产品碳足迹排行 (Top 5)</h3>
+                            <span className="text-[11px] px-2 py-1 rounded bg-slate-100 text-slate-500">产品层面</span>
+                        </div>
+                        <div className="mt-2 space-y-4">
+                            {productRanking.map((item, idx) => {
+                                const width = idx === 0 ? 100 : (item.value / productRanking[0].value) * 100;
+                                return (
+                                    <div key={item.name}>
+                                        <div className="flex items-center justify-between text-sm">
+                                            <span className="inline-flex items-center gap-2 text-slate-700">
+                                                <span className="w-4 h-4 rounded-full bg-blue-100 text-blue-600 text-[10px] flex items-center justify-center font-semibold">
+                                                    {idx + 1}
+                                                </span>
+                                                {item.name}
+                                            </span>
+                                            <span className="font-semibold text-slate-900">
+                                                {item.value.toFixed(2)}
+                                                <span className="ml-1 text-[11px] font-normal text-slate-500">{item.unit}</span>
+                                            </span>
+                                        </div>
+                                        <div className="mt-2 h-1.5 rounded-full bg-slate-200 overflow-hidden">
+                                            <div className="h-full rounded-full bg-blue-500" style={{ width: `${width}%` }} />
+                                        </div>
+                                        <div className="mt-1 text-right text-[11px] text-slate-400">Click for details</div>
                                     </div>
-                                    <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-                                        <div className={`h-full ${item.color}`} style={{ width: `${item.pct}%` }}></div>
+                                );
+                            })}
+                        </div>
+                        <button className="mt-4 text-xs text-slate-500 inline-flex items-center gap-1 hover:text-cyan-700">
+                            查看全部产品碳核算详情 <IconChevronRight size={12} />
+                        </button>
+                    </section>
+
+                    <section className="rounded-md border border-slate-200 bg-white p-4">
+                        <div className="flex items-center justify-between">
+                            <h3 className="text-sm font-semibold text-slate-800">排放源排行</h3>
+                            <span className="text-[11px] px-2 py-1 rounded bg-slate-100 text-slate-500">组织层面</span>
+                        </div>
+                        <div className="mt-3 space-y-6">
+                            {sourceRanking.map((item, idx) => (
+                                <div key={item.name}>
+                                    <div className="flex items-center justify-between text-sm">
+                                        <span className="inline-flex items-center gap-2 text-slate-700">
+                                            <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 text-[10px] flex items-center justify-center font-semibold">
+                                                {idx + 1}
+                                            </span>
+                                            {item.name}
+                                        </span>
+                                        <span className="font-semibold text-slate-900">
+                                            {item.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                            <span className="ml-1 text-[11px] font-normal text-slate-500">tCO₂e</span>
+                                        </span>
                                     </div>
+                                    <div className="mt-2 h-1.5 rounded-full bg-slate-200 overflow-hidden">
+                                        <div className="h-full rounded-full bg-emerald-500" style={{ width: `${item.percent}%` }} />
+                                    </div>
+                                    <div className="mt-1 text-right text-[11px] text-slate-400">{item.percent}% of total</div>
                                 </div>
                             ))}
                         </div>
-                    </div>
-
-                    {/* Top Emitters */}
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 flex-1">
-                        <h3 className="font-bold text-gray-800 mb-4">重点排放源 Top 5</h3>
-                        <div className="space-y-0 divide-y divide-gray-100">
-                            {[1, 2, 3, 4, 5].map((i) => (
-                                <div key={i} className="py-3 flex items-center justify-between group cursor-pointer hover:bg-gray-50 -mx-2 px-2 rounded">
-                                    <div className="flex items-center gap-3">
-                                        <div className={`w-6 h-6 rounded flex items-center justify-center text-xs font-bold ${i <= 3 ? 'bg-orange-100 text-orange-600' : 'bg-gray-100 text-gray-500'}`}>
-                                            {i}
-                                        </div>
-                                        <div className="flex flex-col">
-                                            <span className="text-sm font-medium text-gray-900 group-hover:text-[#087F9C]">生产线 #{100 + i}</span>
-                                            <span className="text-xs text-gray-400">华东厂区 - 车间A</span>
-                                        </div>
-                                    </div>
-                                    <div className="text-right">
-                                        <div className="text-sm font-bold text-gray-700">{800 - i * 50}</div>
-                                        <div className="text-[10px] text-gray-400">tCO2e</div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+                        <button className="mt-6 text-xs text-slate-500 inline-flex items-center gap-1 hover:text-cyan-700">
+                            查看全部组织碳核算详情 <IconChevronRight size={12} />
+                        </button>
+                    </section>
                 </div>
             </div>
         </CanvasPage>

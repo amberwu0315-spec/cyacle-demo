@@ -18,8 +18,8 @@ const AppNavigationContext = createContext(null);
 
 export const AppNavigationProvider = ({ children }) => {
     // App State
-    const [activeL1, setActiveL1] = useState('home');
-    const [activeL2, setActiveL2] = useState(null);
+    const [activeL1, setActiveL1] = useState('workspace');
+    const [activeL2, setActiveL2] = useState('workbench_home');
     const [activeL3, setActiveL3] = useState(null);
     const [mode, setMode] = useState(MODES.HOME);
 
@@ -95,7 +95,11 @@ export const AppNavigationProvider = ({ children }) => {
     );
 
     const handleL1Change = (val) => {
-        const nextL2 = val === 'project_tag' ? 'navigation' : null;
+        const nextL2 = val === 'project_tag'
+            ? 'navigation'
+            : val === 'workspace'
+                ? 'workbench_home'
+                : null;
         const nextL3 = val === 'project_tag' ? 'acct_basic' : null;
 
         setActiveL1(val);
@@ -106,6 +110,7 @@ export const AppNavigationProvider = ({ children }) => {
         if (val === 'background_data') setBusinessTarget('database_mgmt');
         else if (val === 'project_mgmt') setBusinessTarget('all_projects');
         else if (val === 'enterprise') setBusinessTarget('all_objects');
+        else if (val === 'workspace') setBusinessTarget('workbench_home');
 
         if (val === 'project_tag') {
             setProjHistory([{ l2: nextL2, l3: nextL3 }]);
@@ -203,8 +208,16 @@ export const AppNavigationProvider = ({ children }) => {
     useEffect(() => {
         const syncStateFromUrl = () => {
             const params = new URLSearchParams(window.location.search);
-            const l1 = params.get('l1') || 'home';
-            const l2 = params.get('l2') || (l1 === 'project_tag' ? 'navigation' : null);
+            const rawL1 = params.get('l1');
+            const validL1 = ['workspace', 'background_data', 'project_mgmt', 'enterprise', 'project_tag'];
+            const l1 = validL1.includes(rawL1) ? rawL1 : 'workspace';
+            const l2 = params.get('l2') || (
+                l1 === 'project_tag'
+                    ? 'navigation'
+                    : l1 === 'workspace'
+                        ? 'workbench_home'
+                        : null
+            );
             const l3 = params.get('l3') || (l1 === 'project_tag' ? 'acct_basic' : null);
 
             setActiveL1(l1);
@@ -214,6 +227,7 @@ export const AppNavigationProvider = ({ children }) => {
             if (l1 === 'background_data') setBusinessTarget('database_mgmt');
             else if (l1 === 'project_mgmt') setBusinessTarget('all_projects');
             else if (l1 === 'enterprise') setBusinessTarget('all_objects');
+            else if (l1 === 'workspace') setBusinessTarget('workbench_home');
         };
 
         syncStateFromUrl();

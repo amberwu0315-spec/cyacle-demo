@@ -8,7 +8,7 @@ export const USER_ROLES = {
     ENTERPRISE: {
         label: '企业账号',
         // 允许访问的 L1 模块 ID
-        allowedL1: ['home', 'background_data', 'project_mgmt', 'enterprise'],
+        allowedL1: ['workspace', 'background_data', 'project_mgmt', 'enterprise'],
         // 特殊标签覆写 (Key = L1 ID, Value = Display Label)
         labelOverrides: {
             'enterprise': '服务企业'
@@ -18,7 +18,7 @@ export const USER_ROLES = {
     // 2. 个人/服务商账号
     INDIVIDUAL: {
         label: '个人/服务商账号',
-        allowedL1: ['home', 'background_data', 'project_mgmt', 'enterprise'], // ID 相同但标签不同
+        allowedL1: ['workspace', 'background_data', 'project_mgmt', 'enterprise'], // ID 相同但标签不同
         labelOverrides: {
             'enterprise': '研究对象'
         }

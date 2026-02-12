@@ -14,8 +14,10 @@ export default function MainContent({ mode, activeL1, activeL2, activeL3, onL3Ch
 
     // Determine what to render
     const isProject = activeL1 === 'project_tag';
+    const isWorkspace = activeL1 === 'workspace';
     const isBusiness = ['background_data', 'project_mgmt', 'enterprise'].includes(activeL1);
     const isDetailView = businessTarget && businessTarget.startsWith('detail_');
+    const workspaceTarget = activeL2 || 'workbench_home';
 
     // Context decoupling: The "effective" context for tabs comes from their origin, not the current L1 selection
     const activeTab = openedTabs?.find(t => t.id === businessTarget);
@@ -25,8 +27,22 @@ export default function MainContent({ mode, activeL1, activeL2, activeL3, onL3Ch
         <div className="flex-1 flex flex-row overflow-hidden relative bg-[#F5F6F8]">
 
             {/* Dashboard (Home) */}
-            {!isProject && !isBusiness && !isDetailView && (
+            {!isProject && !isBusiness && !isWorkspace && !isDetailView && (
                 <Dashboard />
+            )}
+
+            {/* Workspace Content */}
+            {isWorkspace && !isDetailView && (
+                <BusinessContent
+                    activeL1={activeL1}
+                    target={workspaceTarget}
+                    onOpenTab={onOpenTab}
+                    openedTabs={openedTabs}
+                    projects={projects}
+                    onAddProject={onAddProject}
+                    researchObjects={researchObjects}
+                    onAddResearchObject={onAddResearchObject}
+                />
             )}
 
             {/* Business Content (List Views) */}
