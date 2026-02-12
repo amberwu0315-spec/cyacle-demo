@@ -56,3 +56,7 @@
 - `src/components/views/l2/WorkbenchHomePage.jsx`
 - `src/components/views/l2/CarbonAssetMgmtPage.jsx`
 
+
+## 5. Footer 扩展约束（2026-02-12）
+- 新增行双击事件能力：支持 `onRowDoubleClick`，用于 Footer 的“列表 -> 详情”切换。
+- Footer 场景中，单元格双击编辑保持不变，行双击用于视图切换。

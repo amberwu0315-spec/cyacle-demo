@@ -7,7 +7,7 @@
  * 2. 用于展示辅助信息（如文档、数据源详情）。
  */
 import React from 'react';
-import { IconHistory, IconTrash, IconExternalLink, IconX, IconPlus } from '@tabler/icons-react';
+import { IconExternalLink, IconX, IconChevronLeft } from '@tabler/icons-react';
 
 /**
  * FooterModal 通用组件
@@ -23,7 +23,7 @@ import { IconHistory, IconTrash, IconExternalLink, IconX, IconPlus } from '@tabl
  * - onClose: 关闭回调
  * - children: 内容区
  */
-const FooterModal = ({ title, businessActions, onClose, children }) => {
+const FooterModal = ({ title, businessActions, onClose, onCollapse, children }) => {
     const handleOpenWindow = () => {
         console.log('Open in new window:', title);
         // TODO: 实现独立窗口功能
@@ -48,6 +48,15 @@ const FooterModal = ({ title, businessActions, onClose, children }) => {
 
                     {/* View 功能组 (所有模块相同) */}
                     <div className="flex items-center gap-1">
+                        {onCollapse && (
+                            <button
+                                onClick={onCollapse}
+                                className="p-1.5 text-gray-600 hover:text-primary hover:bg-gray-100 rounded transition-colors"
+                                title="收起并返回表格"
+                            >
+                                <IconChevronLeft size={16} />
+                            </button>
+                        )}
                         <button
                             onClick={handleOpenWindow}
                             // ✅ 修复点 2: hover:text-[#087F9C] -> hover:text-primary

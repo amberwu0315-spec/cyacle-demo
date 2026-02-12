@@ -14,7 +14,7 @@ const DataSourceFooter = ({ onClose }) => {
         ]
     };
 
-    return <StandardFooter title="数据源" onClose={onClose} filterOptions={filterOptions} />;
+    return <StandardFooter moduleKey="datasource" onClose={onClose} filterOptions={filterOptions} />;
 };
 
 export default DataSourceFooter;

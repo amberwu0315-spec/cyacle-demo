@@ -13,7 +13,7 @@ const BasicFlowFooter = ({ onClose }) => {
         ]
     };
 
-    return <StandardFooter title="基本流" onClose={onClose} filterOptions={filterOptions} />;
+    return <StandardFooter moduleKey="baseflow" onClose={onClose} filterOptions={filterOptions} />;
 };
 
 export default BasicFlowFooter;

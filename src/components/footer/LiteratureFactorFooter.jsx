@@ -13,7 +13,7 @@ const LiteratureFactorFooter = ({ onClose }) => {
         ]
     };
 
-    return <StandardFooter title="文献因子" onClose={onClose} filterOptions={filterOptions} />;
+    return <StandardFooter moduleKey="factors" onClose={onClose} filterOptions={filterOptions} />;
 };
 
 export default LiteratureFactorFooter;

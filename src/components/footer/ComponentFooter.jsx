@@ -14,7 +14,7 @@ const ComponentFooter = ({ onClose }) => {
         ]
     };
 
-    return <StandardFooter title="元件" onClose={onClose} filterOptions={filterOptions} />;
+    return <StandardFooter moduleKey="component" onClose={onClose} filterOptions={filterOptions} />;
 };
 
 export default ComponentFooter;

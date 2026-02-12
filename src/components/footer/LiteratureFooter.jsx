@@ -14,7 +14,7 @@ const LiteratureFooter = ({ onClose }) => {
         ]
     };
 
-    return <StandardFooter title="文献" onClose={onClose} filterOptions={filterOptions} />;
+    return <StandardFooter moduleKey="literature" onClose={onClose} filterOptions={filterOptions} />;
 };
 
 export default LiteratureFooter;

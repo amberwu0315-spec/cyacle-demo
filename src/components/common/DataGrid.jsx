@@ -216,6 +216,7 @@ const DataGrid = ({
     defaultSort = null,
     defaultGroupBy = null,
     onRowClick,
+    onRowDoubleClick,
     onSelectionChange,
     onCellEdit,
     showToolbar = true,
@@ -936,6 +937,7 @@ const DataGrid = ({
                                                         }
                                                         onRowClick?.(entry.row, entry.index, event);
                                                     }}
+                                                    onDoubleClick={(event) => onRowDoubleClick?.(entry.row, entry.index, event)}
                                                 >
                                                     {showCheckboxSelection && (
                                                         <td className="px-2 border-r border-slate-200 sticky left-0 z-10 bg-inherit">
@@ -1009,6 +1011,7 @@ const DataGrid = ({
                                             }
                                             onRowClick?.(entry.row, entry.index, event);
                                         }}
+                                        onDoubleClick={(event) => onRowDoubleClick?.(entry.row, entry.index, event)}
                                     >
                                         {showCheckboxSelection && (
                                             <td className="px-2 border-r border-slate-200 sticky left-0 z-10 bg-inherit">

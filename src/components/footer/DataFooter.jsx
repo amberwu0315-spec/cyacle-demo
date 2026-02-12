@@ -13,7 +13,7 @@ const DataFooter = ({ onClose }) => {
         ]
     };
 
-    return <StandardFooter title="数据记录" onClose={onClose} filterOptions={filterOptions} />;
+    return <StandardFooter moduleKey="data" onClose={onClose} filterOptions={filterOptions} />;
 };
 
 export default DataFooter;

@@ -13,7 +13,7 @@ const CompositeFactorFooter = ({ onClose }) => {
         ]
     };
 
-    return <StandardFooter title="复合因子" onClose={onClose} filterOptions={filterOptions} />;
+    return <StandardFooter moduleKey="composite" onClose={onClose} filterOptions={filterOptions} />;
 };
 
 export default CompositeFactorFooter;

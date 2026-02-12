@@ -14,7 +14,7 @@ const ProductFooter = ({ onClose }) => {
         ]
     };
 
-    return <StandardFooter title="产品" onClose={onClose} filterOptions={filterOptions} />;
+    return <StandardFooter moduleKey="product" onClose={onClose} filterOptions={filterOptions} />;
 };
 
 export default ProductFooter;

@@ -14,7 +14,7 @@ const LocationFooter = ({ onClose }) => {
         ]
     };
 
-    return <StandardFooter title="地点" onClose={onClose} filterOptions={filterOptions} />;
+    return <StandardFooter moduleKey="location" onClose={onClose} filterOptions={filterOptions} />;
 };
 
 export default LocationFooter;
