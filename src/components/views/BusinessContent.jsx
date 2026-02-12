@@ -24,8 +24,6 @@ import WorkbenchHomePage from './l2/WorkbenchHomePage';
 import CarbonPanoramaPage from './l2/CarbonPanoramaPage';
 import CarbonAssetMgmtPage from './l2/CarbonAssetMgmtPage';
 
-import { researchObjectData } from '../../data/mockData';
-
 export default function BusinessContent({ activeL1, target, onOpenTab, openedTabs = [], projects = [], onAddProject, researchObjects = [], onAddResearchObject }) {
     const { setActions } = usePagePresentation();
 
@@ -81,13 +79,18 @@ export default function BusinessContent({ activeL1, target, onOpenTab, openedTab
         if (projectLimitMode === 'create') {
             return (
                 <CreateProjectPage
+                    researchObjects={researchObjects}
                     onCancel={() => setProjectLimitMode('list')}
                     onSave={(newProjectData) => {
+                        const selectedObject = researchObjects.find(
+                            (obj) => String(obj.id) === String(newProjectData.research_object_name)
+                        );
+
                         // Create new project object
                         const newProject = {
                             id: String(projects.length + 1),
                             name: newProjectData.name || '未命名项目',
-                            object: researchObjectData.find(o => o.id === newProjectData.research_object_name)?.name || '-',
+                            object: selectedObject?.name || '-',
                             type: newProjectData.type === 'CFP' ? 'PCF' : 'OCF', // Mapping 'CFP'->'PCF', 'CFO'->'OCF' to match list data
                             createTime: new Date().toISOString().split('T')[0], // Simple YYYY-MM-DD
                             updateTime: new Date().toISOString().split('T')[0],

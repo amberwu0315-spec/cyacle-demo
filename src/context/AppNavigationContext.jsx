@@ -20,7 +20,7 @@ export const AppNavigationProvider = ({ children }) => {
     // App State
     const [activeL1, setActiveL1] = useState('home');
     const [activeL2, setActiveL2] = useState(null);
-    const [activeL3, setActiveL3] = useState('acct_basic');
+    const [activeL3, setActiveL3] = useState(null);
     const [mode, setMode] = useState(MODES.HOME);
 
     // Business Navigation
@@ -59,9 +59,21 @@ export const AppNavigationProvider = ({ children }) => {
     // 2. URL Synchronization
     const updateUrl = (l1, l2, l3) => {
         const url = new URL(window.location);
-        if (l1) url.searchParams.set('l1', l1);
-        if (l2) url.searchParams.set('l2', l2);
-        if (l3) url.searchParams.set('l3', l3);
+        if (l1) {
+            url.searchParams.set('l1', l1);
+        } else {
+            url.searchParams.delete('l1');
+        }
+        if (l2) {
+            url.searchParams.set('l2', l2);
+        } else {
+            url.searchParams.delete('l2');
+        }
+        if (l3) {
+            url.searchParams.set('l3', l3);
+        } else {
+            url.searchParams.delete('l3');
+        }
         window.history.pushState({ l1, l2, l3 }, '', url);
     };
 
@@ -84,7 +96,7 @@ export const AppNavigationProvider = ({ children }) => {
 
     const handleL1Change = (val) => {
         const nextL2 = val === 'project_tag' ? 'navigation' : null;
-        const nextL3 = 'acct_basic';
+        const nextL3 = val === 'project_tag' ? 'acct_basic' : null;
 
         setActiveL1(val);
         setActiveL2(nextL2);
@@ -193,7 +205,7 @@ export const AppNavigationProvider = ({ children }) => {
             const params = new URLSearchParams(window.location.search);
             const l1 = params.get('l1') || 'home';
             const l2 = params.get('l2') || (l1 === 'project_tag' ? 'navigation' : null);
-            const l3 = params.get('l3') || 'acct_basic';
+            const l3 = params.get('l3') || (l1 === 'project_tag' ? 'acct_basic' : null);
 
             setActiveL1(l1);
             setActiveL2(l2);

@@ -14,13 +14,13 @@ import EditableField from '../../common/EditableField';
 import { IconDeviceFloppy } from '@tabler/icons-react';
 
 import { usePagePresentation } from '../../../context/PagePresentationContext';
-import { researchObjectData } from '../../../data/mockData';
 
-const CreateProjectPage = ({ onCancel, onSave }) => {
+const CreateProjectPage = ({ onCancel, onSave, researchObjects = [] }) => {
     const { setShowHeader } = usePagePresentation();
 
-    // Mock Data
-    const RESEARCH_OBJECTS = researchObjectData || [];
+    const RESEARCH_OBJECTS = researchObjects.filter(
+        (obj) => !obj.status || obj.status === 'active'
+    );
 
     const REQ_TYPES = [
         { id: 'CFP', name: '产品碳足迹 (CFP)' },
@@ -50,7 +50,9 @@ const CreateProjectPage = ({ onCancel, onSave }) => {
     React.useEffect(() => {
         if (isTitleTouched) return;
 
-        const objName = RESEARCH_OBJECTS.find(o => o.id === formData.research_object_name)?.name || '';
+        const objName = RESEARCH_OBJECTS.find(
+            (o) => String(o.id) === String(formData.research_object_name)
+        )?.name || '';
         const typeName = REQ_TYPES.find(t => t.id === formData.type)?.name?.split(' ')[0] || ''; // '产品碳足迹'
 
         let newTitle = '';
@@ -70,6 +72,10 @@ const CreateProjectPage = ({ onCancel, onSave }) => {
     // Handlers
     const handleChange = (field, value) => {
         setFormData(prev => ({ ...prev, [field]: value }));
+    };
+    const handleManualTitleSave = (value) => {
+        setIsTitleTouched(true);
+        handleChange('name', value);
     };
 
     const handleCreate = () => {
@@ -151,7 +157,7 @@ const CreateProjectPage = ({ onCancel, onSave }) => {
                 title: (
                     <EditableField
                         value={formData.name}
-                        onSave={(val) => handleChange('name', val)}
+                        onSave={handleManualTitleSave}
                         type="text"
                         placeholder="<未命名>"
                         label={null}

@@ -14,7 +14,6 @@ import { useNavigation } from '../../context/NavigationContext';
 import { NAV_SCHEME } from '../../config/navigationConfig';
 
 // Import Widgets
-import ViewActionGroup from './ViewActionGroup';
 import BreadcrumbWidget from './header_widgets/BreadcrumbWidget';
 import ModeSwitchWidget from './header_widgets/ModeSwitchWidget';
 import MethodologyWidget from './header_widgets/MethodologyWidget';
@@ -28,11 +27,17 @@ const Header = ({
 }) => {
     const [isScrolled, setIsScrolled] = useState(false);
     const { actions, titleOverride, layoutConfig } = usePagePresentation();
-    const { activeDimension, activeMode } = layoutConfig; // Assuming activeDimension and activeMode are part of layoutConfig
+    const { activeDimension: navDimension, activeMode: navMode } = useNavigation();
+
+    const pageLayoutConfig = (layoutConfig && typeof layoutConfig === 'object')
+        ? layoutConfig
+        : null;
+    const activeDimension = pageLayoutConfig?.activeDimension || navDimension;
+    const activeMode = pageLayoutConfig?.activeMode || navMode || 'config';
 
     // Now ALL configured dimensions use widget layout.
     // If activeDimension is not in NAV_SCHEME, we fall back to generic layout.
-    const isWidgetLayout = activeDimension && NAV_SCHEME[activeDimension];
+    const isWidgetLayout = Boolean(activeDimension && NAV_SCHEME[activeDimension]);
 
     const targetWidgets = isWidgetLayout
         ? (NAV_SCHEME[activeDimension]?.modes[activeMode]?.headerWidgets || [])

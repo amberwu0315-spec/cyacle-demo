@@ -6,7 +6,7 @@
  * 1. 自动处理 Header 的搜索框和筛选按钮逻辑。
  * 2. 也是 CanvasPage 的一种具体实现。
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { IconPlus, IconFilter, IconSearch } from '@tabler/icons-react';
 import { CanvasPage } from '../layout/PageLayouts';
 
@@ -33,6 +33,33 @@ const StandardBusinessLayout = ({
     const [filterType, setFilterType] = useState(defaultFilterType);
     const [filterStatus, setFilterStatus] = useState('all');
     const [searchQuery, setSearchQuery] = useState('');
+
+    const safeData = Array.isArray(data) ? data : [];
+
+    const filteredData = useMemo(() => {
+        const normalizedQuery = searchQuery.trim().toLowerCase();
+
+        return safeData.filter((item) => {
+            const typeCandidate = item?.type ?? item?.category ?? item?.kind;
+            const statusCandidate = item?.status;
+
+            const typeMatched = filterType === 'all'
+                || !typeCandidate
+                || String(typeCandidate).toLowerCase() === filterType.toLowerCase();
+
+            const statusMatched = filterStatus === 'all'
+                || !statusCandidate
+                || String(statusCandidate).toLowerCase() === filterStatus.toLowerCase();
+
+            const searchMatched = !normalizedQuery || Object.values(item || {}).some((val) => (
+                val !== null
+                && val !== undefined
+                && String(val).toLowerCase().includes(normalizedQuery)
+            ));
+
+            return typeMatched && statusMatched && searchMatched;
+        });
+    }, [safeData, filterType, filterStatus, searchQuery]);
 
     // Update filterType when defaultFilterType changes (e.g. switching sidebar items)
     useEffect(() => {
@@ -146,7 +173,7 @@ const StandardBusinessLayout = ({
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
-                            {data.map((item, rowIndex) => (
+                            {filteredData.map((item, rowIndex) => (
                                 <tr
                                     key={item.id || rowIndex}
                                     onClick={() => onRowClick && onRowClick(item)}
@@ -166,7 +193,7 @@ const StandardBusinessLayout = ({
                     </table>
                 </div>
                 <div className="p-2 text-center text-xs text-gray-400 border-t border-gray-100 mt-auto bg-gray-50">
-                    共 {data.length} 条记录
+                    共 {filteredData.length} 条记录
                 </div>
             </div>
         );
