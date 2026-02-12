@@ -3,6 +3,8 @@ import { CanvasPage } from '../../layout/PageLayouts';
 import DataGrid from '../../common/DataGrid';
 import StatusChip from '../../common/StatusChip';
 import Tag from '../../common/Tag';
+import { ContentModule, ModuleHeader } from '../../common/ContentModule';
+import KpiCard from '../../dashboard/KpiCard';
 
 import {
     ChevronRight,
@@ -114,57 +116,40 @@ const CarbonAssetMgmtPage = () => {
                 </div>
 
                 <div className="grid grid-cols-1 xl:grid-cols-4 gap-3">
-                    <div className="qy-kpi-card">
-                        <div className="flex items-start justify-between">
-                            <div>
-                                <p className="qy-subtle-label">年度履约配额总量</p>
-                                <p className="qy-value-main mt-1">
-                                    50,000
-                                    <span className="qy-value-unit">tCO₂e</span>
-                                </p>
-                            </div>
-                            <Scale size={24} className="text-slate-300" />
+                    <KpiCard
+                        title="年度履约配额总量"
+                        value="50,000"
+                        unit="tCO₂e"
+                        icon={Scale}
+                    >
+                        <div className="flex items-center justify-between text-sm">
+                            <span className="text-slate-500">已核查排放量</span>
+                            <span className="text-slate-700 font-medium">42,500</span>
                         </div>
-                        <div className="mt-4 pt-3 border-t border-slate-200">
-                            <div className="flex items-center justify-between text-sm">
-                                <span className="text-slate-500">已核查排放量</span>
-                                <span className="text-slate-700 font-medium">42,500</span>
-                            </div>
-                            <div className="h-2 rounded-full bg-slate-200 overflow-hidden mt-2">
-                                <div className="h-full rounded-full bg-cyan-600" style={{ width: '85%' }} />
-                            </div>
+                        <div className="h-2 rounded-full bg-slate-200 overflow-hidden mt-2">
+                            <div className="h-full rounded-full bg-cyan-600" style={{ width: '85%' }} />
                         </div>
-                    </div>
+                    </KpiCard>
 
-                    <div className="qy-kpi-card">
-                        <div className="flex items-start justify-between">
-                            <div>
-                                <p className="qy-subtle-label">配额盈缺估算</p>
-                                <p className="text-2xl font-semibold text-emerald-600 mt-0.5">
-                                    +7,500
-                                    <span className="qy-value-unit">tCO₂e</span>
-                                </p>
-                            </div>
-                            <ArrowUpRight size={24} className="text-emerald-300" />
-                        </div>
-                        <div className="mt-4 pt-3 border-t border-slate-200 flex items-center gap-2 text-xs">
+                    <KpiCard
+                        title="配额盈缺估算"
+                        value="+7,500"
+                        unit="tCO₂e"
+                        icon={ArrowUpRight}
+                    >
+                        <div className="flex items-center gap-2 text-xs">
                             <span className="h-6 px-2 rounded bg-emerald-50 text-emerald-600 inline-flex items-center font-medium">↗ 资产盈余</span>
                             <span className="text-slate-400">基于当前核查数据</span>
                         </div>
-                    </div>
+                    </KpiCard>
 
-                    <div className="qy-kpi-card">
-                        <div className="flex items-start justify-between">
-                            <div>
-                                <p className="qy-subtle-label">CCER 持仓量</p>
-                                <p className="qy-value-main mt-1">
-                                    5,000
-                                    <span className="qy-value-unit">tCO₂e</span>
-                                </p>
-                            </div>
-                            <Database size={24} className="text-amber-300" />
-                        </div>
-                        <div className="mt-4 pt-3 border-t border-slate-200 grid grid-cols-2 gap-2 text-sm">
+                    <KpiCard
+                        title="CCER 持仓量"
+                        value="5,000"
+                        unit="tCO₂e"
+                        icon={Database}
+                    >
+                        <div className="grid grid-cols-2 gap-2 text-sm">
                             <div>
                                 <p className="text-slate-400 text-xs">风电项目</p>
                                 <p className="text-slate-700 font-medium">3,000</p>
@@ -174,34 +159,33 @@ const CarbonAssetMgmtPage = () => {
                                 <p className="text-slate-700 font-medium">1,500</p>
                             </div>
                         </div>
-                    </div>
+                    </KpiCard>
 
-                    <div className="qy-kpi-card qy-kpi-card--dark p-4 relative overflow-hidden">
-                        <div className="absolute inset-0 opacity-35" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #3e6a9c 1px, transparent 1px)', backgroundSize: '16px 16px' }} />
-                        <div className="relative z-10">
-                            <p className="text-slate-300 text-xs">碳资产预估总值</p>
-                            <p className="text-2xl font-semibold text-white mt-0.5">
-                                ¥125.00
-                                <span className="text-xs font-normal text-slate-300 ml-1">万元</span>
-                            </p>
-                            <div className="mt-6 pt-3 border-t border-slate-700 text-xs flex items-center justify-between text-slate-300">
-                                <span>参考最新碳交所收盘价</span>
-                                <span className="text-emerald-300 font-medium">CEA: ¥82.5</span>
-                            </div>
+                    <KpiCard
+                        title="碳资产预估总值"
+                        value="¥125.00"
+                        unit="万元"
+                        variant="dark"
+                    >
+                        <div className="text-xs flex items-center justify-between text-slate-300">
+                            <span>参考最新碳交所收盘价</span>
+                            <span className="text-emerald-300 font-medium">CEA: ¥82.5</span>
                         </div>
-                    </div>
+                    </KpiCard>
                 </div>
 
                 <div className="grid grid-cols-1 xl:grid-cols-3 gap-3">
-                    <section className="xl:col-span-2 qy-card p-4">
-                        <div className="flex items-center justify-between">
-                            <h3 className="text-base font-semibold text-slate-800">历年履约及排放趋势</h3>
-                            <div className="text-xs text-slate-600 flex items-center gap-3">
-                                <span className="inline-flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-cyan-600" />配额总量</span>
-                                <span className="inline-flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-slate-800" />实际排放</span>
-                            </div>
-                        </div>
-                        <div className="mt-4">
+                    <ContentModule className="xl:col-span-2">
+                        <ModuleHeader
+                            title="历年履约及排放趋势"
+                            actions={
+                                <div className="text-xs text-slate-600 flex items-center gap-3">
+                                    <span className="inline-flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-cyan-600" />配额总量</span>
+                                    <span className="inline-flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-slate-800" />实际排放</span>
+                                </div>
+                            }
+                        />
+                        <div className="p-4 mt-4">
                             {[60000, 45000, 30000, 15000, 0].map((tick) => (
                                 <div key={tick} className="h-12 border-t border-dashed border-slate-200 relative">
                                     <span className="absolute left-0 -top-2 text-xs text-slate-400">{tick}</span>
@@ -221,39 +205,43 @@ const CarbonAssetMgmtPage = () => {
                                 ))}
                             </div>
                         </div>
-                    </section>
+                    </ContentModule>
 
-                    <section className="qy-card p-4">
-                        <h3 className="text-base font-semibold text-slate-800">资产持有结构</h3>
-                        <div className="mt-3 flex justify-center">
-                            <div className="w-40 h-40 rounded-full relative" style={{ background: donutGradient }}>
-                                <div className="absolute inset-4 rounded-full bg-white flex flex-col items-center justify-center">
-                                    <span className="text-2xl font-semibold text-slate-900">1.25</span>
-                                    <span className="text-xs text-slate-500">万吨总量</span>
+                    <ContentModule>
+                        <ModuleHeader title="资产持有结构" />
+                        <div className="p-4">
+                            <div className="mt-3 flex justify-center">
+                                <div className="w-40 h-40 rounded-full relative" style={{ background: donutGradient }}>
+                                    <div className="absolute inset-4 rounded-full bg-white flex flex-col items-center justify-center">
+                                        <span className="text-2xl font-semibold text-slate-900">1.25</span>
+                                        <span className="text-xs text-slate-500">万吨总量</span>
+                                    </div>
                                 </div>
                             </div>
+                            <div className="mt-4 space-y-2">
+                                {assetStructure.map((item) => (
+                                    <div key={item.name} className="flex items-center justify-between text-sm">
+                                        <span className="inline-flex items-center gap-2 text-slate-700">
+                                            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
+                                            {item.name}
+                                        </span>
+                                        <span className="text-slate-700 font-medium">{item.value.toLocaleString()}</span>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
-                        <div className="mt-4 space-y-2">
-                            {assetStructure.map((item) => (
-                                <div key={item.name} className="flex items-center justify-between text-sm">
-                                    <span className="inline-flex items-center gap-2 text-slate-700">
-                                        <span className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
-                                        {item.name}
-                                    </span>
-                                    <span className="text-slate-700 font-medium">{item.value.toLocaleString()}</span>
-                                </div>
-                            ))}
-                        </div>
-                    </section>
+                    </ContentModule>
                 </div>
 
-                <section className="qy-card overflow-hidden pb-1">
-                    <div className="qy-panel-header">
-                        <h3 className="qy-section-title">资产变动记录</h3>
-                        <button className="text-sm text-cyan-700 font-medium inline-flex items-center gap-1">
-                            查看全部交易 <ChevronRight size={14} />
-                        </button>
-                    </div>
+                <ContentModule className="pb-1">
+                    <ModuleHeader
+                        title="资产变动记录"
+                        actions={
+                            <button className="text-sm text-cyan-700 font-medium inline-flex items-center gap-1">
+                                查看全部交易 <ChevronRight size={14} />
+                            </button>
+                        }
+                    />
                     <DataGrid
                         title="资产变动记录"
                         columns={assetRecordColumns}
@@ -265,7 +253,7 @@ const CarbonAssetMgmtPage = () => {
                         showFooter={false}
                         rowSelection={{ enabled: true, mode: 'checkbox', multiple: true }}
                     />
-                </section>
+                </ContentModule>
             </div>
         </CanvasPage>
     );

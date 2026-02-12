@@ -1,6 +1,7 @@
 import React from 'react';
 import { CanvasPage } from '../../layout/PageLayouts';
 import DataGrid from '../../common/DataGrid';
+import { ContentModule, ModuleHeader } from '../../common/ContentModule';
 import {
     Activity,
     Book,
@@ -199,23 +200,25 @@ const WorkbenchHomePage = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="xl:col-span-2 qy-card p-4 bg-gradient-to-br from-white to-[#f4fbfd]">
-                        <div className="text-sm font-semibold text-slate-800">运营快照</div>
-                        <div className="mt-3 grid grid-cols-3 gap-3">
-                            {quickIndicators.map((item) => (
-                                <div key={item.label} className="rounded-sm border border-slate-200 bg-white px-3 py-2.5">
-                                    <div className="text-[11px] text-slate-500">{item.label}</div>
-                                    <div className="mt-1 text-[24px] leading-none font-semibold text-slate-900">
-                                        {item.value.toLocaleString()}
-                                        <span className="ml-1 text-[11px] font-normal text-slate-500">{item.unit}</span>
+                    <ContentModule className="xl:col-span-2 bg-gradient-to-br from-white to-[#f4fbfd]">
+                        <ModuleHeader title="运营快照" />
+                        <div className="p-4 pt-0">
+                            <div className="mt-3 grid grid-cols-3 gap-3">
+                                {quickIndicators.map((item) => (
+                                    <div key={item.label} className="rounded-sm border border-slate-200 bg-white px-3 py-2.5">
+                                        <div className="text-[11px] text-slate-500">{item.label}</div>
+                                        <div className="mt-1 text-[24px] leading-none font-semibold text-slate-900">
+                                            {item.value.toLocaleString()}
+                                            <span className="ml-1 text-[11px] font-normal text-slate-500">{item.unit}</span>
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))}
+                            </div>
+                            <div className="mt-3 text-[12px] text-slate-500 leading-5">
+                                聚焦高频指标，支持长时间巡检场景下的快速阅读与对比。
+                            </div>
                         </div>
-                        <div className="mt-3 text-[12px] text-slate-500 leading-5">
-                            聚焦高频指标，支持长时间巡检场景下的快速阅读与对比。
-                        </div>
-                    </div>
+                    </ContentModule>
                 </div>
 
                 <div className="grid grid-cols-1 xl:grid-cols-4 gap-3">
@@ -266,14 +269,12 @@ const WorkbenchHomePage = () => {
                 </div>
 
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-3">
-                    <section className="qy-card overflow-hidden">
-                        <div
-                            className="qy-panel-header cursor-pointer hover:bg-[#f2f7fa] transition-colors"
+                    <ContentModule>
+                        <ModuleHeader
+                            title="近期项目"
                             onClick={() => handleNavigation('project_mgmt')}
-                        >
-                            <span className="qy-section-title">近期项目</span>
-                            <ChevronRight size={16} className="text-cyan-700" />
-                        </div>
+                            actions={<ChevronRight size={16} className="text-cyan-700" />}
+                        />
                         <DataGrid
                             title="近期项目"
                             columns={recentProjectsColumns}
@@ -287,16 +288,14 @@ const WorkbenchHomePage = () => {
                             enableColumnMenu={false}
                             compact
                         />
-                    </section>
+                    </ContentModule>
 
-                    <section className="qy-card overflow-hidden">
-                        <div
-                            className="qy-panel-header cursor-pointer hover:bg-[#f2f7fa] transition-colors"
+                    <ContentModule>
+                        <ModuleHeader
+                            title="近期服务客户"
                             onClick={() => handleNavigation('enterprise')}
-                        >
-                            <span className="qy-section-title">近期服务客户</span>
-                            <ChevronRight size={16} className="text-cyan-700" />
-                        </div>
+                            actions={<ChevronRight size={16} className="text-cyan-700" />}
+                        />
                         <DataGrid
                             title="近期服务客户"
                             columns={recentClientsColumns}
@@ -310,21 +309,17 @@ const WorkbenchHomePage = () => {
                             enableColumnMenu={false}
                             compact
                         />
-                    </section>
+                    </ContentModule>
                 </div>
 
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 pb-2">
-                    <section className="qy-card overflow-hidden">
-                        <div
-                            className="qy-panel-header cursor-pointer hover:bg-[#f2f7fa] transition-colors"
+                    <ContentModule>
+                        <ModuleHeader
+                            title="行业资讯"
+                            icon={ExternalLink}
                             onClick={() => handleExternalLink('https://www.carbonnt.com/news')}
-                        >
-                            <div className="flex items-center gap-2">
-                                <span className="qy-section-title">行业资讯</span>
-                                <ExternalLink size={14} className="text-slate-400" />
-                            </div>
-                            <ChevronRight size={16} className="text-cyan-700" />
-                        </div>
+                            actions={<ChevronRight size={16} className="text-cyan-700" />}
+                        />
                         <div className="px-4 py-3 space-y-3">
                             {newsItems.map((item, idx) => (
                                 <div key={item.title} className="flex items-start gap-3">
@@ -344,19 +339,15 @@ const WorkbenchHomePage = () => {
                                 </div>
                             ))}
                         </div>
-                    </section>
+                    </ContentModule>
 
-                    <section className="qy-card overflow-hidden">
-                        <div
-                            className="qy-panel-header cursor-pointer hover:bg-[#f2f7fa] transition-colors"
+                    <ContentModule>
+                        <ModuleHeader
+                            title="帮助中心"
+                            icon={ExternalLink}
                             onClick={() => handleExternalLink('https://doc.cyacle.cn/')}
-                        >
-                            <div className="flex items-center gap-2">
-                                <span className="qy-section-title">帮助中心</span>
-                                <ExternalLink size={14} className="text-slate-400" />
-                            </div>
-                            <ChevronRight size={16} className="text-cyan-700" />
-                        </div>
+                            actions={<ChevronRight size={16} className="text-cyan-700" />}
+                        />
                         <div className="px-4 py-3 space-y-3">
                             {helpItems.map((item) => (
                                 <div key={item} className="flex items-center gap-3 text-sm text-slate-700">
@@ -365,7 +356,7 @@ const WorkbenchHomePage = () => {
                                 </div>
                             ))}
                         </div>
-                    </section>
+                    </ContentModule>
                 </div>
             </div>
         </CanvasPage>

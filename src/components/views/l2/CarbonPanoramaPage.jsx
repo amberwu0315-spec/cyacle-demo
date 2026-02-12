@@ -53,36 +53,7 @@ const getMockData = (year) => {
     };
 };
 
-const MetricCard = ({ title, value, unit, trend, icon: Icon, footer, progress }) => {
-    return (
-        <div className="rounded-sm shadow-sm border border-slate-200 bg-white p-4 min-h-[116px] flex flex-col justify-between group hover:border-[#7dd3df] transition-colors">
-            <div className="flex items-start justify-between gap-2">
-                <div>
-                    <p className="text-[12px] text-slate-500">{title}</p>
-                    <p className="mt-1 text-[30px] leading-none font-semibold text-slate-900">
-                        {value}
-                        <span className="ml-1 text-[12px] font-normal text-slate-500">{unit}</span>
-                    </p>
-                </div>
-                <span className="w-8 h-8 rounded-sm bg-slate-100 text-slate-500 flex items-center justify-center">
-                    <Icon size={16} strokeWidth={1.8} />
-                </span>
-            </div>
-            {progress ? (
-                <div className="mt-2">
-                    <div className="h-1.5 w-full rounded-full bg-slate-200 overflow-hidden">
-                        <div className="h-full rounded-full bg-[#0EA5B7]" style={{ width: `${progress}%` }} />
-                    </div>
-                </div>
-            ) : (
-                <div className="mt-2 flex items-center gap-2 text-xs">
-                    <span className="text-[#22A06B] font-medium">↘ {trend}</span>
-                    <span className="text-slate-400">{footer}</span>
-                </div>
-            )}
-        </div>
-    );
-};
+import MetricCard from '../../dashboard/MetricCard';
 
 const CarbonPanoramaPage = () => {
     const [selectedYear, setSelectedYear] = React.useState('2024');
@@ -203,10 +174,8 @@ const CarbonPanoramaPage = () => {
                         />
                     </div>
 
-                    <section className="rounded-sm shadow-sm border border-slate-200 bg-white overflow-hidden">
-                        <div className="h-11 px-4 border-b border-slate-200 bg-slate-50/40 flex items-center">
-                            <h3 className="text-sm font-semibold text-slate-800">排放类别占比</h3>
-                        </div>
+                    <ContentModule>
+                        <ModuleHeader title="排放类别占比" />
                         <div className="p-4">
                             <div className="w-36 h-36 rounded-full relative mx-auto" style={{ background: 'conic-gradient(#2F6BFF 0 78%, #D97706 78% 100%)' }}>
                                 <div className="absolute inset-4 rounded-full bg-white" />
@@ -222,7 +191,7 @@ const CarbonPanoramaPage = () => {
                                 化石燃料燃烧排放
                             </span>
                         </div>
-                    </section>
+                    </ContentModule>
                 </div>
 
                 <ContentModule>
@@ -297,11 +266,11 @@ const CarbonPanoramaPage = () => {
                 </ContentModule>
 
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 pb-2">
-                    <section className="rounded-sm shadow-sm border border-slate-200 bg-white overflow-hidden flex flex-col">
-                        <div className="h-11 px-4 border-b border-slate-200 bg-slate-50/40 flex items-center justify-between shrink-0">
-                            <h3 className="text-sm font-semibold text-slate-800">产品碳足迹排放 (Top 5)</h3>
-                            <Tag variant="primary" size="xs">产品层面</Tag>
-                        </div>
+                    <ContentModule>
+                        <ModuleHeader
+                            title="产品碳足迹排放 (Top 5)"
+                            actions={<Tag variant="primary" size="xs">产品层面</Tag>}
+                        />
                         <div className="p-4 space-y-4 flex-1">
                             {data.productRanking.map((item, idx) => {
                                 const width = idx === 0 ? 100 : (item.value / data.productRanking[0].value) * 100;
@@ -332,13 +301,13 @@ const CarbonPanoramaPage = () => {
                                 查看全部 <ChevronRight size={12} />
                             </button>
                         </div>
-                    </section>
+                    </ContentModule>
 
-                    <section className="rounded-sm shadow-sm border border-slate-200 bg-white overflow-hidden flex flex-col">
-                        <div className="h-11 px-4 border-b border-slate-200 bg-slate-50/40 flex items-center justify-between shrink-0">
-                            <h3 className="text-sm font-semibold text-slate-800">排放源排行</h3>
-                            <Tag variant="success" size="xs">组织层面</Tag>
-                        </div>
+                    <ContentModule>
+                        <ModuleHeader
+                            title="排放源排行"
+                            actions={<Tag variant="success" size="xs">组织层面</Tag>}
+                        />
                         <div className="p-4 space-y-6 flex-1">
                             {data.sourceRanking.map((item, idx) => (
                                 <div key={item.name}>
@@ -366,7 +335,7 @@ const CarbonPanoramaPage = () => {
                                 查看全部 <ChevronRight size={12} />
                             </button>
                         </div>
-                    </section>
+                    </ContentModule>
                 </div>
             </div>
         </CanvasPage>
