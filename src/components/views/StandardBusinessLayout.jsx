@@ -9,6 +9,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { IconPlus, IconFilter, IconSearch } from '@tabler/icons-react';
 import { CanvasPage } from '../layout/PageLayouts';
+import DataGrid from '../common/DataGrid';
 
 /**
  * 用于创建带有筛选器+表格的标准背景数据页面
@@ -155,47 +156,31 @@ const StandardBusinessLayout = ({
             return <div className="p-4 text-center text-gray-400">No data available</div>;
         }
 
+        const normalizedColumns = columns.map((col, index) => ({
+            ...col,
+            sortable: col.sortable ?? true,
+            filterable: col.filterable ?? true,
+            groupable: col.groupable ?? index === 0,
+            editable: col.editable ?? false
+        }));
+
+        const storageKey = `std-grid:${title}`;
+
         return (
-            <div className="bg-white rounded border border-gray-200 flex-1 flex flex-col overflow-hidden">
-                <div className="overflow-x-auto">
-                    <table className="w-full text-sm text-left">
-                        <thead className="bg-gray-50 text-gray-500 border-b border-gray-200">
-                            <tr>
-                                {columns.map((col, index) => (
-                                    <th
-                                        key={col.key || index}
-                                        className={`px-4 py-3 font-medium text-xs ${col.className || ''}`}
-                                        style={{ width: col.width }}
-                                    >
-                                        {col.title}
-                                    </th>
-                                ))}
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-100">
-                            {filteredData.map((item, rowIndex) => (
-                                <tr
-                                    key={item.id || rowIndex}
-                                    onClick={() => onRowClick && onRowClick(item)}
-                                    className="hover:bg-blue-50 cursor-pointer transition-colors group"
-                                >
-                                    {columns.map((col, colIndex) => (
-                                        <td
-                                            key={`${item.id}-${col.key || colIndex}`}
-                                            className={`px-4 py-3 text-gray-900 ${col.className || ''}`}
-                                        >
-                                            {col.render ? col.render(item[col.key], item) : item[col.key]}
-                                        </td>
-                                    ))}
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-                <div className="p-2 text-center text-xs text-gray-400 border-t border-gray-100 mt-auto bg-gray-50">
-                    共 {filteredData.length} 条记录
-                </div>
-            </div>
+            <DataGrid
+                title={title}
+                columns={normalizedColumns}
+                rows={filteredData}
+                rowKey={(row, index) => row?.id ?? `${title}-${index}`}
+                onRowClick={(row) => onRowClick?.(row)}
+                storageKey={storageKey}
+                emptyText={`暂无${title}数据`}
+                className="flex-1"
+                rowSelection={{ enabled: false, mode: 'click', multiple: false }}
+                showToolbar
+                showFooter
+                minTableWidth={960}
+            />
         );
     };
 

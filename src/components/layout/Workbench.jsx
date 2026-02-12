@@ -234,9 +234,8 @@ const WorkbenchContent = ({
 
                 {/* Right Column: Header + Content + Footer */}
                 <div className="flex-1 flex flex-col h-full overflow-hidden relative">
-                    {/* Header: Visible for Project & Business, Hidden for Dashboard */}
-                    {/* [Updated] Allow Header for workspace */}
-                    {((isProjectLayout || isBusinessLayout || activeL1 === 'workspace') && showHeader) && (
+                    {/* Header: Visible for Project & Business, Hidden for Dashboard & Workspace */}
+                    {((isProjectLayout || isBusinessLayout) && activeL1 !== 'workspace' && showHeader) && (
                         <Header
                             title={headerTitle}
                             // For Legacy Pages (Basis, Navigation), we still pass default actions here

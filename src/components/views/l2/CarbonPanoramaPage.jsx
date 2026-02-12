@@ -1,14 +1,14 @@
 import React, { useMemo } from 'react';
 import { CanvasPage } from '../../layout/PageLayouts';
 import {
-    IconActivity,
-    IconChartBar,
-    IconChevronRight,
-    IconCheck,
-    IconFlask,
-    IconLayoutGrid,
-    IconRotate
-} from '@tabler/icons-react';
+    Activity,
+    BarChart3,
+    ChevronRight,
+    Check,
+    FlaskConical,
+    LayoutGrid,
+    RefreshCw
+} from 'lucide-react';
 
 const years = ['2020', '2021', '2022', '2023', '2024'];
 const areaSeries = [50000, 41000, 39000, 36000, 30000];
@@ -28,29 +28,29 @@ const sourceRanking = [
 
 const MetricCard = ({ title, value, unit, trend, icon: Icon, footer, progress }) => {
     return (
-        <div className="rounded-md border border-slate-200 bg-white p-4 min-h-[122px] flex flex-col justify-between">
+        <div className="rounded-lg shadow-sm border border-gray-100 bg-white p-4 min-h-[122px] flex flex-col justify-between group hover:border-cyan-200 transition-colors">
             <div className="flex items-start justify-between gap-2">
                 <div>
-                    <p className="text-xs text-slate-500">{title}</p>
-                    <p className="mt-1 text-[40px] leading-9 font-semibold text-slate-900">
+                    <p className="text-sm text-gray-500">{title}</p>
+                    <p className="mt-1 text-3xl font-semibold text-gray-900">
                         {value}
-                        <span className="ml-1 text-sm font-normal text-slate-500">{unit}</span>
+                        <span className="ml-1 text-sm font-normal text-gray-500">{unit}</span>
                     </p>
                 </div>
-                <span className="w-8 h-8 rounded-md bg-slate-100 text-slate-500 flex items-center justify-center">
-                    <Icon size={16} />
+                <span className="w-8 h-8 rounded-md bg-gray-100 text-gray-500 flex items-center justify-center">
+                    <Icon size={16} strokeWidth={1.8} />
                 </span>
             </div>
             {progress ? (
                 <div className="mt-2">
-                    <div className="h-1.5 w-full rounded-full bg-slate-200 overflow-hidden">
+                    <div className="h-1.5 w-full rounded-full bg-gray-200 overflow-hidden">
                         <div className="h-full rounded-full bg-cyan-600" style={{ width: `${progress}%` }} />
                     </div>
                 </div>
             ) : (
                 <div className="mt-2 flex items-center gap-2 text-xs">
                     <span className="text-emerald-600 font-medium">↘ {trend}</span>
-                    <span className="text-slate-400">{footer}</span>
+                    <span className="text-gray-400">{footer}</span>
                 </div>
             )}
         </div>
@@ -93,29 +93,29 @@ const CarbonPanoramaPage = () => {
     return (
         <CanvasPage className="bg-[#F5F6F8] p-3">
             <div className="h-full flex flex-col gap-3 overflow-y-auto">
-                <div className="rounded-md border border-slate-200 bg-white px-3 py-2 flex flex-wrap items-center justify-between gap-2">
+                <div className="rounded-lg shadow-sm border border-gray-100 bg-white px-3 py-2 flex flex-wrap items-center justify-between gap-2">
                     <div className="flex flex-wrap items-center gap-2">
-                        <span className="h-8 px-3 rounded-md border border-slate-200 bg-slate-50 text-xs text-slate-700 flex items-center gap-1.5">
-                            <IconCheck size={14} className="text-cyan-600" />
+                        <span className="h-8 px-3 rounded-md border border-gray-100 bg-gray-50/50 text-xs text-gray-700 flex items-center gap-1.5">
+                            <Check size={14} className="text-cyan-600" strokeWidth={2} />
                             管理状态
-                            <strong className="text-slate-900">已核查</strong>
+                            <strong className="text-gray-900 ml-0.5">已核查</strong>
                         </span>
-                        <span className="h-8 px-3 rounded-md border border-slate-200 bg-slate-50 text-xs text-slate-700 flex items-center gap-1.5">
-                            <IconFlask size={14} className="text-emerald-600" />
+                        <span className="h-8 px-3 rounded-md border border-gray-200 bg-gray-50 text-xs text-gray-700 flex items-center gap-1.5">
+                            <FlaskConical size={14} className="text-emerald-600" strokeWidth={2} />
                             核算机构
-                            <strong className="text-slate-900">SGS 通标</strong>
+                            <strong className="text-gray-900">SGS 通标</strong>
                         </span>
-                        <span className="h-8 px-3 rounded-md border border-slate-200 bg-slate-50 text-xs text-slate-700 flex items-center gap-1.5">
-                            <IconLayoutGrid size={14} className="text-sky-600" />
+                        <span className="h-8 px-3 rounded-md border border-gray-200 bg-gray-50 text-xs text-gray-700 flex items-center gap-1.5">
+                            <LayoutGrid size={14} className="text-sky-600" strokeWidth={2} />
                             核算认证标准
-                            <strong className="text-slate-900">《企业温室气体排放核算与报告指南及电设施》</strong>
+                            <strong className="text-gray-900">《企业温室气体排放核算与报告指南及电设施》</strong>
                         </span>
                     </div>
-                    <div className="h-8 rounded-md border border-slate-200 bg-slate-50 px-2 flex items-center gap-1">
+                    <div className="h-8 rounded-md border border-gray-200 bg-gray-50 px-2 flex items-center gap-1">
                         {years.map((year) => (
                             <button
                                 key={year}
-                                className={`px-3 h-6 rounded text-xs ${year === '2024' ? 'bg-white border border-slate-200 text-slate-900' : 'text-slate-500'}`}
+                                className={`px-3 h-6 rounded text-xs ${year === '2024' ? 'bg-white border border-gray-200 text-gray-900' : 'text-gray-500'}`}
                             >
                                 {year}
                             </button>
@@ -131,7 +131,7 @@ const CarbonPanoramaPage = () => {
                             unit="tCO₂e"
                             trend="14.9%"
                             footer="较去年同期"
-                            icon={IconChartBar}
+                            icon={BarChart3}
                         />
                         <MetricCard
                             title="年度能源消耗总量"
@@ -139,7 +139,7 @@ const CarbonPanoramaPage = () => {
                             unit="MWh"
                             trend="1.2%"
                             footer="较去年同期"
-                            icon={IconActivity}
+                            icon={Activity}
                         />
                         <MetricCard
                             title="综合碳排放效益"
@@ -147,20 +147,22 @@ const CarbonPanoramaPage = () => {
                             unit="亿元"
                             trend="5.6%"
                             footer="较去年同期"
-                            icon={IconFlask}
+                            icon={FlaskConical}
                         />
                         <MetricCard
                             title="清洁能源占比"
                             value="81.3"
                             unit="%"
-                            icon={IconRotate}
+                            icon={RefreshCw}
                             progress={81.3}
                         />
                     </div>
 
-                    <section className="rounded-md border border-slate-200 bg-white p-4">
-                        <h3 className="text-sm font-semibold text-slate-800">排放类别占比</h3>
-                        <div className="mt-3 flex justify-center">
+                    <section className="rounded-lg shadow-sm border border-gray-100 bg-white overflow-hidden">
+                        <div className="h-11 px-4 border-b border-gray-100 bg-gray-50/30 flex items-center">
+                            <h3 className="text-base font-semibold text-gray-800">排放类别占比</h3>
+                        </div>
+                        <div className="p-4">
                             <div className="w-36 h-36 rounded-full relative" style={{ background: 'conic-gradient(#3B82F6 0 78%, #F97316 78% 100%)' }}>
                                 <div className="absolute inset-4 rounded-full bg-white" />
                             </div>
@@ -178,32 +180,30 @@ const CarbonPanoramaPage = () => {
                     </section>
                 </div>
 
-                <section className="rounded-md border border-slate-200 bg-white p-4">
-                    <div className="flex flex-wrap items-center justify-between gap-3">
+                <section className="rounded-lg shadow-sm border border-gray-100 bg-white overflow-hidden">
+                    <div className="h-11 px-4 border-b border-gray-100 bg-gray-50/30 flex items-center justify-between">
                         <div>
-                            <h3 className="text-sm font-semibold text-slate-800 flex items-center gap-1.5">
-                                <IconChartBar size={14} className="text-slate-400" />
+                            <h3 className="text-base font-semibold text-gray-800 flex items-center gap-1.5">
+                                <BarChart3 size={18} className="text-cyan-600" />
                                 碳排及能源趋势分析
                             </h3>
-                            <p className="text-xs text-slate-500 mt-1">查看企业近期的排放与能耗动态变化</p>
                         </div>
                         <div className="flex flex-wrap items-center gap-2">
-                            {['总碳排放趋势', '总能源消耗趋势', '碳排放强度', '能源消耗强度', '碳排放密度', '能源消耗密度'].map((tab, idx) => (
+                            {['总碳排放趋势', '总能源消耗趋势', '强度分析'].map((tab, idx) => (
                                 <button
                                     key={tab}
-                                    className={`h-7 px-3 rounded-full text-xs border ${idx === 0 ? 'border-emerald-400 text-emerald-600 bg-emerald-50' : 'border-transparent text-slate-500 bg-slate-100'}`}
+                                    className={`h-7 px-3 rounded-full text-xs border ${idx === 0 ? 'border-cyan-400 text-cyan-600 bg-cyan-50' : 'border-transparent text-gray-500 bg-gray-100'}`}
                                 >
                                     {tab}
                                 </button>
                             ))}
-                            <div className="ml-1 h-7 px-1 rounded-md border border-slate-200 flex items-center gap-1">
-                                <button className="h-5 px-2 rounded text-xs bg-slate-100 text-slate-700">按年</button>
-                                <button className="h-5 px-2 rounded text-xs text-slate-500">按月</button>
+                            <div className="ml-1 h-7 px-1 rounded-md border border-gray-100 flex items-center gap-1">
+                                <button className="h-5 px-2 rounded text-xs bg-white shadow-sm border border-gray-100 text-gray-900">按年</button>
+                                <button className="h-5 px-2 rounded text-xs text-gray-500">按月</button>
                             </div>
                         </div>
                     </div>
-
-                    <div className="mt-4">
+                    <div className="p-4">
                         <svg viewBox={`0 0 ${chartGeometry.width} ${chartGeometry.height}`} className="w-full h-[260px]">
                             <defs>
                                 <linearGradient id="carbonAreaFill" x1="0" x2="0" y1="0" y2="1">
@@ -242,70 +242,70 @@ const CarbonPanoramaPage = () => {
                 </section>
 
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 pb-2">
-                    <section className="rounded-md border border-slate-200 bg-white p-4">
-                        <div className="flex items-center justify-between">
-                            <h3 className="text-sm font-semibold text-slate-800">产品碳足迹排行 (Top 5)</h3>
-                            <span className="text-[11px] px-2 py-1 rounded bg-slate-100 text-slate-500">产品层面</span>
+                    <section className="rounded-lg shadow-sm border border-gray-100 bg-white overflow-hidden">
+                        <div className="h-11 px-4 border-b border-gray-100 bg-gray-50/30 flex items-center justify-between">
+                            <h3 className="text-base font-semibold text-gray-800">产品碳足迹排行 (Top 5)</h3>
+                            <span className="text-[10px] px-2 py-0.5 rounded border border-cyan-100 bg-cyan-50 text-cyan-600">产品层面</span>
                         </div>
-                        <div className="mt-2 space-y-4">
+                        <div className="p-4 space-y-4">
                             {productRanking.map((item, idx) => {
                                 const width = idx === 0 ? 100 : (item.value / productRanking[0].value) * 100;
                                 return (
                                     <div key={item.name}>
                                         <div className="flex items-center justify-between text-sm">
-                                            <span className="inline-flex items-center gap-2 text-slate-700">
+                                            <span className="inline-flex items-center gap-2 text-gray-700">
                                                 <span className="w-4 h-4 rounded-full bg-blue-100 text-blue-600 text-[10px] flex items-center justify-center font-semibold">
                                                     {idx + 1}
                                                 </span>
                                                 {item.name}
                                             </span>
-                                            <span className="font-semibold text-slate-900">
+                                            <span className="font-semibold text-gray-900">
                                                 {item.value.toFixed(2)}
-                                                <span className="ml-1 text-[11px] font-normal text-slate-500">{item.unit}</span>
+                                                <span className="ml-1 text-[11px] font-normal text-gray-500">{item.unit}</span>
                                             </span>
                                         </div>
-                                        <div className="mt-2 h-1.5 rounded-full bg-slate-200 overflow-hidden">
+                                        <div className="mt-2 h-1.5 rounded-full bg-gray-200 overflow-hidden">
                                             <div className="h-full rounded-full bg-blue-500" style={{ width: `${width}%` }} />
                                         </div>
-                                        <div className="mt-1 text-right text-[11px] text-slate-400">Click for details</div>
+                                        <div className="mt-1 text-right text-[11px] text-gray-400">Click for details</div>
                                     </div>
                                 );
                             })}
                         </div>
-                        <button className="mt-4 text-xs text-slate-500 inline-flex items-center gap-1 hover:text-cyan-700">
-                            查看全部产品碳核算详情 <IconChevronRight size={12} />
+                        <button className="mt-4 text-xs text-gray-500 inline-flex items-center gap-1 hover:text-cyan-700">
+                            查看全部产品碳核算详情 <ChevronRight size={12} />
                         </button>
                     </section>
 
-                    <section className="rounded-md border border-slate-200 bg-white p-4">
-                        <div className="flex items-center justify-between">
-                            <h3 className="text-sm font-semibold text-slate-800">排放源排行</h3>
-                            <span className="text-[11px] px-2 py-1 rounded bg-slate-100 text-slate-500">组织层面</span>
+                    <section className="rounded-lg shadow-sm border border-gray-100 bg-white overflow-hidden">
+                        <div className="h-11 px-4 border-b border-gray-100 bg-gray-50/30 flex items-center justify-between">
+                            <h3 className="text-base font-semibold text-gray-800">排放源排行</h3>
+                            <span className="text-[10px] px-2 py-0.5 rounded border border-emerald-100 bg-emerald-50 text-emerald-600">组织层面</span>
                         </div>
-                        <div className="mt-3 space-y-6">
+                        <div className="p-4 space-y-6">
                             {sourceRanking.map((item, idx) => (
                                 <div key={item.name}>
                                     <div className="flex items-center justify-between text-sm">
-                                        <span className="inline-flex items-center gap-2 text-slate-700">
+                                        <span className="inline-flex items-center gap-2 text-gray-700">
                                             <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 text-[10px] flex items-center justify-center font-semibold">
                                                 {idx + 1}
                                             </span>
                                             {item.name}
                                         </span>
-                                        <span className="font-semibold text-slate-900">
+                                        <span className="font-semibold text-gray-900">
                                             {item.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                            <span className="ml-1 text-[11px] font-normal text-slate-500">tCO₂e</span>
+                                            <span className="ml-1 text-[11px] font-normal text-gray-500">tCO₂e</span>
                                         </span>
                                     </div>
-                                    <div className="mt-2 h-1.5 rounded-full bg-slate-200 overflow-hidden">
+                                    <div className="mt-2 h-1.5 rounded-full bg-gray-200 overflow-hidden">
                                         <div className="h-full rounded-full bg-emerald-500" style={{ width: `${item.percent}%` }} />
                                     </div>
-                                    <div className="mt-1 text-right text-[11px] text-slate-400">{item.percent}% of total</div>
+                                    <div className="mt-1 text-right text-[11px] text-gray-400">{item.percent}% of total</div>
                                 </div>
                             ))}
                         </div>
-                        <button className="mt-6 text-xs text-slate-500 inline-flex items-center gap-1 hover:text-cyan-700">
-                            查看全部组织碳核算详情 <IconChevronRight size={12} />
+                        <button className="mt-6 text-xs text-gray-500 inline-flex items-center gap-1 hover:text-cyan-700">
+                            查看全部组织碳核算详情 <ChevronRight size={12} />
                         </button>
                     </section>
                 </div>
