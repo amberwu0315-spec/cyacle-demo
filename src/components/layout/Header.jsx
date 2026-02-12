@@ -76,20 +76,20 @@ const Header = ({
 
     return (
         <header
-            className={`sticky top-0 z-50 bg-white transition-shadow duration-200 px-4 flex items-center justify-between ${isScrolled ? 'shadow-md' : 'shadow-sm'
+            className={`sticky top-0 z-50 bg-white border-b border-slate-200 transition-shadow duration-200 px-4 flex items-center justify-between ${isScrolled ? 'shadow-sm' : 'shadow-none'
                 }`}
-            style={{ height: '46px' }}
+            style={{ height: '44px' }}
         >
             {isWidgetLayout ? (
                 // --- Universal Widget Layout ---
                 <>
                     {/* LEFT ZONE */}
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
                         {leftWidgets.map(wId => renderWidget(wId))}
                     </div>
 
                     {/* RIGHT ZONE */}
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-3">
                         {rightWidgets.map((wId, index) => {
                             // Special Divider Logic: 
                             // If this widget is 'view_actions', AND it is NOT the first/only item on the right
@@ -97,7 +97,7 @@ const Header = ({
                             if (wId === 'view_actions' && index > 0) {
                                 return (
                                     <React.Fragment key={wId}>
-                                        <div className="w-[1px] h-4 bg-gray-200 mx-1"></div>
+                                        <div className="w-[1px] h-4 bg-slate-200 mx-1"></div>
                                         {renderWidget(wId)}
                                     </React.Fragment>
                                 );

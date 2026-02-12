@@ -20,7 +20,7 @@ export const USER_ROLES = {
         label: '个人/服务商账号',
         allowedL1: ['workspace', 'background_data', 'project_mgmt', 'enterprise'], // ID 相同但标签不同
         labelOverrides: {
-            'enterprise': '研究对象'
+            'enterprise': '服务企业'
         }
     }
 };

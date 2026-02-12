@@ -2,22 +2,219 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --qy-bg-canvas: #f3f6f8;
+  --qy-bg-surface: #ffffff;
+  --qy-bg-soft: #edf4f7;
+  --qy-border: #dbe4ea;
+  --qy-border-strong: #c9d6df;
+  --qy-text-main: #0f172a;
+  --qy-text-sub: #475569;
+  --qy-text-faint: #64748b;
+  --qy-brand: #0ea5b7;
+  --qy-brand-strong: #0b7285;
+  --qy-brand-soft: #e6f7fa;
+  --qy-success: #22a06b;
+  --qy-warning: #d97706;
+  --qy-danger: #dc2626;
+}
+
 @layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
   body {
-    @apply font-sans antialiased text-[#4D4D4D];
+    @apply antialiased;
+    font-family: "HarmonyOS Sans SC", "Noto Sans SC", "Source Han Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+    color: var(--qy-text-main);
+    background: var(--qy-bg-canvas);
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "tnum" 1, "liga" 1;
+    font-variant-numeric: tabular-nums;
   }
 
   /* 统一表单控件主题色 - 使用 accent-color */
   input[type='checkbox'],
   input[type='radio'] {
-    accent-color: #0984a3;
+    accent-color: var(--qy-brand-strong);
+  }
+
+  ::selection {
+    background: rgba(14, 165, 183, 0.16);
+  }
+}
+
+@layer components {
+  .qy-card {
+    @apply rounded-lg shadow-sm;
+    background: var(--qy-bg-surface);
+    border: 1px solid var(--qy-border);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
+  }
+
+  .qy-card:hover {
+    border-color: #c5d5df;
+  }
+
+  .qy-card-soft {
+    @apply rounded-lg shadow-sm;
+    background: var(--qy-bg-soft);
+    border: 1px solid var(--qy-border);
+  }
+
+  .qy-btn-primary {
+    @apply inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium text-white transition-colors;
+    background: var(--qy-brand);
+  }
+
+  .qy-btn-primary:hover {
+    background: var(--qy-brand-strong);
+  }
+
+  .qy-text-main {
+    color: var(--qy-text-main);
+  }
+
+  .qy-text-sub {
+    color: var(--qy-text-sub);
+  }
+
+  .qy-panel-header {
+    @apply h-11 px-4 border-b flex items-center justify-between;
+    border-color: #e2eaf0;
+    background: #ffffff;
+  }
+
+  .qy-section-title {
+    @apply text-sm font-semibold tracking-[0.01em];
+    color: #1e293b;
+  }
+
+  .qy-subtle-label {
+    @apply text-[11px] font-medium;
+    color: #64748b;
+  }
+
+  .qy-value-main {
+    @apply text-[26px] font-semibold leading-none;
+    color: #0f172a;
+    letter-spacing: -0.02em;
+  }
+
+  .qy-value-unit {
+    @apply ml-1 text-[11px] font-normal;
+    color: #64748b;
+  }
+
+  .qy-status-chip {
+    @apply inline-flex items-center gap-1.5 h-6 px-2.5 rounded-full text-[11px] font-semibold;
+    border: 1px solid transparent;
+    letter-spacing: 0.01em;
+  }
+
+  .qy-status-chip__dot {
+    @apply w-1.5 h-1.5 rounded-full;
+    background: currentColor;
+  }
+
+  .qy-status-chip--neutral {
+    background: #f1f5f9;
+    color: #475569;
+    border-color: #e2e8f0;
+  }
+
+  .qy-status-chip--processing {
+    background: #eff6ff;
+    color: #2563eb;
+    border-color: #bfdbfe;
+  }
+
+  .qy-status-chip--success {
+    background: #ecfdf3;
+    color: #15803d;
+    border-color: #bbf7d0;
+  }
+
+  .qy-status-chip--warning {
+    background: #fffbeb;
+    color: #b45309;
+    border-color: #fde68a;
+  }
+
+  .qy-status-chip--danger {
+    background: #fef2f2;
+    color: #b91c1c;
+    border-color: #fecaca;
+  }
+
+  .qy-type-chip {
+    @apply inline-flex items-center h-6 px-2.5 rounded-md text-[11px] font-medium;
+    border: 1px solid transparent;
+  }
+
+  .qy-type-chip--buy {
+    background: #ecfdf3;
+    color: #166534;
+    border-color: #bbf7d0;
+  }
+
+  .qy-type-chip--sell {
+    background: #fff7ed;
+    color: #c2410c;
+    border-color: #fed7aa;
+  }
+
+  .qy-type-chip--convert {
+    background: #f5f3ff;
+    color: #6d28d9;
+    border-color: #ddd6fe;
+  }
+
+  .qy-type-chip--compliance {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border-color: #bfdbfe;
+  }
+
+  .qy-type-chip--default {
+    background: #f8fafc;
+    color: #334155;
+    border-color: #e2e8f0;
+  }
+
+  .qy-kpi-card {
+    @apply rounded-lg p-4;
+    border: 1px solid var(--qy-border);
+    background: linear-gradient(180deg, #ffffff 0%, #f9fcff 100%);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
+  }
+
+  .qy-kpi-card--dark {
+    border-color: #0f2f52;
+    background: radial-gradient(circle at top right, #1d4f7a 0%, #0f2e4f 45%, #0a1e35 100%);
+    box-shadow: 0 10px 28px rgba(11, 30, 52, 0.35);
+  }
+
+  .qy-grid-card {
+    @apply rounded-lg border p-4 transition-colors;
+    border-color: #dbe5ec;
+    background: #ffffff;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
+  }
+
+  .qy-grid-card:hover {
+    border-color: #b7dce3;
   }
 }
 
 /* Custom Scrollbar for L3 Menu */
 #l3-sidebar .flex-1::-webkit-scrollbar,
 .overflow-y-auto::-webkit-scrollbar {
-  width: 2px;
+  width: 6px;
+  height: 6px;
 }
 
 #l3-sidebar .flex-1::-webkit-scrollbar-track,
@@ -27,11 +224,11 @@
 
 #l3-sidebar .flex-1::-webkit-scrollbar-thumb,
 .overflow-y-auto::-webkit-scrollbar-thumb {
-  background: #D1D5DB;
-  border-radius: 1px;
+  background: #cbd5e1;
+  border-radius: 999px;
 }
 
 #l3-sidebar .flex-1::-webkit-scrollbar-thumb:hover,
 .overflow-y-auto::-webkit-scrollbar-thumb:hover {
-  background: #9CA3AF;
+  background: #94a3b8;
 }

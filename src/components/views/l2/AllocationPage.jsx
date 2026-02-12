@@ -142,8 +142,8 @@ const AllocationPage = () => {
                                 </ContentModule>
 
                                 {/* 配置详情占位符 */}
-                                <ContentModule className="min-h-[300px] flex flex-col border-dashed">
-                                    <div className="flex-1 flex flex-col items-center justify-center text-gray-400 p-4">
+                                <ContentModule type="global" className="min-h-[300px] flex flex-col border-dashed">
+                                    <div className="flex-1 flex flex-col items-center justify-center text-gray-400">
                                         <IconFilter size={48} className="mb-3 opacity-20" />
                                         <p className="text-sm">分配系数配置表单 (Placeholder)</p>
                                         <p className="text-xs mt-1">此处将显示具体的产品/副产品分配比例输入框</p>

@@ -39,6 +39,8 @@ const CompositeFactorPage = () => {
         <StandardBusinessLayout
             title="复合因子"
             filterOptions={filterOptions}
+            showFilters={false}
+            showGridToolbar={false}
             setHeaderActions={setActions}
             columns={columns}
             data={compositeFactorData}

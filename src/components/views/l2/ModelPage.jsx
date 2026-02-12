@@ -22,6 +22,7 @@ import {
     IconInfoCircle // Imported correctly
 } from '@tabler/icons-react';
 import { ContentModule, ModuleHeader } from '../../common/ContentModule';
+import StatusChip from '../../common/StatusChip';
 
 // Mock Data: Model Groups (Model -> Accountings)
 const MOCK_MODEL_GROUPS = [
@@ -181,9 +182,7 @@ const ModelPage = () => {
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-3">
-                                            <span className={`text-xs px-2 py-0.5 rounded ${acct.status === '已完成' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>
-                                                {acct.status}
-                                            </span>
+                                            <StatusChip status={acct.status} />
                                             <IconArrowRight size={14} className="text-gray-300 group-hover:text-blue-400" />
                                         </div>
                                     </div>

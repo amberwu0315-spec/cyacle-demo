@@ -51,7 +51,7 @@ export default function L1Sidebar() {
         }));
 
     return (
-        <nav className="fixed left-0 top-0 bottom-0 w-fit flex flex-col items-center pt-4 pb-6 z-50 bg-[#1E2A32]">
+        <nav className="fixed left-0 top-0 bottom-0 w-[60px] flex flex-col items-center pt-4 pb-6 z-50 bg-[#0f1b2a] border-r border-[#1f3344]">
             <div className="flex flex-col gap-[2px] w-full items-center px-1">
                 {visibleNavItems.map((item) => {
                     const isActive = activeL1 === item.id;
@@ -59,10 +59,11 @@ export default function L1Sidebar() {
                         <Tooltip key={item.id} content={item.label} placement="right">
                             <button
                                 onClick={() => setActiveL1(item.id)}
-                                className={`group relative p-3 rounded-md transition-colors ${isActive ? 'bg-white/10' : 'hover:bg-white/10'}`}
+                                className={`group relative w-11 h-11 flex items-center justify-center rounded-md transition-all ${isActive ? 'bg-[#123246] shadow-sm ring-1 ring-[#1f506b]' : 'hover:bg-white/10'}`}
                             >
+                                {isActive && <span className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-0.5 rounded-full bg-[#22d3ee]" />}
                                 <item.icon
-                                    className={`w-6 h-6 transition-colors ${isActive ? 'text-white' : 'text-white/70 group-hover:text-white'}`}
+                                    className={`w-5 h-5 transition-colors ${isActive ? 'text-[#d8f6fb]' : 'text-white/70 group-hover:text-white'}`}
                                 />
                             </button>
                         </Tooltip>
@@ -75,9 +76,10 @@ export default function L1Sidebar() {
                 <Tooltip content="项目标签" placement="right">
                     <button
                         onClick={() => setActiveL1('project_tag')}
-                        className={`group relative p-3 rounded-md transition-colors ${activeL1 === 'project_tag' ? 'bg-white/10' : 'hover:bg-white/10'}`}
+                        className={`group relative w-11 h-11 flex items-center justify-center rounded-md transition-all ${activeL1 === 'project_tag' ? 'bg-[#123246] shadow-sm ring-1 ring-[#1f506b]' : 'hover:bg-white/10'}`}
                     >
-                        <IconFileCode className={`w-6 h-6 transition-colors text-[#10B981] ${activeL1 === 'project_tag' ? '' : 'group-hover:text-[#34D399]'}`} />
+                        {activeL1 === 'project_tag' && <span className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-0.5 rounded-full bg-[#22d3ee]" />}
+                        <IconFileCode className={`w-5 h-5 transition-colors text-[#34d399] ${activeL1 === 'project_tag' ? '' : 'group-hover:text-[#6ee7b7]'}`} />
                     </button>
                 </Tooltip>
 
@@ -98,10 +100,10 @@ export default function L1Sidebar() {
                                         <div className="relative group">
                                             <button
                                                 onClick={() => clickTab(tab.id)}
-                                                className={`p-3 rounded-md transition-colors ${isActive ? 'bg-[#087F9C]/20 border border-[#087F9C]/50' : 'hover:bg-white/5 border border-transparent'}`}
+                                                className={`w-11 h-11 flex items-center justify-center rounded-md transition-colors ${isActive ? 'bg-[#123246] border border-[#1f506b]' : 'hover:bg-white/5 border border-transparent'}`}
                                             >
                                                 <TabIcon
-                                                    className={`w-6 h-6 transition-colors ${isActive ? 'text-[#087F9C]' : 'text-white/60 group-hover:text-white'}`}
+                                                    className={`w-5 h-5 transition-colors ${isActive ? 'text-[#22d3ee]' : 'text-white/60 group-hover:text-white'}`}
                                                 />
                                             </button>
                                             {/* Close Button - Top Right Badge Style */}
@@ -125,8 +127,8 @@ export default function L1Sidebar() {
 
             <div className="mt-auto flex flex-col gap-[2px] w-full items-center px-1">
                 <Tooltip content="通知中心" placement="right">
-                    <button className="group relative p-3 hover:text-white transition-colors">
-                        <IconBell className="w-6 h-6 text-white/70" />
+                    <button className="group relative w-11 h-11 flex items-center justify-center rounded-md hover:bg-white/10 transition-colors">
+                        <IconBell className="w-5 h-5 text-white/70" />
                     </button>
                 </Tooltip>
 
@@ -134,9 +136,9 @@ export default function L1Sidebar() {
                     <div className="relative">
                         <button
                             onClick={() => setIsSettingsOpen(!isSettingsOpen)}
-                            className={`group relative p-3 transition-colors ${isSettingsOpen ? 'text-white bg-white/10 rounded-md' : 'hover:text-white text-white/70'}`}
+                            className={`group relative w-11 h-11 flex items-center justify-center transition-colors rounded-md ${isSettingsOpen ? 'text-white bg-[#123246] ring-1 ring-[#1f506b]' : 'hover:text-white text-white/70 hover:bg-white/10'}`}
                         >
-                            <IconSettings className="w-6 h-6" />
+                            <IconSettings className="w-5 h-5" />
                         </button>
 
                         {/* Settings Popover */}
@@ -149,19 +151,19 @@ export default function L1Sidebar() {
                                 ></div>
 
                                 {/* Popover Content */}
-                                <div className="absolute left-full bottom-0 ml-2 w-64 bg-[#1E2A32] border border-gray-700 shadow-xl rounded-md p-4 z-[70] text-sm">
-                                    <div className="text-white font-medium mb-3 pb-2 border-b border-gray-700">
+                                <div className="absolute left-full bottom-0 ml-2 w-64 bg-[#102131] border border-[#1f3344] shadow-xl rounded-lg p-4 z-[70] text-sm">
+                                    <div className="text-[#d8f6fb] font-medium mb-3 pb-2 border-b border-[#1f3344]">
                                         系统设置
                                     </div>
 
                                     {/* Role Switcher Section */}
                                     <div className="mb-4">
-                                        <div className="text-gray-400 text-xs mb-2">演示：切换角色</div>
+                                        <div className="text-slate-400 text-xs mb-2">演示：切换角色</div>
                                         {/* Use Internal Component */}
                                         <RoleSwitcher currentRole={currentRole} setCurrentRole={setCurrentRole} />
                                     </div>
 
-                                    <div className="text-gray-500 text-xs italic">
+                                    <div className="text-slate-500 text-xs italic">
                                         更多设置功能开发中...
                                     </div>
                                 </div>
@@ -180,10 +182,10 @@ function RoleSwitcher({ currentRole, setCurrentRole }) {
         <select
             value={currentRole}
             onChange={(e) => setCurrentRole(e.target.value)}
-            className="w-full bg-black/20 border border-gray-600 rounded px-3 py-2 outline-none text-white text-xs cursor-pointer focus:border-[#087F9C] transition-colors"
+            className="w-full bg-[#0c1a27] border border-[#2b4256] rounded-md px-3 py-2 outline-none text-white text-xs cursor-pointer focus:border-[#0EA5B7] transition-colors"
         >
             <option value="ENTERPRISE">🏢 企业账号 (服务企业)</option>
-            <option value="INDIVIDUAL">👤 个人/服务商 (研究对象)</option>
+            <option value="INDIVIDUAL">👤 个人/服务商 (服务企业)</option>
         </select>
     );
 }

@@ -24,7 +24,7 @@ export default function Drawer({ isOpen, onClose, title, children }) {
             {/* Panel */}
             <div className="fixed top-0 right-0 bottom-0 w-[400px] bg-white shadow-2xl z-[70] flex flex-col animate-in slide-in-from-right duration-300 border-l border-gray-100">
                 {/* Header */}
-                <div className="h-[46px] flex items-center justify-between px-4 border-b border-gray-200 shrink-0 bg-gray-50/50">
+                <div className="h-[46px] flex items-center justify-between px-4 border-b border-gray-200 shrink-0 bg-white">
                     <h3 className="font-bold text-gray-700">{title}</h3>
                     <button
                         onClick={onClose}

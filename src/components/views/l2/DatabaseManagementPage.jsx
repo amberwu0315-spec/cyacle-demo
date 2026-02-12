@@ -58,6 +58,8 @@ const DatabaseManagementPage = () => {
         <StandardBusinessLayout
             title="数据库"
             filterOptions={filterOptions}
+            showFilters={false}
+            showGridToolbar={false}
             setHeaderActions={setActions}
             columns={columns}
             data={databaseData}
@@ -66,4 +68,3 @@ const DatabaseManagementPage = () => {
 };
 
 export default DatabaseManagementPage;
-

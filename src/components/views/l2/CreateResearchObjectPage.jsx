@@ -1,9 +1,9 @@
 /**
- * CreateResearchObjectPage - 创建研究对象页面
+ * CreateResearchObjectPage - 创建服务企业页面
  * 
  * 🏢 角色：产品注册处 (Product Registration)
  * 📝 职责：
- * 1. 在项目内创建一个新的研究对象（如具体的电机型号）。
+ * 1. 在项目内创建一个新的服务企业（如具体的电机型号）。
  * 2. 也是进入具体业务工作的起点。
  */
 import React, { useState, useEffect } from 'react';
@@ -94,7 +94,8 @@ const CreateResearchObjectPage = ({ onCancel, onSave }) => {
                 </svg>
             </div>
             <div className="text-center px-10 space-y-2">
-                <p className="text-gray-500 font-medium">研究对象是一个信息中心，你可以通过围绕研究对象集中管理所有活动数据（如能耗、物料消耗等）</p>
+                <h1 className="text-[20px] font-bold text-gray-900 mb-1">开始你的项目</h1>
+                <p className="text-gray-500 font-medium">服务企业是一个信息中心，你可以通过围绕服务企业集中管理所有活动数据（如能耗、物料消耗等）</p>
             </div>
         </div>
     );
@@ -279,7 +280,7 @@ const CreateResearchObjectPage = ({ onCancel, onSave }) => {
             variant="standard"
             // 左侧 Header: 静态标题
             leftHeader={{
-                title: "研究对象",
+                title: "服务企业",
                 operation: "创建",
                 onExit: onCancel
             }}
@@ -310,7 +311,7 @@ const CreateResearchObjectPage = ({ onCancel, onSave }) => {
                                 }`}
                         >
                             <IconDeviceFloppy size={14} />
-                            <span>创建研究对象</span>
+                            <span>创建服务企业</span>
                         </button>
                     </>
                 )

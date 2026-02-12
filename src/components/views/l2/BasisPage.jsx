@@ -15,7 +15,7 @@ import EditableField from '../../common/EditableField';
 const BasisPage = () => {
     const { setActions, setTitleOverride, setLayoutConfig } = usePagePresentation();
 
-    // 研究对象 - 只读数据
+    // 服务企业 - 只读数据
     const researchObject = {
         name: '示例门窗生产企业',
         nameLink: '#',
@@ -70,9 +70,9 @@ const BasisPage = () => {
         <div className="flex gap-3 p-3 w-full h-full overflow-y-auto bg-[#F5F6F8]">
             {/* Left Column (2/3 width) */}
             <div className="w-2/3 flex flex-col gap-3">
-                {/* 研究对象 - 只读 */}
+                {/* 服务企业 - 只读 */}
                 <ContentModule>
-                    <ModuleHeader title="所属研究对象" />
+                    <ModuleHeader title="所属服务企业" />
                     <div className="p-4">
                         <div className="space-y-0.5">
                             {/* 名称 - 带链接 */}

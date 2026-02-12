@@ -1,6 +1,7 @@
 import React from 'react';
 import { CanvasPage } from '../../layout/PageLayouts';
 import DataGrid from '../../common/DataGrid';
+import StatusChip from '../../common/StatusChip';
 import {
     ChevronRight,
     Database,
@@ -33,15 +34,10 @@ const assetRecords = [
 ];
 
 const typeBadgeStyle = {
-    CCER买入: 'bg-emerald-50 text-emerald-600',
-    配额卖出: 'bg-orange-50 text-orange-600',
-    CCER置换: 'bg-gray-100 text-gray-600',
-    年度履约清缴: 'bg-gray-100 text-gray-700'
-};
-
-const getStatusStyle = (status) => {
-    if (status === '已完成') return 'text-emerald-600';
-    return 'text-amber-600';
+    CCER买入: 'qy-type-chip qy-type-chip--buy',
+    配额卖出: 'qy-type-chip qy-type-chip--sell',
+    CCER置换: 'qy-type-chip qy-type-chip--convert',
+    年度履约清缴: 'qy-type-chip qy-type-chip--compliance'
 };
 
 const assetRecordColumns = [
@@ -55,7 +51,7 @@ const assetRecordColumns = [
         filterable: true,
         groupable: true,
         render: (value) => (
-            <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${typeBadgeStyle[value]}`}>
+            <span className={typeBadgeStyle[value] || 'qy-type-chip qy-type-chip--default'}>
                 {value}
             </span>
         )
@@ -71,10 +67,7 @@ const assetRecordColumns = [
         filterable: true,
         groupable: true,
         render: (value) => (
-            <span className={`inline-flex items-center gap-1.5 ${getStatusStyle(value)}`}>
-                <span className={`w-1.5 h-1.5 rounded-full ${value === '已完成' ? 'bg-emerald-500' : 'bg-amber-500'}`} />
-                {value}
-            </span>
+            <StatusChip status={value} />
         )
     }
 ];
@@ -90,91 +83,91 @@ const CarbonAssetMgmtPage = () => {
     )`;
 
     return (
-        <CanvasPage className="bg-[#F5F6F8] p-3">
+        <CanvasPage className="bg-[var(--qy-bg-canvas)] p-3">
             <div className="h-full flex flex-col gap-3 overflow-y-auto">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
-                            <Layers size={22} className="text-cyan-600" />
+                        <h2 className="text-xl font-semibold text-slate-900 flex items-center gap-2">
+                            <Layers size={22} className="text-cyan-700" />
                             碳资产管理
                         </h2>
-                        <p className="text-xs text-gray-500 mt-1">动态管理配额、CCER及碳资产账户，助力企业合规履约与资产增值</p>
+                        <p className="text-xs text-slate-500 mt-1">动态管理配额、CCER及碳资产账户，支持履约评估与资产运营决策</p>
                     </div>
-                    <button className="h-9 px-4 rounded-md border border-gray-200 bg-white text-sm text-gray-700 font-medium shadow-sm hover:bg-gray-50">
+                    <button className="h-9 px-4 rounded-md border border-slate-200 bg-white text-sm text-slate-700 font-medium shadow-sm hover:bg-slate-50">
                         资产交易
                     </button>
                 </div>
 
-                <div className="text-base font-semibold text-gray-800 flex items-center gap-1.5">
-                    <FileText size={16} className="text-gray-400" />
+                <div className="text-base font-semibold text-slate-800 flex items-center gap-1.5">
+                    <FileText size={16} className="text-slate-400" />
                     企业碳账本
                 </div>
 
                 <div className="grid grid-cols-1 xl:grid-cols-4 gap-3">
-                    <div className="rounded-lg shadow-sm border border-gray-200 bg-white p-4">
+                    <div className="qy-kpi-card">
                         <div className="flex items-start justify-between">
                             <div>
-                                <p className="text-xs text-gray-500">年度履约配额总量</p>
-                                <p className="text-2xl font-semibold text-gray-900 mt-0.5">
+                                <p className="qy-subtle-label">年度履约配额总量</p>
+                                <p className="qy-value-main mt-1">
                                     50,000
-                                    <span className="text-xs font-normal text-gray-400 ml-1">tCO₂e</span>
+                                    <span className="qy-value-unit">tCO₂e</span>
                                 </p>
                             </div>
-                            <Scale size={24} className="text-gray-200" />
+                            <Scale size={24} className="text-slate-300" />
                         </div>
-                        <div className="mt-4 pt-3 border-t border-gray-200">
+                        <div className="mt-4 pt-3 border-t border-slate-200">
                             <div className="flex items-center justify-between text-sm">
-                                <span className="text-gray-500">已核查排放量</span>
-                                <span className="text-gray-700 font-medium">42,500</span>
+                                <span className="text-slate-500">已核查排放量</span>
+                                <span className="text-slate-700 font-medium">42,500</span>
                             </div>
-                            <div className="h-2 rounded-full bg-gray-200 overflow-hidden mt-2">
-                                <div className="h-full rounded-full bg-blue-500" style={{ width: '85%' }} />
+                            <div className="h-2 rounded-full bg-slate-200 overflow-hidden mt-2">
+                                <div className="h-full rounded-full bg-cyan-600" style={{ width: '85%' }} />
                             </div>
                         </div>
                     </div>
 
-                    <div className="rounded-lg shadow-sm border border-gray-200 bg-white p-4">
+                    <div className="qy-kpi-card">
                         <div className="flex items-start justify-between">
                             <div>
-                                <p className="text-xs text-gray-500">配额盈缺估算</p>
+                                <p className="qy-subtle-label">配额盈缺估算</p>
                                 <p className="text-2xl font-semibold text-emerald-600 mt-0.5">
                                     +7,500
-                                    <span className="text-xs font-normal text-gray-400 ml-1">tCO₂e</span>
+                                    <span className="qy-value-unit">tCO₂e</span>
                                 </p>
                             </div>
-                            <ArrowUpRight size={24} className="text-emerald-100" />
+                            <ArrowUpRight size={24} className="text-emerald-300" />
                         </div>
-                        <div className="mt-4 pt-3 border-t border-gray-200 flex items-center gap-2 text-xs">
+                        <div className="mt-4 pt-3 border-t border-slate-200 flex items-center gap-2 text-xs">
                             <span className="h-6 px-2 rounded bg-emerald-50 text-emerald-600 inline-flex items-center font-medium">↗ 资产盈余</span>
-                            <span className="text-gray-400">基于当前核查数据</span>
+                            <span className="text-slate-400">基于当前核查数据</span>
                         </div>
                     </div>
 
-                    <div className="rounded-lg shadow-sm border border-gray-200 bg-white p-4">
+                    <div className="qy-kpi-card">
                         <div className="flex items-start justify-between">
                             <div>
-                                <p className="text-xs text-gray-500">CCER 持仓量</p>
-                                <p className="text-2xl font-semibold text-gray-900 mt-0.5">
+                                <p className="qy-subtle-label">CCER 持仓量</p>
+                                <p className="qy-value-main mt-1">
                                     5,000
-                                    <span className="text-xs font-normal text-gray-400 ml-1">tCO₂e</span>
+                                    <span className="qy-value-unit">tCO₂e</span>
                                 </p>
                             </div>
-                            <Database size={24} className="text-orange-100" />
+                            <Database size={24} className="text-amber-300" />
                         </div>
-                        <div className="mt-4 pt-3 border-t border-gray-200 grid grid-cols-2 gap-2 text-sm">
+                        <div className="mt-4 pt-3 border-t border-slate-200 grid grid-cols-2 gap-2 text-sm">
                             <div>
-                                <p className="text-gray-400 text-xs">风电项目</p>
-                                <p className="text-gray-700 font-medium">3,000</p>
+                                <p className="text-slate-400 text-xs">风电项目</p>
+                                <p className="text-slate-700 font-medium">3,000</p>
                             </div>
                             <div>
-                                <p className="text-gray-400 text-xs">光伏项目</p>
-                                <p className="text-gray-700 font-medium">1,500</p>
+                                <p className="text-slate-400 text-xs">光伏项目</p>
+                                <p className="text-slate-700 font-medium">1,500</p>
                             </div>
                         </div>
                     </div>
 
-                    <div className="rounded-lg shadow-sm border border-[#0B1938] bg-[#0F1D3A] p-4 relative overflow-hidden">
-                        <div className="absolute inset-0 opacity-30" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #2A4E86 1px, transparent 1px)', backgroundSize: '16px 16px' }} />
+                    <div className="qy-kpi-card qy-kpi-card--dark p-4 relative overflow-hidden">
+                        <div className="absolute inset-0 opacity-35" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #3e6a9c 1px, transparent 1px)', backgroundSize: '16px 16px' }} />
                         <div className="relative z-10">
                             <p className="text-slate-300 text-xs">碳资产预估总值</p>
                             <p className="text-2xl font-semibold text-white mt-0.5">
@@ -190,29 +183,29 @@ const CarbonAssetMgmtPage = () => {
                 </div>
 
                 <div className="grid grid-cols-1 xl:grid-cols-3 gap-3">
-                    <section className="xl:col-span-2 rounded-lg shadow-sm border border-gray-200 bg-white p-4">
+                    <section className="xl:col-span-2 qy-card p-4">
                         <div className="flex items-center justify-between">
-                            <h3 className="text-base font-semibold text-gray-800">历年履约及排放趋势</h3>
-                            <div className="text-xs text-gray-600 flex items-center gap-3">
-                                <span className="inline-flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-blue-500" />配额总量</span>
-                                <span className="inline-flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-gray-800" />实际排放</span>
+                            <h3 className="text-base font-semibold text-slate-800">历年履约及排放趋势</h3>
+                            <div className="text-xs text-slate-600 flex items-center gap-3">
+                                <span className="inline-flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-cyan-600" />配额总量</span>
+                                <span className="inline-flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-slate-800" />实际排放</span>
                             </div>
                         </div>
                         <div className="mt-4">
                             {[60000, 45000, 30000, 15000, 0].map((tick) => (
-                                <div key={tick} className="h-12 border-t border-dashed border-gray-200 relative">
-                                    <span className="absolute left-0 -top-2 text-xs text-gray-400">{tick}</span>
+                                <div key={tick} className="h-12 border-t border-dashed border-slate-200 relative">
+                                    <span className="absolute left-0 -top-2 text-xs text-slate-400">{tick}</span>
                                 </div>
                             ))}
                             <div className="mt-[-240px] h-[240px] flex items-end justify-around px-12">
                                 {yearlyBars.map((item) => (
                                     <div key={item.year} className="w-20 flex items-end gap-1 justify-center">
-                                        <div className="w-5 rounded-t bg-blue-500" style={{ height: `${(item.quota / maxBar) * 210}px` }} />
-                                        <div className="w-5 rounded-t bg-gray-800" style={{ height: `${(item.actual / maxBar) * 210}px` }} />
+                                        <div className="w-5 rounded-t bg-cyan-600" style={{ height: `${(item.quota / maxBar) * 210}px` }} />
+                                        <div className="w-5 rounded-t bg-slate-800" style={{ height: `${(item.actual / maxBar) * 210}px` }} />
                                     </div>
                                 ))}
                             </div>
-                            <div className="mt-2 flex justify-around text-sm text-gray-500 px-10">
+                            <div className="mt-2 flex justify-around text-sm text-slate-500 px-10">
                                 {yearlyBars.map((item) => (
                                     <span key={item.year}>{item.year}</span>
                                 ))}
@@ -220,33 +213,33 @@ const CarbonAssetMgmtPage = () => {
                         </div>
                     </section>
 
-                    <section className="rounded-lg shadow-sm border border-gray-200 bg-white p-4">
-                        <h3 className="text-base font-semibold text-gray-800">资产持有结构</h3>
+                    <section className="qy-card p-4">
+                        <h3 className="text-base font-semibold text-slate-800">资产持有结构</h3>
                         <div className="mt-3 flex justify-center">
                             <div className="w-40 h-40 rounded-full relative" style={{ background: donutGradient }}>
                                 <div className="absolute inset-4 rounded-full bg-white flex flex-col items-center justify-center">
-                                    <span className="text-2xl font-semibold text-gray-900">1.25</span>
-                                    <span className="text-xs text-gray-500">万吨总量</span>
+                                    <span className="text-2xl font-semibold text-slate-900">1.25</span>
+                                    <span className="text-xs text-slate-500">万吨总量</span>
                                 </div>
                             </div>
                         </div>
                         <div className="mt-4 space-y-2">
                             {assetStructure.map((item) => (
                                 <div key={item.name} className="flex items-center justify-between text-sm">
-                                    <span className="inline-flex items-center gap-2 text-gray-700">
+                                    <span className="inline-flex items-center gap-2 text-slate-700">
                                         <span className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
                                         {item.name}
                                     </span>
-                                    <span className="text-gray-700 font-medium">{item.value.toLocaleString()}</span>
+                                    <span className="text-slate-700 font-medium">{item.value.toLocaleString()}</span>
                                 </div>
                             ))}
                         </div>
                     </section>
                 </div>
 
-                <section className="rounded-lg shadow-sm border border-gray-200 bg-white overflow-hidden pb-1">
-                    <div className="h-11 px-4 border-b border-gray-200 flex items-center justify-between">
-                        <h3 className="text-base font-semibold text-gray-800">资产变动记录</h3>
+                <section className="qy-card overflow-hidden pb-1">
+                    <div className="qy-panel-header">
+                        <h3 className="qy-section-title">资产变动记录</h3>
                         <button className="text-sm text-cyan-700 font-medium inline-flex items-center gap-1">
                             查看全部交易 <ChevronRight size={14} />
                         </button>

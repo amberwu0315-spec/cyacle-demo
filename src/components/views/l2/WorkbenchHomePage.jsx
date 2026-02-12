@@ -10,20 +10,22 @@ import {
     FlaskConical,
     MapPin,
     Layers,
-    Globe
+    Globe,
+    ExternalLink
 } from 'lucide-react';
+import { useAppNavigation } from '../../../context/AppNavigationContext';
 
 const topCapabilityCards = [
-    { title: '元件', desc1: '基于同属性物质/活动的因子明', desc2: '细集合', icon: Cpu, tone: 'text-cyan-600 bg-cyan-50' },
-    { title: '文献因子', desc1: '溯源自权威学术文献的核算因', desc2: '子数据', icon: FlaskConical, tone: 'text-indigo-500 bg-indigo-50' },
-    { title: '复合因子', desc1: '基于科学建模计算生成的因子', desc2: '数据', icon: Layers, tone: 'text-purple-600 bg-purple-50' },
-    { title: '文献', desc1: '支撑因子取值合理性的证明文', desc2: '件', icon: Book, tone: 'text-blue-600 bg-blue-50' }
+    { title: '元件', desc1: '同属性物质与活动的结构化', desc2: '因子集合', icon: Cpu, tone: 'text-cyan-700 bg-cyan-50' },
+    { title: '文献因子', desc1: '来自权威文献的可追溯核算', desc2: '因子数据', icon: FlaskConical, tone: 'text-indigo-600 bg-indigo-50' },
+    { title: '复合因子', desc1: '基于模型计算形成的多源', desc2: '综合因子', icon: Layers, tone: 'text-violet-600 bg-violet-50' },
+    { title: '文献', desc1: '支撑因子取值、模型设定与', desc2: '审计依据', icon: Book, tone: 'text-blue-700 bg-blue-50' }
 ];
 
 const secondCapabilityCards = [
-    { title: '供应链碳盘查', desc: '管理供应商信息及物料的产品碳足迹', icon: Activity, tone: 'text-cyan-600 bg-cyan-50' },
-    { title: '组织碳盘查', desc: '国标行业系数库及组织碳核算工具', icon: Building, tone: 'text-cyan-600 bg-cyan-50' },
-    { title: '园区碳足迹', desc: '园区入驻企业的组织碳盘查及填报', icon: MapPin, tone: 'text-cyan-600 bg-cyan-50' }
+    { title: '供应链碳盘查', desc: '管理供应商与物料排放数据', icon: Activity, tone: 'text-cyan-700 bg-cyan-50' },
+    { title: '组织碳盘查', desc: '组织级核算、核查与汇总', icon: Building, tone: 'text-sky-700 bg-sky-50' },
+    { title: '园区碳足迹', desc: '园区多主体排放管理与协同', icon: MapPin, tone: 'text-emerald-700 bg-emerald-50' }
 ];
 
 const recentProjects = [
@@ -53,17 +55,29 @@ const newsItems = [
 const helpItems = [
     '账号与工作空间设置',
     '快速了解碳核算项目',
-    '快速了解研究对象',
+    '快速了解服务企业',
     '快速了解不同因子类型',
     '如何管理活动数据'
 ];
 
+const quickIndicators = [
+    { label: '活跃项目', value: 58, unit: '个' },
+    { label: '待处理任务', value: 23, unit: '项' },
+    { label: '本周录入数据', value: 1263, unit: '条' }
+];
+
+const formatToday = () => {
+    const now = new Date();
+    const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+    return `${now.getMonth() + 1}月${now.getDate()}日 ${weekdays[now.getDay()]}`;
+};
+
 const ProgressBar = ({ value }) => {
     return (
         <div className="inline-flex items-center gap-1.5">
-            <span className="text-[12px] text-gray-500">启动准备</span>
-            <div className="h-1.5 w-16 rounded-full bg-gray-200 overflow-hidden">
-                <div className="h-full rounded-full bg-blue-500" style={{ width: `${value}%` }} />
+            <span className="text-[12px] text-slate-500">启动准备</span>
+            <div className="h-1.5 w-16 rounded-full bg-slate-200 overflow-hidden">
+                <div className="h-full rounded-full bg-cyan-600" style={{ width: `${value}%` }} />
             </div>
         </div>
     );
@@ -143,48 +157,63 @@ const recentClientsColumns = [
 ];
 
 const WorkbenchHomePage = () => {
+    const { setActiveL1, setBusinessTarget } = useAppNavigation();
+
+    const handleNavigation = (l1, target) => {
+        setActiveL1(l1);
+        if (target) {
+            // Small timeout to ensure L1 switch processes first (though state updates are batched, this is safer for context switching)
+            setTimeout(() => setBusinessTarget(target), 0);
+        }
+    };
+
+    const handleExternalLink = (url) => {
+        window.open(url, '_blank', 'noopener,noreferrer');
+    };
+
     return (
-        <CanvasPage className="bg-[#F5F6F8] p-3">
+        <CanvasPage className="bg-[var(--qy-bg-canvas)] p-3">
             <div className="h-full flex flex-col gap-3 overflow-y-auto">
                 <div className="h-10 px-1 flex items-center justify-between text-sm">
-                    <div className="text-gray-800 font-semibold">欢迎进入缝缝补补事务所🎉</div>
-                    <div className="text-gray-700 font-semibold">2月12日 周四</div>
+                    <div className="text-slate-800 font-semibold tracking-[0.01em]">青钥工作台</div>
+                    <div className="text-slate-600 font-medium">{formatToday()}</div>
                 </div>
 
                 <div className="grid grid-cols-1 xl:grid-cols-6 gap-3">
-                    <div className="xl:col-span-5 rounded-lg shadow-sm border border-cyan-200 bg-gradient-to-r from-cyan-500 to-sky-400 px-5 py-4 text-white">
+                    <div className="xl:col-span-4 rounded-lg border border-cyan-200 bg-gradient-to-br from-[#0b7e95] via-[#0e95ae] to-[#209fcb] px-5 py-4 text-white shadow-[0_12px_26px_rgba(14,149,174,0.24)]">
                         <div className="flex items-start justify-between gap-4">
                             <div className="max-w-3xl">
                                 <div className="flex items-center gap-2">
                                     <div className="w-10 h-10 rounded-full bg-white/15 border border-white/30 flex items-center justify-center">
-                                        <Globe size={22} strokeWidth={1.8} />
+                                        <Globe size={21} strokeWidth={1.8} />
                                     </div>
                                     <div>
                                         <div className="text-3xl leading-8 tracking-tight font-semibold">青钥</div>
-                                        <div className="text-sm text-white/85 tracking-wide">Cyacle</div>
+                                        <div className="text-sm text-white/85 tracking-[0.08em]">CYACLE CARBON SUITE</div>
                                     </div>
                                 </div>
-                                <p className="mt-3 text-sm leading-6 text-white/95">
-                                    通过产品全生命周期建模与精准量化核算，青钥为您提供专业的碳管理工具集，助力您高效完成数据收集、模型建立与认证报告。
+                                <p className="mt-3 text-sm leading-6 text-white/95 max-w-[680px]">
+                                    聚焦碳核算全流程，统一管理数据采集、因子建模、核算任务与审计材料，
+                                    让复杂碳管理工作保持专业、可追溯、可交付。
                                 </p>
                             </div>
                         </div>
                     </div>
-                    <div className="xl:col-span-1 rounded-lg shadow-sm border border-cyan-200 bg-[#CDEFFF] p-3 flex flex-col justify-between">
-                        <div className="text-sm font-semibold text-cyan-900">青钥·碳管理人 Club</div>
-                        <ul className="text-[12px] text-cyan-900 space-y-1 mt-1">
-                            <li>• 学习碳核算实操技巧</li>
-                            <li>• 交流青钥·Cyacle 使用经验</li>
-                        </ul>
-                        <div className="mt-2 self-end w-[78px] h-[78px] bg-white rounded-sm border border-cyan-200 p-1">
-                            <div className="h-full w-full grid grid-cols-7 gap-[2px]">
-                                {Array.from({ length: 49 }).map((_, idx) => (
-                                    <span
-                                        key={idx}
-                                        className={`${idx % 3 === 0 || idx % 7 === 0 ? 'bg-cyan-500' : 'bg-cyan-100'} rounded-[1px]`}
-                                    />
-                                ))}
-                            </div>
+                    <div className="xl:col-span-2 qy-card p-4 bg-gradient-to-br from-white to-[#f4fbfd]">
+                        <div className="text-sm font-semibold text-slate-800">运营快照</div>
+                        <div className="mt-3 grid grid-cols-3 gap-3">
+                            {quickIndicators.map((item) => (
+                                <div key={item.label} className="rounded-md border border-slate-200 bg-white px-3 py-2.5">
+                                    <div className="text-[11px] text-slate-500">{item.label}</div>
+                                    <div className="mt-1 text-[24px] leading-none font-semibold text-slate-900">
+                                        {item.value.toLocaleString()}
+                                        <span className="ml-1 text-[11px] font-normal text-slate-500">{item.unit}</span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="mt-3 text-[12px] text-slate-500 leading-5">
+                            聚焦高频指标，支持长时间巡检场景下的快速阅读与对比。
                         </div>
                     </div>
                 </div>
@@ -193,16 +222,22 @@ const WorkbenchHomePage = () => {
                     {topCapabilityCards.map((item) => (
                         <button
                             key={item.title}
-                            className="rounded-md shadow-sm border border-gray-200 bg-white px-5 py-5 flex items-center justify-between hover:border-cyan-300 transition-colors text-left"
+                            onClick={() => {
+                                if (item.title === '元件') handleNavigation('background_data', 'components');
+                                if (item.title === '文献因子') handleNavigation('background_data', 'factors_literature');
+                                if (item.title === '复合因子') handleNavigation('background_data', 'factors_composite');
+                                if (item.title === '文献') handleNavigation('background_data', 'literature');
+                            }}
+                            className="qy-grid-card text-left flex items-center justify-between gap-4"
                         >
-                            <div className="flex items-center gap-4">
-                                <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${item.tone}`}>
-                                    <item.icon size={24} strokeWidth={1.8} />
+                            <div className="flex items-center gap-3.5">
+                                <div className={`w-11 h-11 rounded-xl flex items-center justify-center ${item.tone}`}>
+                                    <item.icon size={22} strokeWidth={1.8} />
                                 </div>
                                 <div>
-                                    <div className="text-lg font-semibold text-gray-900">{item.title}</div>
-                                    <div className="text-xs text-gray-500 mt-0.5">{item.desc1}</div>
-                                    <div className="text-xs text-gray-500">{item.desc2}</div>
+                                    <div className="text-base font-semibold text-slate-900">{item.title}</div>
+                                    <div className="text-xs text-slate-500 mt-0.5">{item.desc1}</div>
+                                    <div className="text-xs text-slate-500">{item.desc2}</div>
                                 </div>
                             </div>
                             <ChevronRight size={16} className="text-cyan-600 shrink-0" />
@@ -214,15 +249,15 @@ const WorkbenchHomePage = () => {
                     {secondCapabilityCards.map((item) => (
                         <button
                             key={item.title}
-                            className="rounded-md shadow-sm border border-gray-200 bg-white px-5 py-5 flex items-center justify-between hover:border-cyan-300 transition-colors text-left"
+                            className="qy-grid-card text-left flex items-center justify-between gap-4"
                         >
-                            <div className="flex items-center gap-4">
-                                <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${item.tone}`}>
-                                    <item.icon size={24} strokeWidth={1.8} />
+                            <div className="flex items-center gap-3.5">
+                                <div className={`w-11 h-11 rounded-xl flex items-center justify-center ${item.tone}`}>
+                                    <item.icon size={22} strokeWidth={1.8} />
                                 </div>
                                 <div>
-                                    <div className="text-lg font-semibold text-gray-900">{item.title}</div>
-                                    <div className="text-xs text-gray-500 mt-0.5">{item.desc}</div>
+                                    <div className="text-base font-semibold text-slate-900">{item.title}</div>
+                                    <div className="text-xs text-slate-500 mt-1">{item.desc}</div>
                                 </div>
                             </div>
                             <ChevronRight size={16} className="text-cyan-600 shrink-0" />
@@ -231,10 +266,13 @@ const WorkbenchHomePage = () => {
                 </div>
 
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-3">
-                    <section className="rounded-lg shadow-sm border border-gray-200 bg-white overflow-hidden">
-                        <div className="h-10 px-4 border-b border-gray-200 flex items-center justify-between">
-                            <span className="text-base text-gray-700 font-semibold">近期项目</span>
-                            <ChevronRight size={16} className="text-cyan-600" />
+                    <section className="qy-card overflow-hidden">
+                        <div
+                            className="qy-panel-header cursor-pointer hover:bg-[#f2f7fa] transition-colors"
+                            onClick={() => handleNavigation('project_mgmt')}
+                        >
+                            <span className="qy-section-title">近期项目</span>
+                            <ChevronRight size={16} className="text-cyan-700" />
                         </div>
                         <DataGrid
                             title="近期项目"
@@ -251,10 +289,13 @@ const WorkbenchHomePage = () => {
                         />
                     </section>
 
-                    <section className="rounded-lg shadow-sm border border-gray-200 bg-white overflow-hidden">
-                        <div className="h-10 px-4 border-b border-gray-200 flex items-center justify-between">
-                            <span className="text-base text-gray-700 font-semibold">近期服务客户</span>
-                            <ChevronRight size={16} className="text-cyan-600" />
+                    <section className="qy-card overflow-hidden">
+                        <div
+                            className="qy-panel-header cursor-pointer hover:bg-[#f2f7fa] transition-colors"
+                            onClick={() => handleNavigation('enterprise')}
+                        >
+                            <span className="qy-section-title">近期服务客户</span>
+                            <ChevronRight size={16} className="text-cyan-700" />
                         </div>
                         <DataGrid
                             title="近期服务客户"
@@ -273,10 +314,16 @@ const WorkbenchHomePage = () => {
                 </div>
 
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 pb-2">
-                    <section className="rounded-lg shadow-sm border border-gray-200 bg-white overflow-hidden">
-                        <div className="h-10 px-4 border-b border-gray-200 flex items-center justify-between">
-                            <span className="text-base text-gray-700 font-semibold">行业资讯</span>
-                            <ChevronRight size={16} className="text-cyan-600" />
+                    <section className="qy-card overflow-hidden">
+                        <div
+                            className="qy-panel-header cursor-pointer hover:bg-[#f2f7fa] transition-colors"
+                            onClick={() => handleExternalLink('https://www.carbonnt.com/news')}
+                        >
+                            <div className="flex items-center gap-2">
+                                <span className="qy-section-title">行业资讯</span>
+                                <ExternalLink size={14} className="text-slate-400" />
+                            </div>
+                            <ChevronRight size={16} className="text-cyan-700" />
                         </div>
                         <div className="px-4 py-3 space-y-3">
                             {newsItems.map((item, idx) => (
@@ -286,28 +333,34 @@ const WorkbenchHomePage = () => {
                                             {idx + 1}
                                         </span>
                                     ) : (
-                                        <span className="w-5 h-5 rounded border border-gray-300 text-gray-400 text-[10px] flex items-center justify-center shrink-0 mt-0.5">
+                                        <span className="w-5 h-5 rounded border border-slate-300 text-slate-400 text-[10px] flex items-center justify-center shrink-0 mt-0.5">
                                             文
                                         </span>
                                     )}
                                     <div className="min-w-0">
-                                        <p className="text-sm text-gray-800 leading-5">{item.title}</p>
-                                        <p className="text-xs text-gray-500 leading-5">{item.desc}</p>
+                                        <p className="text-sm text-slate-800 leading-5">{item.title}</p>
+                                        <p className="text-xs text-slate-500 leading-5 line-clamp-1">{item.desc}</p>
                                     </div>
                                 </div>
                             ))}
                         </div>
                     </section>
 
-                    <section className="rounded-lg shadow-sm border border-gray-200 bg-white overflow-hidden">
-                        <div className="h-10 px-4 border-b border-gray-200 flex items-center justify-between">
-                            <span className="text-base text-gray-700 font-semibold">帮助中心</span>
-                            <ChevronRight size={16} className="text-cyan-600" />
+                    <section className="qy-card overflow-hidden">
+                        <div
+                            className="qy-panel-header cursor-pointer hover:bg-[#f2f7fa] transition-colors"
+                            onClick={() => handleExternalLink('https://doc.cyacle.cn/')}
+                        >
+                            <div className="flex items-center gap-2">
+                                <span className="qy-section-title">帮助中心</span>
+                                <ExternalLink size={14} className="text-slate-400" />
+                            </div>
+                            <ChevronRight size={16} className="text-cyan-700" />
                         </div>
                         <div className="px-4 py-3 space-y-3">
                             {helpItems.map((item) => (
-                                <div key={item} className="flex items-center gap-3 text-sm text-gray-700">
-                                    <span className="w-4 h-4 rounded-[3px] border border-gray-300 bg-white shrink-0" />
+                                <div key={item} className="flex items-center gap-3 text-sm text-slate-700">
+                                    <span className="w-4 h-4 rounded-[3px] border border-slate-300 bg-white shrink-0" />
                                     <span>{item}</span>
                                 </div>
                             ))}

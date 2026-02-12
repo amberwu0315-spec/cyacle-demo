@@ -39,6 +39,8 @@ const LiteratureFactorPage = () => {
         <StandardBusinessLayout
             title="文献因子"
             filterOptions={filterOptions}
+            showFilters={false}
+            showGridToolbar={false}
             setHeaderActions={setActions}
             columns={columns}
             data={literatureFactorData}

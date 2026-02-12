@@ -9,6 +9,7 @@
  */
 import React, { useEffect, useState } from 'react';
 import { usePagePresentation } from '../../../context/PagePresentationContext';
+import StatusChip from '../../common/StatusChip';
 import {
     IconChartPie,
     IconListCheck,
@@ -66,20 +67,6 @@ const NavigationPage = () => {
             />
         </div>
     );
-
-    // 组件：状态标签
-    const StatusBadge = ({ status }) => {
-        const styles = {
-            '进行中': 'bg-blue-50 text-blue-700',
-            '已完成': 'bg-green-50 text-green-700',
-            '待开始': 'bg-gray-100 text-gray-600',
-        };
-        return (
-            <span className={`px-2 py-0.5 rounded text-xs font-medium ${styles[status] || styles['待开始']}`}>
-                {status}
-            </span>
-        );
-    };
 
     if (loading) {
         return (
@@ -171,7 +158,7 @@ const NavigationPage = () => {
                                                 </div>
                                             </td>
                                             <td className="px-4 py-3">
-                                                <StatusBadge status={task.status} />
+                                                <StatusChip status={task.status} />
                                             </td>
                                         </tr>
                                     ))}

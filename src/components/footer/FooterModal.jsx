@@ -31,11 +31,11 @@ const FooterModal = ({ title, businessActions, onClose, onCollapse, children }) 
 
     return (
         // ✅ 修复点 1: border-[#087F9C] -> border-primary
-        <div className="absolute top-0 left-0 bottom-[40px] right-0 bg-white/95 backdrop-blur-sm z-50 flex flex-col shadow-2xl border-4 border-primary rounded-t-md">
+        <div className="absolute top-0 left-0 bottom-[40px] right-0 bg-white/95 backdrop-blur-sm z-50 flex flex-col shadow-2xl border-2 border-[#0EA5B7] rounded-t-md">
             {/* 顶部栏 */}
-            <div className="h-10 bg-gray-50 border-b border-gray-200 flex items-center justify-between px-3 shrink-0">
+            <div className="h-10 bg-white border-b border-slate-200 flex items-center justify-between px-3 shrink-0">
                 {/* 左侧标题 */}
-                <h3 className="text-sm font-medium text-gray-800">{title}</h3>
+                <h3 className="text-sm font-semibold tracking-[0.01em] text-slate-800">{title}</h3>
 
                 {/* 右侧功能组 */}
                 <div className="flex items-center gap-2">
@@ -51,7 +51,7 @@ const FooterModal = ({ title, businessActions, onClose, onCollapse, children }) 
                         {onCollapse && (
                             <button
                                 onClick={onCollapse}
-                                className="p-1.5 text-gray-600 hover:text-primary hover:bg-gray-100 rounded transition-colors"
+                                className="p-1.5 text-slate-600 hover:text-[#0EA5B7] hover:bg-white rounded transition-colors"
                                 title="收起并返回表格"
                             >
                                 <IconChevronLeft size={16} />
@@ -60,14 +60,14 @@ const FooterModal = ({ title, businessActions, onClose, onCollapse, children }) 
                         <button
                             onClick={handleOpenWindow}
                             // ✅ 修复点 2: hover:text-[#087F9C] -> hover:text-primary
-                            className="p-1.5 text-gray-600 hover:text-primary hover:bg-gray-100 rounded transition-colors"
+                            className="p-1.5 text-slate-600 hover:text-[#0EA5B7] hover:bg-white rounded transition-colors"
                             title="打开独立窗口"
                         >
                             <IconExternalLink size={16} />
                         </button>
                         <button
                             onClick={onClose}
-                            className="p-1.5 text-gray-600 hover:text-red-600 hover:bg-gray-100 rounded transition-colors"
+                            className="p-1.5 text-slate-600 hover:text-red-600 hover:bg-white rounded transition-colors"
                             title="关闭"
                         >
                             <IconX size={16} />
@@ -77,7 +77,7 @@ const FooterModal = ({ title, businessActions, onClose, onCollapse, children }) 
             </div>
 
             {/* 内容区 */}
-            <div className="flex-1 overflow-y-auto bg-[#F5F6F8]">
+            <div className="flex-1 overflow-y-auto bg-[#f3f6f8]">
                 {children}
             </div>
         </div>

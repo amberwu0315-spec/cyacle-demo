@@ -25,6 +25,8 @@ const StandardBusinessLayout = ({
     title,
     filterOptions = {},
     showSearch = true,
+    showFilters = true,
+    showGridToolbar = true,
     setHeaderActions,
     defaultFilterType = 'all',
     onRowClick,
@@ -71,7 +73,7 @@ const StandardBusinessLayout = ({
     useEffect(() => {
         if (setHeaderActions) {
             setHeaderActions(
-                <button className="flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium text-white bg-[#087F9C] hover:bg-[#076A82] rounded transition-colors">
+                <button className="qy-btn-primary text-sm px-4">
                     <IconPlus size={16} />
                     <span>创建</span>
                 </button>
@@ -97,7 +99,7 @@ const StandardBusinessLayout = ({
                         placeholder={`搜索${title}...`}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 rounded hover:border-[#087F9C] focus:outline-none focus:border-[#087F9C] transition-colors"
+                        className="w-full pl-9 pr-4 py-1.5 text-[13px] border border-slate-300 rounded-md bg-white hover:border-[#0EA5B7] focus:outline-none focus:border-[#0EA5B7] transition-colors"
                     />
                 </div>
             </div>
@@ -106,6 +108,10 @@ const StandardBusinessLayout = ({
 
     // 渲染筛选器
     const renderFilters = () => {
+        if (!showFilters) {
+            return null;
+        }
+
         const { types = [], statuses = [] } = filterOptions;
 
         // 如果没有筛选项，不渲染筛选器
@@ -114,7 +120,7 @@ const StandardBusinessLayout = ({
         }
 
         return (
-            <div className="flex items-center gap-3 p-4 bg-white rounded border border-gray-200 mb-3">
+            <div className="flex items-center gap-3 p-3 bg-[#edf4f7] rounded-lg border border-slate-200 mb-3">
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                     <IconFilter size={14} />
                     <span className="text-xs font-medium">筛选：</span>
@@ -124,7 +130,7 @@ const StandardBusinessLayout = ({
                     <select
                         value={filterType}
                         onChange={(e) => setFilterType(e.target.value)}
-                        className="px-2 py-1 text-xs border border-gray-200 rounded hover:border-[#087F9C] focus:outline-none focus:border-[#087F9C] transition-colors"
+                        className="px-2 py-1 text-xs border border-slate-300 rounded-md bg-white hover:border-[#0EA5B7] focus:outline-none focus:border-[#0EA5B7] transition-colors"
                     >
                         <option value="all">全部类型</option>
                         {types.map(type => (
@@ -137,7 +143,7 @@ const StandardBusinessLayout = ({
                     <select
                         value={filterStatus}
                         onChange={(e) => setFilterStatus(e.target.value)}
-                        className="px-2 py-1 text-xs border border-gray-200 rounded hover:border-[#087F9C] focus:outline-none focus:border-[#087F9C] transition-colors"
+                        className="px-2 py-1 text-xs border border-slate-300 rounded-md bg-white hover:border-[#0EA5B7] focus:outline-none focus:border-[#0EA5B7] transition-colors"
                     >
                         <option value="all">全部状态</option>
                         {statuses.map(status => (
@@ -177,7 +183,7 @@ const StandardBusinessLayout = ({
                 emptyText={`暂无${title}数据`}
                 className="flex-1"
                 rowSelection={{ enabled: false, mode: 'click', multiple: false }}
-                showToolbar
+                showToolbar={showGridToolbar}
                 showFooter
                 minTableWidth={960}
             />

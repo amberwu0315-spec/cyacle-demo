@@ -40,6 +40,8 @@ const BasicFlowPage = () => {
         <StandardBusinessLayout
             title="基本流"
             filterOptions={filterOptions}
+            showFilters={false}
+            showGridToolbar={false}
             setHeaderActions={setActions}
             columns={columns}
             data={basicFlowData}

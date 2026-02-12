@@ -28,10 +28,10 @@ export default function L2Sidebar({ activeL2, onSelect, activeL1, enterpriseName
                 onClick={() => onSelect(item.id)}
                 className="group w-full flex flex-col items-center gap-1"
             >
-                <div className={`w-10 h-10 rounded-md flex items-center justify-center transition-transform hover:scale-105 ${isActive ? 'bg-[#087F9C] text-white' : 'text-gray-500'}`}>
+                <div className={`w-10 h-10 rounded-md flex items-center justify-center transition-transform hover:scale-105 ${isActive ? 'bg-[#0ea5b7] text-white shadow-sm' : 'text-slate-500 bg-white hover:bg-slate-100'}`}>
                     <item.icon className="w-5 h-5" />
                 </div>
-                <span className={`text-[14px] font-medium whitespace-nowrap ${isActive ? 'text-[#087F9C]' : 'text-gray-500'}`}>
+                <span className={`text-[13px] font-medium whitespace-nowrap ${isActive ? 'text-[#0B7285]' : 'text-slate-500'}`}>
                     {item.label}
                 </span>
             </button>
@@ -94,7 +94,7 @@ export default function L2Sidebar({ activeL2, onSelect, activeL1, enterpriseName
             }
         ],
         'enterprise': [ // ActiveL1=enterprise but NOT detail view
-            { title: '列表', items: [{ id: 'all_objects', icon: IconShield, label: '全部', desc: '所有研究对象主体' }] }
+            { title: '列表', items: [{ id: 'all_objects', icon: IconShield, label: '全部', desc: '所有服务企业主体' }] }
         ]
     };
 
@@ -103,7 +103,7 @@ export default function L2Sidebar({ activeL2, onSelect, activeL1, enterpriseName
         'workspace': { title: '工作空间', icon: IconCompass, desc: '您的个人工作中心，概览核心指标与待办事项。' },
         'background_data': { title: '背景数据', icon: IconShare, desc: '聚焦排放因子与文献数据，为碳足迹核算提供权威依据。' },
         'project_mgmt': { title: '项目', icon: IconLayoutGrid, desc: '管理覆盖碳核算全生命周期，涵盖核算、建模及执行。' },
-        'enterprise': { title: '研究对象', icon: IconShield, desc: '围绕研究对象构建数据管理体系，提供清晰的数据信息。' }
+        'enterprise': { title: '服务企业', icon: IconShield, desc: '围绕服务企业构建数据管理体系，提供清晰的数据信息。' }
     };
 
     // ==================== Logic Determination ====================
@@ -122,7 +122,7 @@ export default function L2Sidebar({ activeL2, onSelect, activeL1, enterpriseName
         }
 
         return (
-            <div className={`${isCollapsed ? 'w-[56px]' : 'w-[200px]'} h-full bg-white border-r border-gray-200 flex flex-col shrink-0 transition-all duration-300 ease-in-out relative`}>
+            <div className={`${isCollapsed ? 'w-[56px]' : 'w-[206px]'} h-full bg-[#f8fbfd] border-r border-slate-200 flex flex-col shrink-0 transition-all duration-300 ease-in-out relative`}>
                 {/* Header Card area */}
                 <div className="p-2">
                     {isCollapsed ? (
@@ -133,7 +133,7 @@ export default function L2Sidebar({ activeL2, onSelect, activeL1, enterpriseName
                             }
                             placement="right"
                         >
-                            <div className="bg-[#087F9C] rounded-md p-2 text-white shadow-md flex items-center justify-center cursor-default">
+                            <div className="bg-gradient-to-br from-[#0EA5B7] to-[#0B7285] rounded-md p-2 text-white shadow-md flex items-center justify-center cursor-default">
                                 {isEnterpriseDetail ? <IconShield size={20} stroke={1.5} /> :
                                     (isBusinessList && headerConfig[activeL1]) ? (() => { const Icon = headerConfig[activeL1].icon; return <Icon size={20} stroke={1.5} />; })() :
                                         <IconCompass size={20} stroke={1.5} />
@@ -143,14 +143,14 @@ export default function L2Sidebar({ activeL2, onSelect, activeL1, enterpriseName
                     ) : (
                         // Expanded Header
                         isEnterpriseDetail ? (
-                            <div className="bg-gradient-to-br from-[#087F9C] to-[#0D9488] rounded-md p-3 text-white shadow-md flex flex-col items-center justify-center text-center mb-1 overflow-hidden whitespace-nowrap">
+                            <div className="bg-gradient-to-br from-[#0EA5B7] to-[#0B7285] rounded-md p-3 text-white shadow-md flex flex-col items-center justify-center text-center mb-1 overflow-hidden whitespace-nowrap">
                                 <div className="w-8 h-8 rounded-md border-2 border-white/30 flex items-center justify-center mb-1.5 backdrop-blur-sm bg-white/10">
                                     <IconShield size={18} stroke={1.5} />
                                 </div>
                                 <div className="font-medium text-[13px] leading-tight w-full break-words px-1 truncate">{enterpriseName}</div>
                             </div>
                         ) : (isBusinessList && headerConfig[activeL1]) ? (
-                            <div className="bg-gradient-to-br from-[#087F9C] to-[#065F75] rounded-md p-3 text-white shadow-md flex flex-col items-center justify-center text-center mb-1 overflow-hidden">
+                            <div className="bg-gradient-to-br from-[#0EA5B7] to-[#0B7285] rounded-md p-3 text-white shadow-md flex flex-col items-center justify-center text-center mb-1 overflow-hidden">
                                 <div className="w-8 h-8 mb-1.5 opacity-90 flex items-center justify-center">
                                     {(() => { const Icon = headerConfig[activeL1].icon; return <Icon size={28} stroke={1.5} />; })()}
                                 </div>
@@ -167,7 +167,7 @@ export default function L2Sidebar({ activeL2, onSelect, activeL1, enterpriseName
                     {displayGroups.map((group, idx) => (
                         <div key={idx}>
                             {!isCollapsed && group.title && (
-                                <h3 className="text-[11px] font-bold text-gray-400 mb-1.5 px-2 uppercase tracking-wide truncate">{group.title}</h3>
+                                <h3 className="text-[10px] font-semibold text-slate-400 mb-1.5 px-2 uppercase tracking-[0.08em] truncate">{group.title}</h3>
                             )}
                             {isCollapsed && idx > 0 && <div className="h-px bg-gray-100 my-2 mx-1"></div>}
 
@@ -179,23 +179,24 @@ export default function L2Sidebar({ activeL2, onSelect, activeL1, enterpriseName
                                             key={item.id}
                                             onClick={() => onSelect(item.id)}
                                             className={`
-                                                flex items-center text-left rounded-md transition-all duration-200 group
+                                                relative flex items-center text-left rounded-md transition-all duration-200 group
                                                 ${isCollapsed ? 'justify-center w-10 h-10 p-0' : 'w-full p-2 items-start'}
-                                                ${isActive ? 'bg-[#087F9C] shadow-sm' : 'hover:bg-gray-50'}
+                                                ${isActive ? 'bg-[#e6f7fa] border border-[#bde8ef] shadow-sm' : 'hover:bg-white border border-transparent'}
                                             `}
                                         >
+                                            {isActive && !isCollapsed && <span className="absolute left-0.5 top-1/2 -translate-y-1/2 h-5 w-0.5 rounded-full bg-[#0EA5B7]" />}
                                             <item.icon
                                                 className={`
                                                     shrink-0 transition-colors 
                                                     ${isCollapsed ? 'w-5 h-5' : 'w-4 h-4 mt-0.5'}
-                                                    ${isActive ? 'text-white' : 'text-gray-400 group-hover:text-gray-600'}
+                                                    ${isActive ? 'text-[#0B7285]' : 'text-slate-400 group-hover:text-slate-600'}
                                                 `}
                                                 stroke={1.5}
                                             />
                                             {!isCollapsed && (
                                                 <div className="ml-2.5 min-w-0 flex-1">
-                                                    <div className={`text-[13px] font-medium leading-none mb-1 truncate ${isActive ? 'text-white' : 'text-gray-700 group-hover:text-gray-900'}`}>{item.label}</div>
-                                                    <div className={`text-[10px] leading-tight truncate ${isActive ? 'text-white/80' : 'text-gray-400 group-hover:text-gray-500'}`}>{item.desc}</div>
+                                                    <div className={`text-[13px] font-medium leading-none mb-1 truncate ${isActive ? 'text-[#0f172a]' : 'text-slate-700 group-hover:text-slate-900'}`}>{item.label}</div>
+                                                    <div className={`text-[10px] leading-tight truncate ${isActive ? 'text-slate-500' : 'text-slate-400 group-hover:text-slate-500'}`}>{item.desc}</div>
                                                 </div>
                                             )}
                                         </button>
@@ -216,10 +217,10 @@ export default function L2Sidebar({ activeL2, onSelect, activeL1, enterpriseName
                 </div>
 
                 {/* Footer Toggle */}
-                <div className="p-2 border-t border-gray-100 flex justify-center">
+                <div className="p-2 border-t border-slate-200 flex justify-center">
                     <button
                         onClick={() => setIsCollapsed(!isCollapsed)}
-                        className="w-8 h-8 rounded-full bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-gray-500 hover:text-[#087F9C] transition-colors"
+                        className="w-8 h-8 rounded-full bg-white hover:bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-500 hover:text-[#0EA5B7] transition-colors"
                     >
                         {isCollapsed ? <IconChevronRight size={16} /> : <IconChevronLeft size={16} />}
                     </button>
@@ -230,9 +231,9 @@ export default function L2Sidebar({ activeL2, onSelect, activeL1, enterpriseName
 
     // ==================== Standard Project Layout (Left Nav - Not Sidebar) ====================
     return (
-        <div className="w-[50px] h-full bg-[#F8FAFB] border-r border-[#D6D9DC] flex flex-col py-2 shrink-0 items-center gap-[4px]">
+        <div className="w-[50px] h-full bg-[#f8fbfd] border-r border-slate-200 flex flex-col py-2 shrink-0 items-center gap-[4px]">
             {items.map(renderBtn)}
-            <div className="border-b border-gray-200 w-6 mx-auto my-[4px]"></div>
+            <div className="border-b border-slate-200 w-6 mx-auto my-[4px]"></div>
             {group2.map(renderBtn)}
         </div>
     );

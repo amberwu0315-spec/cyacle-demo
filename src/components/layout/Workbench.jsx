@@ -158,7 +158,7 @@ const WorkbenchContent = ({
             const businessTitleMap = {
                 'background_data': '数据库管理',
                 'project_mgmt': '全部项目',
-                'enterprise': '全部研究对象'
+                'enterprise': '全部服务企业'
             };
             // Title Mapping based on Target (Priority) or L1
             const targetTitleMap = {
@@ -174,7 +174,7 @@ const WorkbenchContent = ({
                 'pcf': '产品碳足迹', // Specific Context
                 'ocf': '组织碳足迹', // Specific Context
                 // Enterprise
-                'all_objects': '全部研究对象' // Specific Context, distinct from 'Research Object' identity
+                'all_objects': '全部服务企业' // Specific Context, distinct from 'Research Object' identity
             };
 
             // Logic: 
@@ -217,7 +217,7 @@ const WorkbenchContent = ({
                 {(isProjectLayout || isDetailView || (isBusinessLayout && !isDetailView) || hasWorkspaceL2Menu) && (
                     <L2Sidebar
                         activeL1={activeL1 === 'workspace' ? 'workspace' : effectiveL1}
-                        activeL2={(isProjectLayout || isDetailView) ? activeL2 : businessTarget}
+                        activeL2={(isProjectLayout || isDetailView || activeL1 === 'workspace') ? activeL2 : businessTarget}
                         onSelect={(id) => {
                             if (activeL1 === 'workspace') {
                                 setActiveL2(id);

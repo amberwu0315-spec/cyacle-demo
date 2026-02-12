@@ -81,7 +81,7 @@ const CreateProjectPage = ({ onCancel, onSave, researchObjects = [] }) => {
     const handleCreate = () => {
         if (!isFormValid) {
             console.warn("Validation Failed: Missing research_object_name or type", formData);
-            alert("请完善必填信息：\n1. 请选择所属研究对象\n2. 请选择需求类型");
+            alert("请完善必填信息：\n1. 请选择所属服务企业\n2. 请选择需求类型");
             return;
         }
         if (onSave) {
@@ -98,8 +98,8 @@ const CreateProjectPage = ({ onCancel, onSave, researchObjects = [] }) => {
                 <span className="text-4xl">✨</span>
             </div>
             <p className="text-sm font-medium">开始创建一个新项目</p>
-            <p className="text-xs text-gray-300 px-8 text-center">
-                请在右侧填写项目的详细信息，包括名称、类型以及关联的研究对象。
+            <p className="text-sm text-gray-500 font-medium">
+                请在右侧填写项目的详细信息，包括名称、类型以及关联的服务企业。
             </p>
         </div>
     );
@@ -112,7 +112,7 @@ const CreateProjectPage = ({ onCancel, onSave, researchObjects = [] }) => {
                     <ModuleHeader title="基础信息" />
                     <FormBlock>
                         <EditableField
-                            label="所属研究对象"
+                            label="所属服务企业"
                             value={formData.research_object_name}
                             onSave={(val) => handleChange('research_object_name', val)}
                             type="select"

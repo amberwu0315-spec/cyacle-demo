@@ -1,14 +1,12 @@
 import React, { useMemo, useState } from 'react';
-import { IconPlus, IconFilter } from '@tabler/icons-react';
+import { IconPlus, IconSearch } from '@tabler/icons-react';
 import FooterModal from './FooterModal';
 import DataGrid from '../common/DataGrid';
 import { ContentModule, ModuleHeader } from '../common/ContentModule';
 import { footerModelConfig } from '../../data/footerModelConfig';
 
-const StandardFooter = ({ moduleKey, onClose, filterOptions = {} }) => {
+const StandardFooter = ({ moduleKey, onClose }) => {
   const config = footerModelConfig[moduleKey];
-  const [filterType, setFilterType] = useState('all');
-  const [filterStatus, setFilterStatus] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeRowId, setActiveRowId] = useState(null);
 
@@ -20,58 +18,31 @@ const StandardFooter = ({ moduleKey, onClose, filterOptions = {} }) => {
   const filteredRows = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
     return rows.filter((item) => {
-      const typeCandidate = item?.type || item?.descType || item?.locationType || item?.docType;
-      const statusCandidate = item?.status;
-
-      const typeMatched = filterType === 'all' || !typeCandidate || String(typeCandidate).toLowerCase() === filterType.toLowerCase();
-      const statusMatched = filterStatus === 'all' || !statusCandidate || String(statusCandidate).toLowerCase() === filterStatus.toLowerCase();
       const searchMatched = !query || Object.values(item).some((val) => String(val || '').toLowerCase().includes(query));
 
-      return typeMatched && statusMatched && searchMatched;
+      return searchMatched;
     });
-  }, [rows, filterType, filterStatus, searchQuery]);
+  }, [rows, searchQuery]);
 
   const businessActions = (
-    <button className="flex items-center gap-1 px-3 py-1 text-xs font-medium text-white bg-[#087F9C] hover:bg-[#076A82] rounded transition-colors" title="添加">
+    <button className="qy-btn-primary" title="添加">
       <IconPlus size={14} />
       <span>添加</span>
     </button>
   );
 
-  const renderFilters = () => {
-    const { types = [], statuses = [] } = filterOptions;
-
+  const renderSearchBar = () => {
     return (
-      <div className="flex items-center gap-3 p-3 bg-white border-b border-gray-200">
-        <div className="flex items-center gap-2 text-sm text-gray-600">
-          <IconFilter size={14} />
-          <span className="text-xs font-medium">筛选：</span>
+      <div className="p-3 pb-0">
+        <div className="relative max-w-md">
+          <IconSearch size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <input
+            value={searchQuery}
+            onChange={(event) => setSearchQuery(event.target.value)}
+            placeholder={`搜索${config?.title || ''}...`}
+            className="w-full pl-9 pr-4 py-1.5 text-[13px] border border-slate-300 rounded-md bg-white hover:border-[#0EA5B7] focus:outline-none focus:border-[#0EA5B7] transition-colors"
+          />
         </div>
-
-        <input
-          value={searchQuery}
-          onChange={(event) => setSearchQuery(event.target.value)}
-          placeholder="名称或关键词"
-          className="px-2 py-1 text-xs border border-gray-200 rounded w-40"
-        />
-
-        {types.length > 0 && (
-          <select value={filterType} onChange={(event) => setFilterType(event.target.value)} className="px-2 py-1 text-xs border border-gray-200 rounded">
-            <option value="all">全部类型</option>
-            {types.map((type) => (
-              <option key={type.value} value={type.value}>{type.label}</option>
-            ))}
-          </select>
-        )}
-
-        {statuses.length > 0 && (
-          <select value={filterStatus} onChange={(event) => setFilterStatus(event.target.value)} className="px-2 py-1 text-xs border border-gray-200 rounded">
-            <option value="all">全部状态</option>
-            {statuses.map((status) => (
-              <option key={status.value} value={status.value}>{status.label}</option>
-            ))}
-          </select>
-        )}
       </div>
     );
   };
@@ -85,7 +56,7 @@ const StandardFooter = ({ moduleKey, onClose, filterOptions = {} }) => {
         rowKey="id"
         onRowDoubleClick={(row) => setActiveRowId(row.id)}
         storageKey={`footer-grid:${moduleKey}`}
-        showToolbar
+        showToolbar={false}
         showFooter
         emptyText="暂无数据"
         className="h-full"
@@ -131,7 +102,7 @@ const StandardFooter = ({ moduleKey, onClose, filterOptions = {} }) => {
       onClose={onClose}
       onCollapse={isDetailMode ? () => setActiveRowId(null) : undefined}
     >
-      {renderFilters()}
+      {!isDetailMode && renderSearchBar()}
       {isDetailMode ? renderDetailModules() : renderTableView()}
     </FooterModal>
   );

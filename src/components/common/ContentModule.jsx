@@ -4,20 +4,55 @@ import { IconChevronDown, IconChevronRight } from '@tabler/icons-react';
 
 // Reusable Content Module Wrapper (Component D)
 // Principle: "外圆内方、高度自适、状态显性、间距统一"
-export const ContentModule = ({ children, className = '', type = 'detail', status = '' }) => {
+const isModuleHeaderNode = (node) => {
+    if (!React.isValidElement(node)) return false;
+    const displayName = node.type?.displayName;
+    return displayName === 'ModuleHeader';
+};
+
+const containsModuleHeader = (nodes) => {
+    let found = false;
+    React.Children.forEach(nodes, (child) => {
+        if (found || !React.isValidElement(child)) return;
+        if (isModuleHeaderNode(child)) {
+            found = true;
+            return;
+        }
+        if (child.props?.children && containsModuleHeader(child.props.children)) {
+            found = true;
+        }
+    });
+    return found;
+};
+
+export const ContentModule = ({ children, className = '', type = 'auto', status = '' }) => {
+    const hasHeader = containsModuleHeader(children);
+    const resolvedType = type === 'auto' ? (hasHeader ? 'detail' : 'global') : type;
+
     // 状态显性: Added (Green), Deleted (Red)
     const statusClasses = {
         added: 'border-l-4 border-[#29AC68]',
         deleted: 'border-l-4 border-[#E38585]',
     };
 
+    const typeClasses = {
+        detail: 'h-auto flex flex-col border border-slate-200 bg-white',
+        global: 'h-auto border border-slate-200 bg-white'
+    };
+
+    const shouldWrapGlobalBody = resolvedType === 'global' && !hasHeader;
+    const normalizedChildren = shouldWrapGlobalBody ? (
+        <div className="p-4">{children}</div>
+    ) : children;
+
     return (
         <div
-            className={`w-full h-auto bg-white rounded-lg shadow-sm overflow-visible border border-gray-100 ${status ? statusClasses[status] : ''} ${className}`}
-            data-type={type}
+            className={`w-full bg-white rounded-lg shadow-sm overflow-visible ${typeClasses[resolvedType] || typeClasses.detail} ${status ? statusClasses[status] : ''} ${className}`}
+            data-type={resolvedType}
             data-status={status}
+            data-has-header={hasHeader ? 'true' : 'false'}
         >
-            {children}
+            {normalizedChildren}
         </div>
     );
 };
@@ -97,7 +132,7 @@ export const ModuleHeader = ({
     };
 
     return (
-        <div className={`flex flex-wrap items-center justify-between px-3 py-2 bg-white min-h-[48px] gap-y-2 ${showBorder ? 'border-b border-gray-100' : ''}`}>
+        <div className={`flex flex-wrap items-center justify-between px-3 py-2 bg-white min-h-[44px] gap-y-1 ${showBorder ? 'border-b border-slate-200' : ''}`}>
             {/* Zone L: Title Variants + Toggle */}
             <div className={`flex items-center gap-2 ${isAccordion ? 'cursor-pointer' : ''}`} onClick={isAccordion ? onToggle : undefined}>
                 {isAccordion && (
@@ -108,7 +143,7 @@ export const ModuleHeader = ({
 
                 {Icon && <Icon className="text-gray-500" size={18} />}
 
-                <h3 className={`text-base font-semibold select-none ${status ? titleClasses[status] : titleClasses.default}`}>
+                <h3 className={`text-sm font-semibold select-none tracking-[0.01em] ${status ? titleClasses[status] : titleClasses.default}`}>
                     {title}
                 </h3>
 
@@ -148,3 +183,5 @@ export const ModuleHeader = ({
         </div>
     );
 };
+
+ModuleHeader.displayName = 'ModuleHeader';

@@ -50,7 +50,7 @@ export default function BusinessContent({ activeL1, target, onOpenTab, openedTab
                 </div>
             )
         },
-        { title: '研究对象', key: 'object', width: '25%', className: 'text-gray-600' },
+        { title: '服务企业', key: 'object', width: '25%', className: 'text-gray-600' },
         {
             title: '需求类型', key: 'type', width: '15%', render: (type) => {
                 const isPCF = type === 'PCF' || type === '产品碳足迹';
@@ -209,8 +209,10 @@ export default function BusinessContent({ activeL1, target, onOpenTab, openedTab
         };
 
         return <StandardBusinessLayout
-            title="研究对象"
+            title="服务企业"
             filterOptions={filterOptions}
+            showFilters={false}
+            showGridToolbar={false}
             setHeaderActions={(actions) => {
                 setActions(
                     <button

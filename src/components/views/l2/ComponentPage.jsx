@@ -8,6 +8,7 @@
 import React from 'react';
 import StandardBusinessLayout from '../StandardBusinessLayout';
 import { usePagePresentation } from '../../../context/PagePresentationContext';
+import StatusChip from '../../common/StatusChip';
 
 import { componentData } from '../../../data/mockData';
 
@@ -39,9 +40,7 @@ const ComponentPage = () => {
         { title: '更新时间', key: 'updateTime', width: '15%', className: 'text-sm text-gray-500' },
         {
             title: '状态', key: 'status', width: '15%', render: (text) => (
-                <span className={`text-xs px-2 py-1 rounded ${text === 'in_use' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                    {text === 'in_use' ? '使用中' : '已淘汰'}
-                </span>
+                <StatusChip status={text === 'in_use' ? '使用中' : '已淘汰'} />
             )
         }
     ];
@@ -50,6 +49,8 @@ const ComponentPage = () => {
         <StandardBusinessLayout
             title="元件库"
             filterOptions={filterOptions}
+            showFilters={false}
+            showGridToolbar={false}
             setHeaderActions={setActions}
             columns={columns}
             data={componentData}

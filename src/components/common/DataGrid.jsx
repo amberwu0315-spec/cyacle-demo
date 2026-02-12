@@ -50,6 +50,37 @@ const inferAlignFromClass = (className = '') => {
     return null;
 };
 
+const isOperationColumn = (column = {}) => {
+    const key = String(column.key ?? column.id ?? '').trim().toLowerCase();
+    const title = String(column.title ?? '').trim().toLowerCase();
+    return key === 'action'
+        || key === 'actions'
+        || key.includes('operation')
+        || title.includes('操作')
+        || title === 'action'
+        || title === 'actions'
+        || title.includes('operation');
+};
+
+const looksLikeTaggedClassName = (className = '') => {
+    const normalized = String(className || '');
+    if (!normalized) return false;
+    return /(chip|badge|tag|label|qy-status-chip|qy-type-chip)/i.test(normalized)
+        || (/rounded/.test(normalized) && /bg-/.test(normalized) && /text-/.test(normalized));
+};
+
+const hasTagLikeContent = (node) => {
+    if (node === null || node === undefined || typeof node === 'boolean') return false;
+    if (typeof node === 'string' || typeof node === 'number') return false;
+    if (Array.isArray(node)) return node.some(hasTagLikeContent);
+
+    if (React.isValidElement(node)) {
+        if (looksLikeTaggedClassName(node.props?.className)) return true;
+        return hasTagLikeContent(node.props?.children);
+    }
+    return false;
+};
+
 const normalizeColumn = (col, index, prevByKey = null) => {
     const key = String(col.key ?? col.id ?? `col_${index}`);
     const prev = prevByKey?.[key];
@@ -191,15 +222,15 @@ const compareValues = (a, b, column) => {
     return String(a).localeCompare(String(b), 'zh-CN');
 };
 
-const getRowStateClasses = (rowState, selected) => {
+const getRowStateClasses = (rowState, selected, zebraClass) => {
     if (rowState === 'disabled') return 'bg-slate-100 text-slate-400';
     if (rowState === 'locked') return 'bg-slate-100 text-slate-500';
-    if (rowState === 'warning') return 'bg-rose-50';
+    if (rowState === 'warning') return 'bg-amber-50';
     if (rowState === 'submitting') return 'bg-slate-100 text-slate-500 animate-pulse';
-    if (rowState === 'focused') return 'bg-cyan-50 ring-1 ring-cyan-400/40';
+    if (rowState === 'focused') return 'bg-cyan-50/70 ring-1 ring-cyan-500/30';
     if (rowState === 'error') return 'bg-rose-50 text-rose-700';
-    if (selected) return 'bg-blue-50';
-    return 'bg-white';
+    if (selected) return 'bg-cyan-50/70';
+    return zebraClass;
 };
 
 const DataGrid = ({
@@ -229,6 +260,10 @@ const DataGrid = ({
     const configRef = useRef(null);
     const menuRef = useRef(null);
     const resizeStateRef = useRef(null);
+    const effectiveColumns = useMemo(
+        () => columns.filter((col) => !isOperationColumn(col)),
+        [columns]
+    );
 
     const loadStoredColumns = () => {
         if (!storageKey) return null;
@@ -247,7 +282,7 @@ const DataGrid = ({
         const prevByKey = stored
             ? Object.fromEntries(stored.map((item) => [String(item.key), item]))
             : null;
-        return columns.map((col, index) => normalizeColumn(col, index, prevByKey));
+        return effectiveColumns.map((col, index) => normalizeColumn(col, index, prevByKey));
     });
 
     const [sortState, setSortState] = useState(() => (
@@ -268,8 +303,8 @@ const DataGrid = ({
 
     useEffect(() => {
         const prevByKey = Object.fromEntries(columnStates.map((item) => [String(item.key), item]));
-        setColumnStates(columns.map((col, index) => normalizeColumn(col, index, prevByKey)));
-    }, [columns]);
+        setColumnStates(effectiveColumns.map((col, index) => normalizeColumn(col, index, prevByKey)));
+    }, [effectiveColumns]);
 
     useEffect(() => {
         if (!storageKey) return;
@@ -320,7 +355,6 @@ const DataGrid = ({
     const startResize = (event, column) => {
         event.preventDefault();
         event.stopPropagation();
-        if (column.lockPosition) return;
         resizeStateRef.current = {
             key: column.key,
             startX: event.clientX,
@@ -405,6 +439,10 @@ const DataGrid = ({
     const processedRowIds = useMemo(
         () => processedEntries.map((entry) => entry.id),
         [processedEntries]
+    );
+    const displayOrderMap = useMemo(
+        () => Object.fromEntries(processedRowIds.map((id, index) => [id, index])),
+        [processedRowIds]
     );
 
     const groupedRows = useMemo(() => {
@@ -493,7 +531,7 @@ const DataGrid = ({
     };
 
     const resetView = () => {
-        setColumnStates(columns.map((col, index) => normalizeColumn(col, index, null)));
+        setColumnStates(effectiveColumns.map((col, index) => normalizeColumn(col, index, null)));
         setSortState({ key: null, order: null });
         setFilters({});
         setGroupBy(null);
@@ -629,23 +667,119 @@ const DataGrid = ({
         }))
         : [{ type: 'flat', rows: processedEntries }];
 
+    const getCellMeta = (entry, col) => {
+        const rowId = entry.id;
+        const value = getValue(entry.row, col.key, rowId);
+        const editing = editingCell
+            && editingCell.rowId === rowId
+            && editingCell.columnKey === col.key;
+        const rendered = col.render
+            ? col.render(value, entry.row)
+            : formatCellValue(value, col);
+        const alignClass = col.align === 'right'
+            ? 'text-right'
+            : col.align === 'center'
+                ? 'text-center'
+                : 'text-left';
+        const contentClass = col.wrap
+            ? 'whitespace-normal break-words'
+            : col.ellipsis
+                ? 'truncate'
+                : '';
+        const primitive = typeof rendered === 'string' || typeof rendered === 'number';
+
+        return {
+            col,
+            rowId,
+            value,
+            editing,
+            rendered,
+            alignClass,
+            contentClass,
+            primitive,
+            hasTagLikeContent: hasTagLikeContent(rendered)
+        };
+    };
+
+    const renderDataRow = (entry) => {
+        const rowId = entry.id;
+        const selected = selectedSet.has(rowId);
+        const rowState = entry.row.rowState ?? (selected ? 'selected' : 'default');
+        const rowOrder = displayOrderMap[rowId] ?? entry.index;
+        const zebraClass = rowOrder % 2 === 0 ? 'bg-white' : 'bg-slate-50/55';
+        const cells = visibleColumns.map((col) => getCellMeta(entry, col));
+        const hasTagLikeRow = cells.some((cell) => cell.hasTagLikeContent);
+        const rowHeightClass = hasTagLikeRow
+            ? (compact ? 'h-9' : 'h-10')
+            : (compact ? 'h-8' : 'h-9');
+
+        return (
+            <tr
+                key={rowId}
+                className={`${getRowStateClasses(rowState, selected, zebraClass)} ${rowHeightClass} hover:bg-slate-100/70 transition-colors`}
+                onClick={(event) => {
+                    if (rowSelection?.enabled && rowSelection.mode === 'click') {
+                        toggleRowSelection(entry, null, event);
+                    }
+                    onRowClick?.(entry.row, entry.index, event);
+                }}
+                onDoubleClick={(event) => onRowDoubleClick?.(entry.row, entry.index, event)}
+            >
+                {showCheckboxSelection && (
+                    <td className="px-2 sticky left-0 z-10 bg-inherit">
+                        <input
+                            type="checkbox"
+                            checked={selected}
+                            disabled={rowState === 'disabled' || rowState === 'locked'}
+                            onChange={(event) => toggleRowSelection(entry, event.target.checked, event)}
+                            className="rounded border-slate-300"
+                        />
+                    </td>
+                )}
+                {cells.map((cell, colIndex) => {
+                    const stickyLeft = showCheckboxSelection ? SELECTION_COLUMN_WIDTH : 0;
+                    const isSticky = cell.col.lockPosition && colIndex === 0;
+
+                    return (
+                        <td
+                            key={`${rowId}:${cell.col.key}`}
+                            className={`px-2 text-slate-700 align-middle ${cell.alignClass} ${isSticky ? 'sticky z-10 bg-inherit' : ''}`}
+                            style={isSticky ? { left: stickyLeft } : undefined}
+                            onDoubleClick={() => startEdit(entry.row, entry.index, cell.col, cell.value)}
+                        >
+                            {cell.editing ? (
+                                <div className="py-1">
+                                    {renderCellEditor(cell.col)}
+                                </div>
+                            ) : (
+                                <div className={`${cell.contentClass}`} title={cell.primitive ? String(cell.rendered) : undefined}>
+                                    {cell.rendered}
+                                </div>
+                            )}
+                        </td>
+                    );
+                })}
+            </tr>
+        );
+    };
+
     return (
-        <div ref={gridRef} className={`relative bg-white border border-slate-200 rounded-md flex flex-col min-h-0 ${className}`}>
+        <div ref={gridRef} className={`relative bg-white border border-slate-200 rounded-lg flex flex-col min-h-0 ${className}`}>
             {showToolbar && (
-                <div className="h-10 px-3 border-b border-slate-200 flex items-center justify-between bg-slate-50/80">
-                    <div className="flex items-center gap-2 text-xs text-slate-500">
+                <div className="h-9 px-3 border-b border-slate-200 flex items-center justify-between bg-white">
+                    <div className="flex items-center gap-2 text-[11px] text-slate-500">
                         <span className="inline-flex items-center gap-1">
                             <IconColumns3 size={14} />
                             {title}
                         </span>
                         {sortState.key && (
-                            <span className="inline-flex items-center gap-1 px-2 h-6 rounded bg-white border border-slate-200">
+                            <span className="inline-flex items-center gap-1 px-2 h-5 rounded bg-white border border-slate-200">
                                 {sortState.order === 'asc' ? <IconSortAscending size={12} /> : <IconSortDescending size={12} />}
                                 排序: {columnMap[sortState.key]?.title}
                             </span>
                         )}
                         {groupBy && (
-                            <span className="inline-flex items-center gap-1 px-2 h-6 rounded bg-white border border-slate-200">
+                            <span className="inline-flex items-center gap-1 px-2 h-5 rounded bg-white border border-slate-200">
                                 <IconLayersIntersect size={12} />
                                 分组: {columnMap[groupBy]?.title}
                             </span>
@@ -677,7 +811,7 @@ const DataGrid = ({
             {configOpen && (
                 <div
                     ref={configRef}
-                    className={`absolute right-3 ${showToolbar ? 'top-11' : 'top-2'} z-30 w-80 bg-white border border-slate-200 rounded-md shadow-lg p-3`}
+                    className={`absolute right-3 ${showToolbar ? 'top-10' : 'top-2'} z-30 w-80 bg-white border border-slate-200 rounded-md shadow-lg p-3`}
                 >
                     <div className="text-sm font-medium text-slate-700 mb-2">列布局</div>
                     <div className="max-h-72 overflow-y-auto space-y-1 pr-1">
@@ -719,17 +853,17 @@ const DataGrid = ({
             )}
 
             <div className="flex-1 overflow-auto">
-                <table className="text-sm border-collapse table-fixed min-w-full" style={{ width: `${Math.max(totalWidth, minTableWidth)}px` }}>
+                <table className="text-[13px] border-collapse table-fixed min-w-full" style={{ width: `${Math.max(totalWidth, minTableWidth)}px` }}>
                     <colgroup>
                         {showCheckboxSelection && <col style={{ width: `${SELECTION_COLUMN_WIDTH}px` }} />}
                         {visibleColumns.map((col) => (
                             <col key={col.key} style={{ width: `${col.width}px` }} />
                         ))}
                     </colgroup>
-                    <thead className="bg-slate-50 text-slate-600 border-b border-slate-200">
+                    <thead className="bg-white text-slate-600 border-b border-slate-200">
                         <tr>
                             {showCheckboxSelection && (
-                                <th className="h-9 px-2 border-r border-slate-200 sticky left-0 z-20 bg-slate-50">
+                                <th className="h-8 px-2 sticky left-0 z-20 bg-white">
                                     <input
                                         ref={(node) => {
                                             if (!node) return;
@@ -752,7 +886,7 @@ const DataGrid = ({
                                 return (
                                     <th
                                         key={col.key}
-                                        className={`relative h-9 px-2 border-r border-slate-200 font-medium ${isSticky ? 'sticky z-20 bg-slate-50' : ''}`}
+                                        className={`group relative h-8 px-2 font-medium ${isSticky ? 'sticky z-20 bg-white' : ''}`}
                                         style={isSticky ? { left: stickyLeft } : undefined}
                                     >
                                         <div className="h-full flex items-center justify-between gap-2 min-w-0">
@@ -770,13 +904,13 @@ const DataGrid = ({
                                                 className={`flex items-center gap-1 min-w-0 text-left ${canSort ? '' : 'cursor-default'}`}
                                             >
                                                 <span className="truncate">{col.title}</span>
-                                                {sortState.key === col.key && (
-                                                    sortState.order === 'asc'
-                                                        ? <IconSortAscending size={12} className="text-slate-500 shrink-0" />
-                                                        : <IconSortDescending size={12} className="text-slate-500 shrink-0" />
-                                                )}
                                             </button>
-                                            <div className="inline-flex items-center gap-1 shrink-0">
+                                            <div className="inline-flex items-center gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                                                {sortState.key === col.key && (
+                                                    <span className="w-4 h-4 rounded bg-white text-slate-600 inline-flex items-center justify-center border border-slate-200">
+                                                        {sortState.order === 'asc' ? <IconSortAscending size={10} /> : <IconSortDescending size={10} />}
+                                                    </span>
+                                                )}
                                                 {canFilter && currentFilter && (
                                                     <span className="w-4 h-4 rounded bg-blue-100 text-blue-600 inline-flex items-center justify-center">
                                                         <IconFilter size={10} />
@@ -886,7 +1020,7 @@ const DataGrid = ({
                                         <div
                                             role="presentation"
                                             onMouseDown={(event) => startResize(event, col)}
-                                            className={`absolute top-0 right-0 w-1 h-full ${col.lockPosition ? 'cursor-not-allowed' : 'cursor-col-resize hover:bg-cyan-500/50'}`}
+                                            className="absolute top-0 right-0 w-1 h-full cursor-col-resize hover:bg-cyan-500/50"
                                         />
                                     </th>
                                 );
@@ -915,7 +1049,7 @@ const DataGrid = ({
                                                         ...prev,
                                                         [bucket.groupValue]: !prev[bucket.groupValue]
                                                     }))}
-                                                    className="inline-flex items-center gap-2 text-xs font-medium text-slate-600"
+                                                    className="inline-flex items-center gap-2 text-[12px] font-medium text-slate-600"
                                                 >
                                                     <IconArrowsSort size={12} className={`${isCollapsed ? '' : 'rotate-90'} transition-transform`} />
                                                     {bucket.groupValue}
@@ -923,157 +1057,19 @@ const DataGrid = ({
                                                 </button>
                                             </td>
                                         </tr>
-                                        {!isCollapsed && bucket.rows.map((entry) => {
-                                            const rowId = entry.id;
-                                            const selected = selectedSet.has(rowId);
-                                            const rowState = entry.row.rowState ?? (selected ? 'selected' : 'default');
-                                            return (
-                                                <tr
-                                                    key={rowId}
-                                                    className={`${getRowStateClasses(rowState, selected)} ${compact ? 'h-8' : 'h-9'} hover:bg-slate-50 transition-colors`}
-                                                    onClick={(event) => {
-                                                        if (rowSelection?.enabled && rowSelection.mode === 'click') {
-                                                            toggleRowSelection(entry, null, event);
-                                                        }
-                                                        onRowClick?.(entry.row, entry.index, event);
-                                                    }}
-                                                    onDoubleClick={(event) => onRowDoubleClick?.(entry.row, entry.index, event)}
-                                                >
-                                                    {showCheckboxSelection && (
-                                                        <td className="px-2 border-r border-slate-200 sticky left-0 z-10 bg-inherit">
-                                                            <input
-                                                                type="checkbox"
-                                                                checked={selected}
-                                                                disabled={rowState === 'disabled' || rowState === 'locked'}
-                                                                onChange={(event) => toggleRowSelection(entry, event.target.checked, event)}
-                                                                className="rounded border-slate-300"
-                                                            />
-                                                        </td>
-                                                    )}
-                                                    {visibleColumns.map((col, colIndex) => {
-                                                        const stickyLeft = showCheckboxSelection ? SELECTION_COLUMN_WIDTH : 0;
-                                                        const isSticky = col.lockPosition && colIndex === 0;
-                                                        const value = getValue(entry.row, col.key, rowId);
-                                                        const editing = editingCell
-                                                            && editingCell.rowId === rowId
-                                                            && editingCell.columnKey === col.key;
-                                                        const rendered = col.render
-                                                            ? col.render(value, entry.row)
-                                                            : formatCellValue(value, col);
-                                                        const alignClass = col.align === 'right'
-                                                            ? 'text-right'
-                                                            : col.align === 'center'
-                                                                ? 'text-center'
-                                                                : 'text-left';
-                                                        const contentClass = col.wrap
-                                                            ? 'whitespace-normal break-words'
-                                                            : col.ellipsis
-                                                                ? 'truncate'
-                                                                : '';
-                                                        const primitive = typeof rendered === 'string' || typeof rendered === 'number';
-                                                        return (
-                                                            <td
-                                                                key={`${rowId}:${col.key}`}
-                                                                className={`px-2 border-r border-slate-200 text-slate-700 align-middle ${alignClass} ${isSticky ? 'sticky z-10 bg-inherit' : ''}`}
-                                                                style={isSticky ? { left: stickyLeft } : undefined}
-                                                                onDoubleClick={() => startEdit(entry.row, entry.index, col, value)}
-                                                            >
-                                                                {editing ? (
-                                                                    <div className="py-1">
-                                                                        {renderCellEditor(col)}
-                                                                    </div>
-                                                                ) : (
-                                                                    <div className={`${contentClass}`} title={primitive ? String(rendered) : undefined}>
-                                                                        {rendered}
-                                                                    </div>
-                                                                )}
-                                                            </td>
-                                                        );
-                                                    })}
-                                                </tr>
-                                            );
-                                        })}
+                                        {!isCollapsed && bucket.rows.map((entry) => renderDataRow(entry))}
                                     </React.Fragment>
                                 );
                             }
 
-                            return bucket.rows.map((entry) => {
-                                const rowId = entry.id;
-                                const selected = selectedSet.has(rowId);
-                                const rowState = entry.row.rowState ?? (selected ? 'selected' : 'default');
-                                return (
-                                    <tr
-                                        key={rowId}
-                                        className={`${getRowStateClasses(rowState, selected)} ${compact ? 'h-8' : 'h-9'} hover:bg-slate-50 transition-colors`}
-                                        onClick={(event) => {
-                                            if (rowSelection?.enabled && rowSelection.mode === 'click') {
-                                                toggleRowSelection(entry, null, event);
-                                            }
-                                            onRowClick?.(entry.row, entry.index, event);
-                                        }}
-                                        onDoubleClick={(event) => onRowDoubleClick?.(entry.row, entry.index, event)}
-                                    >
-                                        {showCheckboxSelection && (
-                                            <td className="px-2 border-r border-slate-200 sticky left-0 z-10 bg-inherit">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={selected}
-                                                    disabled={rowState === 'disabled' || rowState === 'locked'}
-                                                    onChange={(event) => toggleRowSelection(entry, event.target.checked, event)}
-                                                    className="rounded border-slate-300"
-                                                />
-                                            </td>
-                                        )}
-                                        {visibleColumns.map((col, colIndex) => {
-                                            const stickyLeft = showCheckboxSelection ? SELECTION_COLUMN_WIDTH : 0;
-                                            const isSticky = col.lockPosition && colIndex === 0;
-                                            const value = getValue(entry.row, col.key, rowId);
-                                            const editing = editingCell
-                                                && editingCell.rowId === rowId
-                                                && editingCell.columnKey === col.key;
-                                            const rendered = col.render
-                                                ? col.render(value, entry.row)
-                                                : formatCellValue(value, col);
-                                            const alignClass = col.align === 'right'
-                                                ? 'text-right'
-                                                : col.align === 'center'
-                                                    ? 'text-center'
-                                                    : 'text-left';
-                                            const contentClass = col.wrap
-                                                ? 'whitespace-normal break-words'
-                                                : col.ellipsis
-                                                    ? 'truncate'
-                                                    : '';
-                                            const primitive = typeof rendered === 'string' || typeof rendered === 'number';
-                                            return (
-                                                <td
-                                                    key={`${rowId}:${col.key}`}
-                                                    className={`px-2 border-r border-slate-200 text-slate-700 align-middle ${alignClass} ${isSticky ? 'sticky z-10 bg-inherit' : ''}`}
-                                                    style={isSticky ? { left: stickyLeft } : undefined}
-                                                    onDoubleClick={() => startEdit(entry.row, entry.index, col, value)}
-                                                >
-                                                    {editing ? (
-                                                        <div className="py-1">
-                                                            {renderCellEditor(col)}
-                                                        </div>
-                                                    ) : (
-                                                        <div className={`${contentClass}`} title={primitive ? String(rendered) : undefined}>
-                                                            {rendered}
-                                                        </div>
-                                                    )}
-                                                </td>
-                                            );
-                                        })}
-                                    </tr>
-                                );
-                            });
+                            return bucket.rows.map((entry) => renderDataRow(entry));
                         })}
                     </tbody>
                 </table>
             </div>
 
             {showFooter && (
-                <div className="h-8 px-3 border-t border-slate-200 bg-slate-50 text-xs text-slate-500 flex items-center justify-between">
+                <div className="h-8 px-3 border-t border-slate-200 bg-slate-50/70 text-[11px] text-slate-500 flex items-center justify-between">
                     <span>{footerText || `共 ${processedRows.length} 条记录`}</span>
                     {rowSelection?.enabled && (
                         <span>已选中 {selectedRowKeys.length} 条</span>
