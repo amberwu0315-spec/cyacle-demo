@@ -6,7 +6,7 @@ import {
   literatureFactorData,
   basicFlowData,
   compositeFactorData,
-  literatureData,
+  documentData,
   componentData
 } from './mockData';
 
@@ -57,6 +57,19 @@ export const footerModelConfig = {
       { title: '创建人', key: 'creator', width: '14%' },
       { title: '创建时间', key: 'createdAt', width: '17%' },
       { title: '更新时间', key: 'updatedAt', width: '17%' }
+    ],
+    modules: placeholderModules
+  },
+  docs: {
+    title: '文档',
+    rows: documentData,
+    columns: [
+      { title: '文档名称', key: 'name', width: '40%' },
+      { title: '类型', key: 'docType', width: '16%' },
+      { title: '来源', key: 'source', width: '12%' },
+      { title: '出版时间', key: 'publishYear', width: '10%' },
+      { title: '期刊/出版社', key: 'journal', width: '14%' },
+      { title: '创建用户', key: 'creator', width: '8%' }
     ],
     modules: placeholderModules
   },
@@ -121,11 +134,11 @@ export const footerModelConfig = {
   },
   literature: {
     title: '文献',
-    rows: literatureData,
+    rows: documentData,
     columns: [
       { title: '文献名称', key: 'name', width: '40%' },
-      { title: '来源', key: 'source', width: '12%' },
-      { title: '文献类型', key: 'docType', width: '16%' },
+      { title: '来源', key: 'source', width: '10%' },
+      { title: '文献类型', key: 'docType', width: '18%' },
       { title: '出版时间', key: 'publishYear', width: '10%' },
       { title: '期刊名/出版社', key: 'journal', width: '14%' },
       { title: '创建用户', key: 'creator', width: '8%' }
@@ -146,3 +159,4 @@ export const footerModelConfig = {
     modules: placeholderModules
   }
 };
+

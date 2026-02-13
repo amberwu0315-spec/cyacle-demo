@@ -136,7 +136,7 @@ export default function BusinessContent({ activeL1, target, onOpenTab, openedTab
                 setActions(
                     <button
                         onClick={() => setProjectLimitMode('create')}
-                        className="flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium text-white bg-[#087F9C] hover:bg-[#076A82] rounded-md transition-colors"
+                        className="flex items-center gap-1.5 h-btn-md px-btn-x-md text-[13px] font-medium text-white bg-primary-action hover:bg-primary-emphasize rounded-sm transition-colors"
                     >
                         <IconPlus size={16} />
                         <span>创建</span>
@@ -169,7 +169,7 @@ export default function BusinessContent({ activeL1, target, onOpenTab, openedTab
         },
         {
             title: '所在地', key: 'location', width: '20%', render: (text) => (
-                text !== '-' ? <span className="flex items-center gap-1 text-gray-500"><IconMapPin size={12} />{text}</span> : '-'
+                text !== '-' ? <span className="flex items-center gap-1 text-gray-500"><IconMapPin size={14} />{text}</span> : '-'
             )
         },
         { title: '创建人', key: 'creator', width: '10%', className: 'text-gray-500' },
@@ -219,7 +219,7 @@ export default function BusinessContent({ activeL1, target, onOpenTab, openedTab
                 setActions(
                     <button
                         onClick={() => setObjectLimitMode('create')}
-                        className="flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium text-white bg-[#087f9c] hover:bg-[#076a82] rounded-md transition-colors"
+                        className="flex items-center gap-1.5 h-btn-md px-btn-x-md text-[13px] font-medium text-white bg-primary-action hover:bg-primary-emphasize rounded-sm transition-colors"
                     >
                         <IconPlus size={16} />
                         <span>创建</span>

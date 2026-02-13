@@ -12,10 +12,13 @@ import StatusChip from '../../common/StatusChip';
 import Tag from '../../common/Tag';
 
 
+import { IconPlus } from '@tabler/icons-react';
+import CreateComponentPage from '../create/CreateComponentPage';
 import { componentData } from '../../../data/mockData';
 
 const ComponentPage = () => {
     const { setActions } = usePagePresentation();
+    const [isCreateMode, setIsCreateMode] = React.useState(false);
 
     const filterOptions = {
         types: [
@@ -47,13 +50,37 @@ const ComponentPage = () => {
         }
     ];
 
+    if (isCreateMode) {
+        return (
+            <div className="h-full bg-white">
+                <CreateComponentPage
+                    onCancel={() => setIsCreateMode(false)}
+                    onSave={(data) => {
+                        console.log('Save Component:', data);
+                        setIsCreateMode(false);
+                    }}
+                />
+            </div>
+        );
+    }
+
     return (
         <StandardBusinessLayout
             title="元件库"
             filterOptions={filterOptions}
             showFilters={false}
             showGridToolbar={false}
-            setHeaderActions={setActions}
+            setHeaderActions={(actions) => {
+                setActions(
+                    <button
+                        onClick={() => setIsCreateMode(true)}
+                        className="flex items-center gap-1.5 h-btn-md px-btn-x-md text-[13px] font-medium text-white bg-primary-action hover:bg-primary-emphasize rounded-sm transition-colors"
+                    >
+                        <IconPlus size={16} />
+                        <span>创建</span>
+                    </button>
+                );
+            }}
             columns={columns}
             data={componentData}
         />

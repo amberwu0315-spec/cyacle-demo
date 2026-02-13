@@ -1,6 +1,3 @@
-import React from 'react';
-import { cn } from '../../utils/cn'; // Assuming you have a cn utility, otherwise use template literals or classnames
-
 const MetricCard = ({
     title,
     value,

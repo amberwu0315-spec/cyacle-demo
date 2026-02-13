@@ -128,7 +128,7 @@ const NavigationPage = () => {
                                 核算任务列表
                             </h3>
                             <button className="text-xs text-[#087F9C] hover:underline flex items-center gap-1">
-                                查看全部 <IconArrowRight size={12} />
+                                查看全部 <IconArrowRight size={16} />
                             </button>
                         </div>
                         <div className="flex-1 overflow-auto">

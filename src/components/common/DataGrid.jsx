@@ -774,13 +774,13 @@ const DataGrid = ({
                         </span>
                         {sortState.key && (
                             <span className="inline-flex items-center gap-1 px-2 h-5 rounded bg-white border border-slate-200">
-                                {sortState.order === 'asc' ? <IconSortAscending size={12} /> : <IconSortDescending size={12} />}
+                                {sortState.order === 'asc' ? <IconSortAscending size={14} /> : <IconSortDescending size={14} />}
                                 排序: {columnMap[sortState.key]?.title}
                             </span>
                         )}
                         {groupBy && (
                             <span className="inline-flex items-center gap-1 px-2 h-5 rounded bg-white border border-slate-200">
-                                <IconLayersIntersect size={12} />
+                                <IconLayersIntersect size={14} />
                                 分组: {columnMap[groupBy]?.title}
                             </span>
                         )}
@@ -818,7 +818,7 @@ const DataGrid = ({
                         {columnStates.map((col, index) => (
                             <div key={col.key} className="h-8 px-2 rounded border border-slate-200 flex items-center justify-between text-xs">
                                 <div className="flex items-center gap-2 min-w-0">
-                                    <IconGripVertical size={12} className="text-slate-400 shrink-0" />
+                                    <IconGripVertical size={14} className="text-slate-400 shrink-0" />
                                     <input
                                         type="checkbox"
                                         checked={!col.hidden}
@@ -835,7 +835,7 @@ const DataGrid = ({
                                         disabled={index === 0 || col.lockPosition}
                                         className="w-5 h-5 rounded border border-slate-200 text-slate-500 disabled:opacity-40 inline-flex items-center justify-center"
                                     >
-                                        <IconArrowUp size={12} />
+                                        <IconArrowUp size={14} />
                                     </button>
                                     <button
                                         type="button"
@@ -843,7 +843,7 @@ const DataGrid = ({
                                         disabled={index === columnStates.length - 1 || col.lockPosition}
                                         className="w-5 h-5 rounded border border-slate-200 text-slate-500 disabled:opacity-40 inline-flex items-center justify-center"
                                     >
-                                        <IconArrowDown size={12} />
+                                        <IconArrowDown size={14} />
                                     </button>
                                 </div>
                             </div>
@@ -908,12 +908,12 @@ const DataGrid = ({
                                             <div className="inline-flex items-center gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
                                                 {sortState.key === col.key && (
                                                     <span className="w-4 h-4 rounded bg-white text-slate-600 inline-flex items-center justify-center border border-slate-200">
-                                                        {sortState.order === 'asc' ? <IconSortAscending size={10} /> : <IconSortDescending size={10} />}
+                                                        {sortState.order === 'asc' ? <IconSortAscending size={14} /> : <IconSortDescending size={14} />}
                                                     </span>
                                                 )}
                                                 {canFilter && currentFilter && (
                                                     <span className="w-4 h-4 rounded bg-blue-100 text-blue-600 inline-flex items-center justify-center">
-                                                        <IconFilter size={10} />
+                                                        <IconFilter size={14} />
                                                     </span>
                                                 )}
                                                 {enableColumnMenu && (
@@ -925,7 +925,7 @@ const DataGrid = ({
                                                         }}
                                                         className="w-5 h-5 rounded hover:bg-slate-200 text-slate-500 inline-flex items-center justify-center"
                                                     >
-                                                        <IconArrowsSort size={12} />
+                                                        <IconArrowsSort size={14} />
                                                     </button>
                                                 )}
                                             </div>
@@ -945,7 +945,7 @@ const DataGrid = ({
                                                         setMenuColumnKey(null);
                                                     }}
                                                 >
-                                                    <IconSortAscending size={12} />
+                                                    <IconSortAscending size={14} />
                                                     升序
                                                 </button>
                                                 <button
@@ -957,7 +957,7 @@ const DataGrid = ({
                                                         setMenuColumnKey(null);
                                                     }}
                                                 >
-                                                    <IconSortDescending size={12} />
+                                                    <IconSortDescending size={14} />
                                                     降序
                                                 </button>
                                                 <button
@@ -969,7 +969,7 @@ const DataGrid = ({
                                                         setMenuColumnKey(null);
                                                     }}
                                                 >
-                                                    <IconLayersIntersect size={12} />
+                                                    <IconLayersIntersect size={14} />
                                                     {groupBy === col.key ? '取消分组' : '按此列分组'}
                                                 </button>
                                                 {canFilter ? (
@@ -999,7 +999,7 @@ const DataGrid = ({
                                                         setMenuColumnKey(null);
                                                     }}
                                                 >
-                                                    <IconEyeOff size={12} />
+                                                    <IconEyeOff size={14} />
                                                     隐藏此列
                                                 </button>
                                                 <div className="grid grid-cols-3 gap-1">
@@ -1051,7 +1051,7 @@ const DataGrid = ({
                                                     }))}
                                                     className="inline-flex items-center gap-2 text-[12px] font-medium text-slate-600"
                                                 >
-                                                    <IconArrowsSort size={12} className={`${isCollapsed ? '' : 'rotate-90'} transition-transform`} />
+                                                    <IconArrowsSort size={14} className={`${isCollapsed ? '' : 'rotate-90'} transition-transform`} />
                                                     {bucket.groupValue}
                                                     <span className="text-slate-400">{bucket.rows.length}</span>
                                                 </button>

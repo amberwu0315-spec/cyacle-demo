@@ -204,7 +204,15 @@ export default {
                 xl: '24px',
                 xxl: '32px',
             },
+            height: {
+                'btn-sm': '24px',
+                'btn-md': '32px',
+                'btn-lg': '40px',
+            },
             padding: {
+                'btn-x-sm': '8px',
+                'btn-x-md': '12px',
+                'btn-x-lg': '20px',
                 xxs: '4px',
                 xs: '8px',
                 sm: '12px',

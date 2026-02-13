@@ -22,12 +22,33 @@ import { IconExternalLink, IconX, IconChevronLeft } from '@tabler/icons-react';
  * - businessActions: 业务功能组 (版本历史/删除/添加等)
  * - onClose: 关闭回调
  * - children: 内容区
+ * - isCreateMode: 是否为创建模式（隐藏Header）
  */
-const FooterModal = ({ title, businessActions, onClose, onCollapse, children }) => {
+const FooterModal = ({ title, businessActions, onClose, onCollapse, children, isCreateMode = false, headless = false }) => {
     const handleOpenWindow = () => {
         console.log('Open in new window:', title);
         // TODO: 实现独立窗口功能
     };
+
+    // 创建模式：移除边框和Header，让CreatePageTemplate全屏显示
+    if (isCreateMode) {
+        return (
+            <div className="absolute top-0 left-0 bottom-[40px] right-0 bg-[#F5F6F8] z-50 flex flex-col">
+                {children}
+            </div>
+        );
+    }
+
+    // Headless 模式：仅提供容器，不提供 Header
+    if (headless) {
+        return (
+            <div className="absolute top-0 left-0 bottom-[40px] right-0 bg-white/95 backdrop-blur-sm z-50 flex flex-col shadow-2xl border-2 border-[#0EA5B7] rounded-t-md overflow-hidden">
+                <div className="flex-1 overflow-y-auto bg-[#f3f6f8]">
+                    {children}
+                </div>
+            </div>
+        );
+    }
 
     return (
         // ✅ 修复点 1: border-[#087F9C] -> border-primary
@@ -51,26 +72,25 @@ const FooterModal = ({ title, businessActions, onClose, onCollapse, children }) 
                         {onCollapse && (
                             <button
                                 onClick={onCollapse}
-                                className="p-1.5 text-slate-600 hover:text-[#0EA5B7] hover:bg-white rounded transition-colors"
+                                className="p-0 w-8 h-8 flex items-center justify-center rounded text-slate-600 hover:text-[#0EA5B7] hover:bg-white transition-colors"
                                 title="收起并返回表格"
                             >
-                                <IconChevronLeft size={16} />
+                                <IconChevronLeft size={18} />
                             </button>
                         )}
                         <button
                             onClick={handleOpenWindow}
-                            // ✅ 修复点 2: hover:text-[#087F9C] -> hover:text-primary
-                            className="p-1.5 text-slate-600 hover:text-[#0EA5B7] hover:bg-white rounded transition-colors"
+                            className="p-0 w-8 h-8 flex items-center justify-center rounded text-slate-600 hover:text-[#0EA5B7] hover:bg-white transition-colors"
                             title="打开独立窗口"
                         >
-                            <IconExternalLink size={16} />
+                            <IconExternalLink size={18} />
                         </button>
                         <button
                             onClick={onClose}
-                            className="p-1.5 text-slate-600 hover:text-red-600 hover:bg-white rounded transition-colors"
+                            className="p-0 w-8 h-8 flex items-center justify-center rounded text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
                             title="关闭"
                         >
-                            <IconX size={16} />
+                            <IconX size={18} />
                         </button>
                     </div>
                 </div>
@@ -85,3 +105,4 @@ const FooterModal = ({ title, businessActions, onClose, onCollapse, children }) 
 };
 
 export default FooterModal;
+

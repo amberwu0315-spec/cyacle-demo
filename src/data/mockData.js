@@ -134,12 +134,31 @@ export const locationData = footerEnterpriseSharedData.locations;
 export const literatureFactorData = footerBackgroundSharedData.literatureFactors;
 export const basicFlowData = footerBackgroundSharedData.basicFlows;
 export const compositeFactorData = footerBackgroundSharedData.compositeFactors;
-export const literatureData = footerBackgroundSharedData.literature;
+export const documentData = footerBackgroundSharedData.literature;
 export const componentData = footerBackgroundSharedData.components;
 
 export const allocationData = [
-  { id: 1, name: '按产量分配', type: '数量分配', status: '已启用', description: '根据产品产量进行碳排放分配', method: 'Physical' },
-  { id: 2, name: '按价值分配', type: '经济分配', status: '已启用', description: '根据产品经济价值进行分配', method: 'Economic' }
+  {
+    id: 1,
+    name: '全厂产品碳排量分配',
+    type: '物理量法',
+    status: '已启用',
+    description: '本报告在涉及温室气体核算涉及不同产品碳分配的情况下采用了物理量法，即基于产量（kg）为单位进行分配的方法。空调以分段的原则将部分散逸性温室气体排放量按照产量比进行分配。',
+    method: 'Physical',
+    createdAt: '2026-02-13 10:43:53',
+    updatedAt: '2026-02-13 10:43:53',
+    formula: 'E分产品 = E总体 × (Q分产品/Q全厂)',
+    variables: [
+      { symbol: 'E分产品', type: '-', description: '本报告所指某产品的温室气体排放量' },
+      { symbol: 'E总体', type: '-', description: '所有产品的温室气体排放量' },
+      { symbol: 'Q分产品', type: '特定性质', description: '本报告所指某产品的总的产量' },
+      { symbol: 'Q全厂', type: '全部性质', description: '所有产品的总产量' }
+    ],
+    applications: [
+      { name: '如村', certificationStatus: '确定合格', period: '2024年', ratio: 'Q如村/Q全厂', result: '-' },
+      { name: '示例门窗', certificationStatus: '确定合格', period: '2024年', ratio: 'Q示例/Q全厂', result: '-' }
+    ]
+  }
 ];
 
 export const commonOptions = {

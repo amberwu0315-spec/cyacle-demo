@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { IconX } from '@tabler/icons-react';
+import Button from './Button';
 
 export default function Drawer({ isOpen, onClose, title, children }) {
     // Close on escape
@@ -26,12 +27,13 @@ export default function Drawer({ isOpen, onClose, title, children }) {
                 {/* Header */}
                 <div className="h-[46px] flex items-center justify-between px-4 border-b border-gray-200 shrink-0 bg-white">
                     <h3 className="font-bold text-gray-700">{title}</h3>
-                    <button
+                    <Button
+                        variant="ghost"
+                        size="md"
                         onClick={onClose}
-                        className="p-1 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
-                    >
-                        <IconX size={18} />
-                    </button>
+                        className="p-0 w-8 h-8 rounded-md text-gray-400 hover:text-gray-700 hover:bg-gray-100"
+                        icon={IconX}
+                    />
                 </div>
 
                 {/* Content */}

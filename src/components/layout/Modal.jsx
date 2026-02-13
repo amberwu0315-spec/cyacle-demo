@@ -9,6 +9,7 @@ import CompositeFactorFooter from '../footer/CompositeFactorFooter';
 import LiteratureFooter from '../footer/LiteratureFooter';
 import ComponentFooter from '../footer/ComponentFooter';
 import LocationFooter from '../footer/LocationFooter';
+import DocumentFooter from '../footer/DocumentFooter';
 
 /**
  * Modal 组件
@@ -30,8 +31,8 @@ export default function Modal({ isOpen, onClose, title }) {
             case '数据源':
                 return <DataSourceFooter onClose={onClose} />;
             case '文档':
-                // 文档对应文献
-                return <LiteratureFooter onClose={onClose} />;
+                // 文档 -> DocumentFooter
+                return <DocumentFooter onClose={onClose} />;
             case '地点':
                 return <LocationFooter onClose={onClose} />;
             case '文献因子':

@@ -114,7 +114,7 @@ export default function L1Sidebar() {
                                                 }}
                                                 className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-[1px] opacity-0 group-hover:opacity-100 transition-opacity shadow-sm hover:scale-110"
                                             >
-                                                <IconX size={10} stroke={3} />
+                                                <IconX size={14} stroke={2.5} />
                                             </button>
                                         </div>
                                     </Tooltip>

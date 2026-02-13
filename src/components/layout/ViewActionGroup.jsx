@@ -9,6 +9,7 @@
 import React from 'react';
 import { IconChevronLeft, IconChevronRight, IconExternalLink } from '@tabler/icons-react';
 import Tooltip from '../common/Tooltip';
+import Button from '../common/Button';
 
 const ViewActionGroup = ({
     showDivider = true,
@@ -36,13 +37,14 @@ const ViewActionGroup = ({
             {/* Button Group (View功能组) */}
             <div className="flex items-center gap-1">
                 <Tooltip content={canBack ? "后退 (Back)" : "无上一步记录 (No History)"}>
-                    {/* Wrap enabled/disabled button */}
                     <button
                         onClick={handleBack}
                         disabled={!canBack}
-                        className="p-1.5 text-slate-500 hover:text-[#0EA5B7] hover:bg-[#e6f7fa] rounded-md transition-colors disabled:opacity-30 disabled:cursor-not-allowed block"
+                        className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors 
+                            ${!canBack ? 'text-slate-300 cursor-not-allowed' : 'text-slate-500 hover:text-primary-action hover:bg-cyan-50'}
+                        `}
                     >
-                        <IconChevronLeft size={18} />
+                        <IconChevronLeft size={20} stroke={1.5} />
                     </button>
                 </Tooltip>
 
@@ -50,18 +52,20 @@ const ViewActionGroup = ({
                     <button
                         onClick={handleForward}
                         disabled={!canForward}
-                        className="p-1.5 text-slate-500 hover:text-[#0EA5B7] hover:bg-[#e6f7fa] rounded-md transition-colors disabled:opacity-30 disabled:cursor-not-allowed block"
+                        className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors 
+                            ${!canForward ? 'text-slate-300 cursor-not-allowed' : 'text-slate-500 hover:text-primary-action hover:bg-cyan-50'}
+                        `}
                     >
-                        <IconChevronRight size={18} />
+                        <IconChevronRight size={20} stroke={1.5} />
                     </button>
                 </Tooltip>
 
                 <Tooltip content="在新窗口打开">
                     <button
                         onClick={handleOpenWindow}
-                        className="p-1.5 text-slate-500 hover:text-[#0EA5B7] hover:bg-[#e6f7fa] rounded-md transition-colors block"
+                        className="w-8 h-8 flex items-center justify-center rounded-md text-slate-500 hover:text-primary-action hover:bg-cyan-50 transition-colors"
                     >
-                        <IconExternalLink size={18} />
+                        <IconExternalLink size={20} stroke={1.5} />
                     </button>
                 </Tooltip>
             </div>

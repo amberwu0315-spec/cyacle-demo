@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { IconChevronDown, IconChevronRight } from '@tabler/icons-react';
+import Button from './Button';
 
 // Reusable Content Module Wrapper (Component D)
 // Principle: "外圆内方、高度自适、状态显性、间距统一"
@@ -136,9 +137,12 @@ export const ModuleHeader = ({
             {/* Zone L: Title Variants + Toggle */}
             <div className={`flex items-center gap-2 ${isAccordion ? 'cursor-pointer' : ''}`} onClick={isAccordion ? onToggle : undefined}>
                 {isAccordion && (
-                    <button className="text-gray-400 hover:text-gray-600 transition-colors">
-                        {isOpen ? <IconChevronDown size={18} /> : <IconChevronRight size={18} />}
-                    </button>
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-gray-400 hover:text-gray-600 p-0 h-auto"
+                        icon={isOpen ? IconChevronDown : IconChevronRight}
+                    />
                 )}
 
                 {Icon && <Icon className="text-gray-500" size={18} />}

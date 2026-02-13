@@ -73,7 +73,7 @@ const StandardBusinessLayout = ({
     useEffect(() => {
         if (setHeaderActions) {
             setHeaderActions(
-                <button className="qy-btn-primary text-sm px-4">
+                <button className="flex items-center gap-1.5 h-btn-md px-btn-x-md text-[13px] font-medium text-white bg-primary-action hover:bg-primary-emphasize rounded-sm transition-colors">
                     <IconPlus size={16} />
                     <span>创建</span>
                 </button>

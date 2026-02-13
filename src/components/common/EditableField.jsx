@@ -327,7 +327,7 @@ const EditableField = ({
                                 className="flex items-center gap-1 px-2 h-6 bg-white border border-slate-200 text-xs text-slate-600 hover:text-[#0EA5B7] hover:border-[#0EA5B7] rounded-md shadow-sm transition-all whitespace-nowrap"
                                 title="编辑"
                             >
-                                <IconPencil size={12} />
+                                <IconPencil size={14} />
                                 <span>编辑</span>
                             </button>
                         </div>

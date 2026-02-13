@@ -8,6 +8,7 @@
  */
 import React, { useEffect } from 'react';
 import { IconX } from '@tabler/icons-react';
+import Button from './Button';
 
 export default function CenterModal({ isOpen, onClose, title, children, footer }) {
     if (!isOpen) return null;
@@ -25,12 +26,13 @@ export default function CenterModal({ isOpen, onClose, title, children, footer }
                 {/* Header */}
                 <div className="w-full h-12 flex items-center justify-between px-4 border-b border-gray-100">
                     <h3 className="font-semibold text-gray-800">{title}</h3>
-                    <button
+                    <Button
+                        variant="ghost"
+                        size="md"
                         onClick={onClose}
-                        className="p-1 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-50 transition-colors"
-                    >
-                        <IconX size={18} />
-                    </button>
+                        className="p-0 w-8 h-8 rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-50"
+                        icon={IconX}
+                    />
                 </div>
 
                 {/* Body */}

@@ -8,10 +8,12 @@
 import React from 'react';
 import StandardBusinessLayout from '../StandardBusinessLayout';
 import { usePagePresentation } from '../../../context/PagePresentationContext';
-import { compositeFactorData } from '../../../data/mockData';
+import { IconPlus } from '@tabler/icons-react';
+import CreateCompositeFactorPage from '../create/CreateCompositeFactorPage';
 
 const CompositeFactorPage = () => {
     const { setActions } = usePagePresentation();
+    const [isCreateMode, setIsCreateMode] = React.useState(false);
 
     const filterOptions = {
         types: [
@@ -35,13 +37,37 @@ const CompositeFactorPage = () => {
         { title: '技术', key: 'tech', width: '10%', className: 'text-sm text-gray-500' }
     ];
 
+    if (isCreateMode) {
+        return (
+            <div className="h-full bg-white">
+                <CreateCompositeFactorPage
+                    onCancel={() => setIsCreateMode(false)}
+                    onSave={(data) => {
+                        console.log('Save Composite Factor:', data);
+                        setIsCreateMode(false);
+                    }}
+                />
+            </div>
+        );
+    }
+
     return (
         <StandardBusinessLayout
             title="复合因子"
             filterOptions={filterOptions}
             showFilters={false}
             showGridToolbar={false}
-            setHeaderActions={setActions}
+            setHeaderActions={(actions) => {
+                setActions(
+                    <button
+                        onClick={() => setIsCreateMode(true)}
+                        className="flex items-center gap-1.5 h-btn-md px-btn-x-md text-[13px] font-medium text-white bg-primary-action hover:bg-primary-emphasize rounded-sm transition-colors"
+                    >
+                        <IconPlus size={16} />
+                        <span>创建</span>
+                    </button>
+                );
+            }}
             columns={columns}
             data={compositeFactorData}
         />

@@ -5,6 +5,7 @@ import {
     IconShare, IconStack2, IconCpu, IconFlask, IconActivity, IconBook, IconWorld
 } from '@tabler/icons-react';
 import Tooltip from '../common/Tooltip';
+import Button from '../common/Button';
 
 export default function L2Sidebar({ activeL2, onSelect, activeL1, enterpriseName = '演示门窗有限公司', isDetailView = false }) {
     const [isCollapsed, setIsCollapsed] = useState(false);
@@ -174,13 +175,14 @@ export default function L2Sidebar({ activeL2, onSelect, activeL1, enterpriseName
                             <div className="space-y-1 flex flex-col items-center">
                                 {group.items.map(item => {
                                     const isActive = activeL2 === item.id;
+                                    // Strategy: Keep semantic button for complex layout, but enforce strict sizing
                                     const ButtonContent = (
                                         <button
                                             key={item.id}
                                             onClick={() => onSelect(item.id)}
                                             className={`
                                                 relative flex items-center text-left rounded-md transition-all duration-200 group
-                                                ${isCollapsed ? 'justify-center w-10 h-10 p-0' : 'w-full p-2 items-start'}
+                                                ${isCollapsed ? 'justify-center w-10 h-10 p-0' : 'w-full px-2 h-btn-lg items-start py-2'}
                                                 ${isActive ? 'bg-[#e6f7fa] border border-[#bde8ef] shadow-sm' : 'hover:bg-white border border-transparent'}
                                             `}
                                         >
@@ -218,12 +220,13 @@ export default function L2Sidebar({ activeL2, onSelect, activeL1, enterpriseName
 
                 {/* Footer Toggle */}
                 <div className="p-2 border-t border-slate-200 flex justify-center">
-                    <button
+                    <Button
+                        variant="ghost"
+                        size="md"
                         onClick={() => setIsCollapsed(!isCollapsed)}
-                        className="w-8 h-8 rounded-full bg-white hover:bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-500 hover:text-[#0EA5B7] transition-colors"
-                    >
-                        {isCollapsed ? <IconChevronRight size={16} /> : <IconChevronLeft size={16} />}
-                    </button>
+                        className="rounded-full w-8 h-8 p-0 border border-slate-200 text-slate-500 hover:text-primary-action"
+                        icon={isCollapsed ? IconChevronRight : IconChevronLeft}
+                    />
                 </div>
             </div>
         );

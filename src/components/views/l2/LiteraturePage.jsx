@@ -8,10 +8,12 @@
 import React from 'react';
 import StandardBusinessLayout from '../StandardBusinessLayout';
 import { usePagePresentation } from '../../../context/PagePresentationContext';
-import { literatureData } from '../../../data/mockData';
+import { IconPlus } from '@tabler/icons-react';
+import CreateLiteraturePage from '../create/CreateLiteraturePage';
 
 const LiteraturePage = () => {
     const { setActions } = usePagePresentation();
+    const [isCreateMode, setIsCreateMode] = React.useState(false);
 
     const filterOptions = {
         types: [
@@ -34,15 +36,39 @@ const LiteraturePage = () => {
         { title: '创建用户', key: 'creator', width: '8%', className: 'text-sm text-gray-500' }
     ];
 
+    if (isCreateMode) {
+        return (
+            <div className="h-full bg-white">
+                <CreateLiteraturePage
+                    onCancel={() => setIsCreateMode(false)}
+                    onSave={(data) => {
+                        console.log('Save Literature:', data);
+                        setIsCreateMode(false);
+                    }}
+                />
+            </div>
+        );
+    }
+
     return (
         <StandardBusinessLayout
             title="文献"
             filterOptions={filterOptions}
             showFilters={false}
             showGridToolbar={false}
-            setHeaderActions={setActions}
+            setHeaderActions={(actions) => {
+                setActions(
+                    <button
+                        onClick={() => setIsCreateMode(true)}
+                        className="flex items-center gap-1.5 h-btn-md px-btn-x-md text-[13px] font-medium text-white bg-primary-action hover:bg-primary-emphasize rounded-sm transition-colors"
+                    >
+                        <IconPlus size={16} />
+                        <span>创建</span>
+                    </button>
+                );
+            }}
             columns={columns}
-            data={literatureData}
+            data={documentData}
         />
     );
 };

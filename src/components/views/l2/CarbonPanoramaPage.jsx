@@ -298,7 +298,7 @@ const CarbonPanoramaPage = () => {
                         </div>
                         <div className="px-4 py-3 border-t border-slate-100 text-right">
                             <button className="text-xs text-slate-500 inline-flex items-center gap-1 hover:text-[#0B7285]">
-                                查看全部 <ChevronRight size={12} />
+                                查看全部 <ChevronRight size={16} />
                             </button>
                         </div>
                     </ContentModule>
@@ -332,7 +332,7 @@ const CarbonPanoramaPage = () => {
                         </div>
                         <div className="px-4 py-3 border-t border-slate-100 text-right">
                             <button className="text-xs text-slate-500 inline-flex items-center gap-1 hover:text-[#0B7285]">
-                                查看全部 <ChevronRight size={12} />
+                                查看全部 <ChevronRight size={16} />
                             </button>
                         </div>
                     </ContentModule>
