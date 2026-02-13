@@ -49,17 +49,8 @@ const LocationPage = () => {
             filterOptions={filterOptions}
             showFilters={false}
             showGridToolbar={false}
-            setHeaderActions={(actions) => {
-                setActions(
-                    <button
-                        onClick={() => setIsCreateMode(true)}
-                        className="flex items-center gap-1.5 h-btn-md px-btn-x-md text-[13px] font-medium text-white bg-primary-action hover:bg-primary-emphasize rounded-sm transition-colors"
-                    >
-                        <IconPlus size={16} />
-                        <span>创建</span>
-                    </button>
-                );
-            }}
+            setHeaderActions={setActions}
+            onCreate={() => setIsCreateMode(true)}
             columns={columns}
             data={locationData}
         />

@@ -8,6 +8,7 @@ import CreatePageTemplate from '../../layout/templates/CreatePageTemplate';
 import { ContentModule, ModuleHeader } from '../../common/ContentModule';
 import FormBlock from '../../common/FormBlock';
 import EditableField from '../../common/EditableField';
+import { usePagePresentation } from '../../../context/PagePresentationContext';
 
 const CreateComponentPage = ({ onSave, onCancel }) => {
     const [formData, setFormData] = useState({
@@ -17,6 +18,14 @@ const CreateComponentPage = ({ onSave, onCancel }) => {
         supplier: '',
         model: ''
     });
+
+    const { setShowHeader } = usePagePresentation();
+
+    // 隐藏系统 Header
+    React.useEffect(() => {
+        setShowHeader(false);
+        return () => setShowHeader(true);
+    }, [setShowHeader]);
 
     //验证：名称和类型必填
     const isValid = Boolean(formData.name && formData.type);

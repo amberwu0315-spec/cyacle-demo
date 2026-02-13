@@ -191,6 +191,50 @@ export const NAV_SCHEME = {
             config: { headerWidgets: ['title', 'business_actions'], sidebarGroups: [] },
             version: { headerWidgets: ['title'], sidebarGroups: [] }
         }
+    },
+
+    // ==================== Service Enterprise L2 Modules ====================
+    // Basic Info (Create/Edit View) - Double Column
+    ent_info: {
+        modes: {
+            config: { headerWidgets: [], sidebarGroups: [] }, // Hide Top Header
+            version: { headerWidgets: [], sidebarGroups: [] }
+        }
+    },
+    // Products - Standard Layout
+    ent_products: {
+        modes: {
+            config: { headerWidgets: ['title', 'business_actions'], sidebarGroups: [] },
+            version: { headerWidgets: ['title'], sidebarGroups: [] }
+        }
+    },
+    // Locations - Standard Layout
+    ent_locations: {
+        modes: {
+            config: { headerWidgets: ['title', 'business_actions'], sidebarGroups: [] },
+            version: { headerWidgets: ['title'], sidebarGroups: [] }
+        }
+    },
+    // Data - Standard Layout
+    ent_data: {
+        modes: {
+            config: { headerWidgets: ['title', 'business_actions'], sidebarGroups: [] },
+            version: { headerWidgets: ['title'], sidebarGroups: [] }
+        }
+    },
+    // Data Sources - Standard Layout
+    ent_datasources: {
+        modes: {
+            config: { headerWidgets: ['title', 'business_actions'], sidebarGroups: [] },
+            version: { headerWidgets: ['title'], sidebarGroups: [] }
+        }
+    },
+    // Documents - Double Column (MasterDetail)
+    ent_docs: {
+        modes: {
+            config: { headerWidgets: [], sidebarGroups: [] }, // Hide Top Header
+            version: { headerWidgets: [], sidebarGroups: [] }
+        }
     }
 };
 

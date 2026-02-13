@@ -7,6 +7,7 @@
  * 2. 也是 CanvasPage 的一种具体实现。
  */
 import React, { useState, useEffect, useMemo } from 'react';
+import { usePagePresentation } from '../../context/PagePresentationContext';
 import { IconPlus, IconFilter, IconSearch } from '@tabler/icons-react';
 import { CanvasPage } from '../layout/PageLayouts';
 import DataGrid from '../common/DataGrid';
@@ -28,6 +29,7 @@ const StandardBusinessLayout = ({
     showFilters = true,
     showGridToolbar = true,
     setHeaderActions,
+    onCreate,
     defaultFilterType = 'all',
     onRowClick,
     columns,
@@ -64,27 +66,43 @@ const StandardBusinessLayout = ({
         });
     }, [safeData, filterType, filterStatus, searchQuery]);
 
-    // Update filterType when defaultFilterType changes (e.g. switching sidebar items)
+    const { setShowHeader } = usePagePresentation(); // Only using setShowHeader now
+
+    // Update filterType when defaultFilterType changes
     useEffect(() => {
         setFilterType(defaultFilterType);
     }, [defaultFilterType]);
 
-    // 设置Header的创建按钮
+    // 🔴 Hide System Header (User Requirement)
+    // 🔴 Also resolves 'Maximum update depth exceeded' by removing setHeaderActions loop
     useEffect(() => {
-        if (setHeaderActions) {
-            setHeaderActions(
-                <button className="flex items-center gap-1.5 h-btn-md px-btn-x-md text-[13px] font-medium text-white bg-primary-action hover:bg-primary-emphasize rounded-sm transition-colors">
-                    <IconPlus size={16} />
-                    <span>创建</span>
-                </button>
-            );
+        if (setShowHeader) {
+            setShowHeader(false);
         }
         return () => {
-            if (setHeaderActions) {
-                setHeaderActions(null);
+            if (setShowHeader) {
+                setShowHeader(true);
             }
         };
-    }, [setHeaderActions]);
+    }, [setShowHeader]);
+
+    // 🟢 Render Local Header (Title + Create Button)
+    const renderLocalHeader = () => {
+        return (
+            <div className="flex items-center justify-between mb-4 shrink-0">
+                <h1 className="text-lg font-bold text-gray-800">{title}</h1>
+                {onCreate && (
+                    <button
+                        onClick={onCreate}
+                        className="flex items-center gap-1.5 h-btn-md px-btn-x-md text-[13px] font-medium text-white bg-primary-action hover:bg-primary-emphasize rounded-sm transition-colors"
+                    >
+                        <IconPlus size={16} />
+                        <span>创建</span>
+                    </button>
+                )}
+            </div>
+        );
+    };
 
     // 渲染搜索栏
     const renderSearchBar = () => {
@@ -191,7 +209,10 @@ const StandardBusinessLayout = ({
     };
 
     return (
-        <CanvasPage className="p-3 bg-[#F5F6F8]">
+        <CanvasPage className="p-4 bg-[#F5F6F8] flex flex-col h-full overflow-hidden">
+            {/* Local Header */}
+            {renderLocalHeader()}
+
             {/* 搜索栏 */}
             {renderSearchBar()}
 
