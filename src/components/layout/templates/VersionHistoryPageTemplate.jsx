@@ -17,9 +17,10 @@
  * - 版本对比（Diff）逻辑由具体页面实现
  * - 可能需要支持单版本查看 vs 双版本对比两种模式
  */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { IconRestore, IconGitCompare } from '@tabler/icons-react';
 import DoubleColumnBase from '../DoubleColumnBase';
+import { usePagePresentation } from '../../../context/PagePresentationContext';
 
 export const VersionHistoryPageTemplate = ({
     // ========== 插槽 ==========
@@ -38,6 +39,21 @@ export const VersionHistoryPageTemplate = ({
     entityType = "项目",              // 实体类型
 
 }) => {
+
+    // 获取页面表现上下文
+    const { setShowHeader } = usePagePresentation() || {};
+
+    // 通用规则：双栏布局自动隐藏顶部系统标题栏
+    useEffect(() => {
+        if (setShowHeader) {
+            setShowHeader(false);
+        }
+        return () => {
+            if (setShowHeader) {
+                setShowHeader(true);
+            }
+        };
+    }, [setShowHeader]);
 
     // ========== 左栏Header ==========
     const leftHeaderContent = (

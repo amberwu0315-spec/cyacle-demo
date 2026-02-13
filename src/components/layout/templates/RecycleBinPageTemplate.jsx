@@ -17,9 +17,10 @@
  * - 主按钮应该是"恢复"（主题色），次要按钮是"永久删除"（灰色）
  * - 心理定位：安全网、保险箱，而非垃圾桶
  */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { IconRestore, IconTrash } from '@tabler/icons-react';
 import DoubleColumnBase from '../DoubleColumnBase';
+import { usePagePresentation } from '../../../context/PagePresentationContext';
 
 export const RecycleBinPageTemplate = ({
     // ========== 插槽 ==========
@@ -37,6 +38,21 @@ export const RecycleBinPageTemplate = ({
     entityType = "项目",              // 实体类型
 
 }) => {
+
+    // 获取页面表现上下文
+    const { setShowHeader } = usePagePresentation() || {};
+
+    // 通用规则：双栏布局自动隐藏顶部系统标题栏
+    useEffect(() => {
+        if (setShowHeader) {
+            setShowHeader(false);
+        }
+        return () => {
+            if (setShowHeader) {
+                setShowHeader(true);
+            }
+        };
+    }, [setShowHeader]);
 
     // ========== 左栏Header ==========
     const leftHeaderContent = (

@@ -17,8 +17,9 @@
  * - 与 MasterDetailPageTemplate 的区别：左侧不是用来切换主体数据的
  * - 焦点在单一数据的深度查看，左侧仅作辅助
  */
-import React from 'react';
+import React, { useEffect } from 'react';
 import DoubleColumnBase from '../DoubleColumnBase';
+import { usePagePresentation } from '../../../context/PagePresentationContext';
 
 export const DetailPageTemplate = ({
     // ========== 实体配置 ==========
@@ -40,6 +41,21 @@ export const DetailPageTemplate = ({
     leftHeaderTitle = "导航",         // 左侧Header标题
 
 }) => {
+
+    // 获取页面表现上下文
+    const { setShowHeader } = usePagePresentation() || {};
+
+    // 通用规则：双栏布局自动隐藏顶部系统标题栏
+    useEffect(() => {
+        if (setShowHeader) {
+            setShowHeader(false);
+        }
+        return () => {
+            if (setShowHeader) {
+                setShowHeader(true);
+            }
+        };
+    }, [setShowHeader]);
 
     // ========== 左栏Header ==========
     const leftHeaderContent = showLeftHeader ? (

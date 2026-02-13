@@ -17,9 +17,10 @@
  * - 此为基础骨架模板，具体编辑逻辑由使用者实现
  * - 与 CreatePageTemplate 的区别：表单预填充、标题固定、显示变更状态
  */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { IconLogout, IconDeviceFloppy } from '@tabler/icons-react';
 import DoubleColumnBase from '../DoubleColumnBase';
+import { usePagePresentation } from '../../../context/PagePresentationContext';
 
 export const EditPageTemplate = ({
     // ========== 实体配置 ==========
@@ -45,6 +46,21 @@ export const EditPageTemplate = ({
     showLeftHeader = true,            // 是否显示左侧Header
 
 }) => {
+
+    // 获取页面表现上下文
+    const { setShowHeader } = usePagePresentation() || {};
+
+    // 通用规则：双栏布局自动隐藏顶部系统标题栏
+    useEffect(() => {
+        if (setShowHeader) {
+            setShowHeader(false);
+        }
+        return () => {
+            if (setShowHeader) {
+                setShowHeader(true);
+            }
+        };
+    }, [setShowHeader]);
 
     // ========== 左栏Header ==========
     const leftHeaderContent = showLeftHeader ? (
@@ -98,8 +114,8 @@ export const EditPageTemplate = ({
                     onClick={onSave}
                     disabled={!isValid || !hasChanges}
                     className={`px-3 py-1.5 text-xs text-white rounded-md transition-colors flex items-center gap-1 ${isValid && hasChanges
-                            ? 'bg-[#087F9C] hover:bg-[#076A82]'
-                            : 'bg-gray-400 cursor-not-allowed'
+                        ? 'bg-[#087F9C] hover:bg-[#076A82]'
+                        : 'bg-gray-400 cursor-not-allowed'
                         }`}
                 >
                     <IconDeviceFloppy size={14} />

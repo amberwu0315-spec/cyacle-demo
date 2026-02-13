@@ -13,9 +13,10 @@
  * - 报告列表
  * - 文件管理器
  */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { IconPlus, IconBox } from '@tabler/icons-react';
 import DoubleColumnBase from '../DoubleColumnBase';
+import { usePagePresentation } from '../../../context/PagePresentationContext';
 
 export const MasterDetailPageTemplate = ({
     // ========== 列表配置 ==========
@@ -45,6 +46,21 @@ export const MasterDetailPageTemplate = ({
 
     // 获取当前选中的数据项
     const selectedItem = listData.find(item => item.id === selectedId);
+
+    // 获取页面表现上下文
+    const { setShowHeader } = usePagePresentation() || {};
+
+    // 通用规则：双栏布局（主从页）自动隐藏顶部系统标题栏
+    useEffect(() => {
+        if (setShowHeader) {
+            setShowHeader(false);
+        }
+        return () => {
+            if (setShowHeader) {
+                setShowHeader(true);
+            }
+        };
+    }, [setShowHeader]);
 
     // ========== 左栏Header ==========
     const leftHeaderContent = listHeaderSlot || (

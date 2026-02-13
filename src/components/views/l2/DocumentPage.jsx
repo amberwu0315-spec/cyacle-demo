@@ -9,14 +9,12 @@
  */
 import React, { useState, useEffect } from 'react';
 import { IconSearch, IconFileText, IconCalendar, IconUser, IconBuilding, IconExternalLink, IconX } from '@tabler/icons-react';
-import { usePagePresentation } from '../../../context/PagePresentationContext';
 import { documentData } from '../../../data/mockData';
 import { ContentModule, ModuleHeader } from '../../common/ContentModule';
 import MasterDetailPageTemplate from '../../layout/templates/MasterDetailPageTemplate';
 import CreateLiteraturePage from '../create/CreateLiteraturePage';
 
 const DocumentPage = ({ onClose, showAddButton = true }) => {
-    const { setActions, setShowHeader } = usePagePresentation();
     // 状态管理
     const [selectedId, setSelectedId] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
@@ -34,17 +32,7 @@ const DocumentPage = ({ onClose, showAddButton = true }) => {
     // 获取当前选中的数据
     const selectedItem = documentData.find(item => item.id === selectedId);
 
-    // 隐藏系统 Header
-    useEffect(() => {
-        if (setShowHeader) {
-            setShowHeader(false);
-        }
-        return () => {
-            if (setShowHeader) {
-                setShowHeader(true);
-            }
-        };
-    }, [setShowHeader]);
+
 
     // 过滤数据
     const filteredData = documentData.filter(item =>

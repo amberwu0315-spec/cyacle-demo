@@ -13,9 +13,10 @@
  * - 创建分配方案
  * - 创建活动数据记录
  */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { IconLogout, IconDeviceFloppy } from '@tabler/icons-react';
 import DoubleColumnBase from '../DoubleColumnBase';
+import { usePagePresentation } from '../../../context/PagePresentationContext';
 
 export const CreatePageTemplate = ({
     // ========== 实体配置 ==========
@@ -45,6 +46,21 @@ export const CreatePageTemplate = ({
 
     // 默认保存按钮文案
     const finalSaveButtonText = saveButtonText || `创建${entityType}`;
+
+    // 获取页面表现上下文
+    const { setShowHeader } = usePagePresentation() || {};
+
+    // 通用规则：双栏布局（创建页）自动隐藏顶部系统标题栏
+    useEffect(() => {
+        if (setShowHeader) {
+            setShowHeader(false);
+        }
+        return () => {
+            if (setShowHeader) {
+                setShowHeader(true);
+            }
+        };
+    }, [setShowHeader]);
 
     // ========== 左栏Header ==========
     const leftHeaderContent = showLeftHeader ? (
@@ -107,8 +123,8 @@ export const CreatePageTemplate = ({
                     onClick={onSave}
                     disabled={!isValid}
                     className={`px-3 py-1.5 text-xs text-white rounded-md transition-colors flex items-center gap-1 ${isValid
-                            ? 'bg-[#087F9C] hover:bg-[#076A82]'
-                            : 'bg-gray-400 cursor-not-allowed'
+                        ? 'bg-[#087F9C] hover:bg-[#076A82]'
+                        : 'bg-gray-400 cursor-not-allowed'
                         }`}
                 >
                     <IconDeviceFloppy size={14} />
