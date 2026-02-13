@@ -18,6 +18,9 @@ import CompositeFactorPage from './l2/CompositeFactorPage';
 import LiteratureFactorPage from './l2/LiteratureFactorPage';
 import LiteraturePage from './l2/LiteraturePage';
 import DatabaseManagementPage from './l2/DatabaseManagementPage';
+import DataSourcePage from './l2/DataSourcePage';
+import ProductPage from './l2/ProductPage';
+import DataPage from './l2/DataPage';
 import CreateProjectPage from './l2/CreateProjectPage';
 import CreateResearchObjectPage from './l2/CreateResearchObjectPage';
 import { usePagePresentation } from '../../context/PagePresentationContext';
@@ -245,6 +248,15 @@ export default function BusinessContent({ activeL1, target, onOpenTab, openedTab
         // ==================== Background Data ====================
         case 'database_mgmt':
             return <DatabaseManagementPage />;
+
+        case 'datasource':
+            return <DataSourcePage />;
+
+        case 'product':
+            return <ProductPage />;
+
+        case 'data':
+            return <DataPage />;
 
         case 'components':
             return <ComponentPage />;
