@@ -103,7 +103,7 @@ const AccountingPage = ({ activeL3, onL3Change }) => {
     const renderL3Content = () => {
         switch (activeL3) {
             case 'acct_basic': return <AccountingBasic />;
-            case 'acct_model_config': return <AccountingModelConfig />;
+            case 'acct_model_config': return <AccountingModelConfig menuMode="config" />;
             case 'acct_calc': return <ComingSoon title="计算与分析" />;
             case 'acct_tools': return <ComingSoon title="分析工具" />;
             case 'acct_pers_activity': return <ActivityDataView />;
@@ -114,7 +114,7 @@ const AccountingPage = ({ activeL3, onL3Change }) => {
             case 'rpt_sheet': return <ComingSoon title="计算表" />;
             case 'app_cpcd': return <ComingSoon title="CPCD信息" />;
             case 'cmp_list': return <ComingSoon title="对比核算列表" />;
-            case 'cmp_config': return <ComingSoon title="对比配置调整" />;
+            case 'cmp_config': return <AccountingModelConfig menuMode="compare" />;
             case 'cmp_detail': return <ComingSoon title="对比标识详情" />;
             case 'cmp_result': return <ComingSoon title="对比分析结果" />;
             default: return <AccountingBasic />;

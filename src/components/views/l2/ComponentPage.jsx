@@ -6,20 +6,13 @@
  * 1. 它是连接基础流和完整产品的中间层。
  */
 import React from 'react';
-import StandardBusinessLayout from '../StandardBusinessLayout';
-import { usePagePresentation } from '../../../context/PagePresentationContext';
 import StatusChip from '../../common/StatusChip';
 import Tag from '../../common/Tag';
-
-
-import { IconPlus } from '@tabler/icons-react';
 import CreateComponentPage from '../create/CreateComponentPage';
 import { componentData } from '../../../data/mockData';
+import EntityModulePage from '../shared/EntityModulePage';
 
 const ComponentPage = () => {
-    const { setActions } = usePagePresentation();
-    const [isCreateMode, setIsCreateMode] = React.useState(false);
-
     const filterOptions = {
         types: [
             { value: 'mechanical', label: '机械元件' },
@@ -50,28 +43,14 @@ const ComponentPage = () => {
         }
     ];
 
-    if (isCreateMode) {
-        return (
-            <div className="h-full bg-white">
-                <CreateComponentPage
-                    onCancel={() => setIsCreateMode(false)}
-                    onSave={(data) => {
-                        console.log('Save Component:', data);
-                        setIsCreateMode(false);
-                    }}
-                />
-            </div>
-        );
-    }
-
     return (
-        <StandardBusinessLayout
+        <EntityModulePage
             title="元件库"
             filterOptions={filterOptions}
-            showFilters={false}
-            showGridToolbar={false}
-            setHeaderActions={setActions}
-            onCreate={() => setIsCreateMode(true)}
+            createComponent={CreateComponentPage}
+            onCreateSaved={(data) => {
+                console.log('Save Component:', data);
+            }}
             columns={columns}
             data={componentData}
         />

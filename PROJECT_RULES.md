@@ -24,3 +24,15 @@
 *   全站状态展示统一使用 `StatusChip`（`src/components/common/StatusChip.jsx`），禁止页面内再写一套临时状态 badge。
 *   状态视觉映射统一走 `qy-status-chip` 及其语义变体（`success / processing / warning / danger / neutral`）。
 *   非状态型标签（如交易类型）统一使用 `qy-type-chip`，保持字重、圆角、边框风格一致。
+
+## 5. 规则与验收资产（必须持续维护）
+*   交互规则的单一真相文件：`docs/qa/interaction-rules.md`。
+*   验收清单文件：`docs/qa/acceptance-checklist.md`。
+*   测试用例模板文件：`docs/qa/test-cases-template.md`。
+*   测试用例目录：`docs/qa/test-cases/`。
+*   页面台账文件：`docs/qa/page-inventory-55.md`。
+*   阶段复盘文件：`docs/qa/stage-review-log.md`。
+*   每次功能开发后，至少更新：
+    - 对应页面在 `page-inventory-55.md` 的状态与备注。
+    - 对应模块在 `acceptance-checklist.md` 的通过结果。
+*   每个阶段结束（例如 Day 1 / Day 2 / Day 3）必须追加一次 `stage-review-log.md` 记录。

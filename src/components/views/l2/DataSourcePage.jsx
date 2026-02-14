@@ -4,16 +4,14 @@
  * 🏢 角色：数据源登记
  * 📝 职责：管理数据的来源设备或系统（如电表、ERP系统）。
  */
-import React, { useState } from 'react';
-import StandardBusinessLayout from '../StandardBusinessLayout';
-import { usePagePresentation } from '../../../context/PagePresentationContext';
-import { IconPlus } from '@tabler/icons-react';
+import React from 'react';
 import { dataSourceData } from '../../../data/mockData';
 import CreateDataSourcePage from '../create/CreateDataSourcePage';
+import { useNotification } from '../../../context/NotificationContext';
+import EntityModulePage from '../shared/EntityModulePage';
 
 const DataSourcePage = () => {
-    const { setActions } = usePagePresentation();
-    const [isCreateMode, setIsCreateMode] = useState(false);
+    const { addNotification } = useNotification();
 
     const filterOptions = {
         types: [],
@@ -30,28 +28,14 @@ const DataSourcePage = () => {
         { title: '更新时间', key: 'updatedAt', width: '15%', className: 'text-sm text-gray-500' }
     ];
 
-    if (isCreateMode) {
-        return (
-            <div className="h-full bg-white">
-                <CreateDataSourcePage
-                    onCancel={() => setIsCreateMode(false)}
-                    onSave={(data) => {
-                        console.log('Save Data Source:', data);
-                        setIsCreateMode(false);
-                    }}
-                />
-            </div>
-        );
-    }
-
     return (
-        <StandardBusinessLayout
+        <EntityModulePage
             title="数据来源"
             filterOptions={filterOptions}
-            showFilters={false}
-            showGridToolbar={false}
-            setHeaderActions={setActions}
-            onCreate={() => setIsCreateMode(true)}
+            createComponent={CreateDataSourcePage}
+            onCreateSaved={(data) => {
+                addNotification(`数据源「${data?.name || '未命名数据源'}」已保存（演示）`, 'success');
+            }}
             columns={columns}
             data={dataSourceData}
         />

@@ -1,208 +1,278 @@
 import React from 'react';
 import {
-  IconInfoCircle,
   IconAlertTriangle,
   IconCheck,
-  IconPlus,
-  IconDots,
-  IconChevronRight,
-  IconArrowRight
+  IconCircleOff,
+  IconListDetails,
+  IconTable,
+  IconSettings,
+  IconVariable,
+  IconChartBar,
+  IconShieldLock,
+  IconSparkles,
+  IconPlus
 } from '@tabler/icons-react';
+import { ModuleHeader } from '../../../common/ContentModule';
+import {
+  NODE_STATUSES,
+  NODE_TYPES,
+  PROCESS_SUB_TYPES,
+  getSummaryTabs
+} from '../modelRules';
 
-/**
- * Brick 1: HeaderBrick (通用头部)
- * UI: 图标 + 名称 + 面包屑 + 右侧操作按钮
- */
-export const HeaderBrick = ({ node }) => {
-  // 简易面包屑逻辑：核算产品 / 阶段名 / 模块名
-  const breadcrumbs = ['核算产品', node.parentName || '所属阶段'].filter(Boolean);
+const getTypeLabel = (type) => {
+  if (type === NODE_TYPES.PRODUCT) return '核算产品';
+  if (type === NODE_TYPES.PHASE) return '阶段';
+  if (type === NODE_TYPES.MODULE) return '模块';
+  return '过程';
+};
+
+const getStatusLabel = (status) => {
+  if (status === NODE_STATUSES.EXCLUDED) return '已排除';
+  if (status === NODE_STATUSES.SCREENED) return '已屏蔽';
+  if (status === NODE_STATUSES.ADDED) return '新增';
+  if (status === NODE_STATUSES.DELETED) return '已删除';
+  if (status === NODE_STATUSES.MODIFIED) return '已变更';
+  return '常规';
+};
+
+export const HeaderModule = ({ node, isConfigured }) => {
+  const resultText = isConfigured ? `${(node.value ?? 0).toFixed ? (node.value ?? 0).toFixed(2) : (node.value ?? 0)} kgCO2e` : '配置中';
+  const tagTone = node.origin === 'self' ? 'bg-cyan-50 text-cyan-700' : 'bg-violet-50 text-violet-700';
 
   return (
-    <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-white sticky top-0 z-10 shrink-0">
-      <div className="flex items-center gap-3 overflow-hidden">
-        <div className="p-2 bg-gray-50 text-gray-400 rounded-md shrink-0">
-          <IconInfoCircle className="w-5 h-5" />
-        </div>
-        <div className="overflow-hidden">
-          <div className="flex items-center gap-1 text-[10px] text-gray-400 uppercase tracking-wider mb-0.5">
-            {breadcrumbs.map((b, i) => (
-              <React.Fragment key={i}>
-                <span className="truncate max-w-[80px]">{b}</span>
-                {i < breadcrumbs.length - 1 && <IconChevronRight className="w-2.5 h-2.5 shrink-0" />}
-              </React.Fragment>
-            ))}
+    <section className="rounded-sm border border-slate-200 bg-white shadow-sm">
+      <ModuleHeader
+        title={`${getTypeLabel(node.type)}信息`}
+        icon={IconListDetails}
+        actions={
+          <div className="flex items-center gap-2">
+            <span className={`rounded px-2 py-0.5 text-[10px] font-semibold ${tagTone}`}>
+              {node.origin === 'self' ? '自建' : '继承'}
+            </span>
+            <span className="rounded bg-slate-100 px-2 py-0.5 text-[10px] text-slate-600">{getStatusLabel(node.status)}</span>
           </div>
-          <h2 className="text-base font-bold text-gray-900 truncate">{node.name}</h2>
+        }
+      />
+      <div className="grid grid-cols-3 gap-3 p-4 text-xs">
+        <div className="rounded border border-slate-200 bg-white px-3 py-2">
+          <div className="text-slate-400">名称</div>
+          <div className="mt-1 font-semibold text-slate-900">{node.name}</div>
+        </div>
+        <div className="rounded border border-slate-200 bg-white px-3 py-2">
+          <div className="text-slate-400">节点类型</div>
+          <div className="mt-1 font-semibold text-slate-900">{getTypeLabel(node.type)}</div>
+        </div>
+        <div className="rounded border border-slate-200 bg-white px-3 py-2">
+          <div className="text-slate-400">单位评估结果</div>
+          <div className="mt-1 font-semibold text-slate-900">{resultText}</div>
         </div>
       </div>
-
-      <div className="flex items-center gap-2 shrink-0 ml-4">
-        <div className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${node.origin === 'self' ? 'bg-blue-50 text-blue-600' : 'bg-purple-50 text-purple-600'
-          }`}>
-          {node.origin === 'self' ? '自建' : '继承'}
-        </div>
-        <button className="p-1.5 hover:bg-gray-100 rounded text-gray-400">
-          <IconDots className="w-4 h-4" />
-        </button>
-        <button className="px-4 py-1.5 text-sm bg-[#087F9C] text-white rounded hover:bg-[#066a82] font-bold transition-all shadow-sm">
-          保存
-        </button>
-      </div>
-    </div>
+    </section>
   );
 };
 
-/**
- * Brick 2: StateBrick (状态提示区)
- * 互斥：HintBox (配置中) vs ResultCard (已完成)
- */
-export const StateBrick = ({ status, resultValue, unit = 'kgCO₂e' }) => {
-  if (status === 'done') {
-    return (
-      <div className="mx-6 mt-6 p-5 bg-[#087F9C]/5 border border-[#087F9C]/10 rounded-xl flex justify-between items-center group hover:bg-[#087F9C]/10 transition-all">
-        <div className="flex items-center gap-4">
-          <div className="p-3 bg-[#087F9C] text-white rounded-full shadow-lg shadow-[#087F9C]/20">
-            <IconCheck className="w-6 h-6" />
-          </div>
-          <div>
-            <div className="text-[10px] text-[#087F9C] uppercase font-bold tracking-widest mb-1">单位评估结果</div>
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-3xl font-mono font-bold text-gray-900 leading-none">{resultValue || '0.00'}</span>
-              <span className="text-sm text-gray-500 font-medium">{unit}</span>
+export const HintModule = ({ show, message }) => {
+  if (!show) return null;
+  return (
+    <section className="rounded-sm border border-slate-200 bg-white shadow-sm">
+      <div className="flex items-start gap-3 p-4">
+        <IconAlertTriangle className="mt-0.5 h-4 w-4 text-amber-500" />
+        <div className="text-xs leading-5 text-amber-800">{message}</div>
+      </div>
+    </section>
+  );
+};
+
+export const ScreenedNoticeModule = ({ node }) => {
+  if (node.status !== NODE_STATUSES.SCREENED) return null;
+  return (
+    <section className="rounded-sm border border-slate-200 bg-white shadow-sm">
+      <div className="flex items-center gap-3 p-4 text-xs text-slate-600">
+        <IconCircleOff className="h-4 w-4 text-slate-500" />
+        当前节点为“已屏蔽”状态，展示仅供参考，不参与计算。
+      </div>
+    </section>
+  );
+};
+
+export const EmissionDetailModule = ({ node, isConfigured }) => {
+  const tabs = getSummaryTabs(node.type);
+  const addLabel =
+    node.type === NODE_TYPES.PRODUCT ? '添加阶段节点' :
+      node.type === NODE_TYPES.PHASE ? '添加模块节点' :
+        '添加过程节点';
+
+  return (
+    <section className="rounded-sm border border-slate-200 bg-white shadow-sm">
+      <ModuleHeader title="排放详情" icon={IconTable} />
+      <div className="p-4">
+        {isConfigured ? (
+          <>
+            {tabs.length > 0 && (
+              <div className="mb-3 flex items-center gap-2">
+                {tabs.map((tab) => (
+                  <span key={tab} className="rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[10px] text-slate-600">
+                    {tab}
+                  </span>
+                ))}
+              </div>
+            )}
+            <div className="overflow-hidden rounded-md border border-slate-200">
+              <div className="grid grid-cols-3 bg-slate-50 px-3 py-2 text-[11px] text-slate-500">
+                <span>名称</span>
+                <span>状态</span>
+                <span className="text-right">排放占比</span>
+              </div>
+              <div className="grid grid-cols-3 px-3 py-2 text-xs text-slate-700">
+                <span className="truncate">{node.name}</span>
+                <span>{getStatusLabel(node.status)}</span>
+                <span className="text-right">{node.value != null ? `${Number(node.value).toFixed(2)}%` : '--%'}</span>
+              </div>
             </div>
+          </>
+        ) : (
+          <div className="rounded-md border border-dashed border-slate-300 bg-slate-50/70 p-5 text-center">
+            <div className="mx-auto mb-2 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-sm">
+              <IconPlus className="h-4 w-4 text-slate-500" />
+            </div>
+            <div className="text-xs text-slate-600">暂无可展示结果，先完善配置后可查看明细。</div>
+            <button className="mt-3 rounded border border-cyan-200 bg-cyan-50 px-3 py-1 text-[11px] text-cyan-700">
+              {addLabel}
+            </button>
           </div>
+        )}
+      </div>
+    </section>
+  );
+};
+
+export const ConfigParamsModule = ({ node, isConfigured, readOnly }) => {
+  const isSplit = node.subType === PROCESS_SUB_TYPES.SPLIT_REF;
+  const showFormula = node.subType === PROCESS_SUB_TYPES.WHOLE_REF || isSplit || isConfigured;
+
+  return (
+    <section className="rounded-sm border border-slate-200 bg-white shadow-sm">
+      <ModuleHeader
+        title="配置参数"
+        icon={IconSettings}
+        actions={readOnly ? <span className="inline-flex items-center gap-1 rounded bg-slate-100 px-2 py-0.5 text-[10px] text-slate-600"><IconShieldLock size={12} /> 继承锁定</span> : null}
+      />
+      <div className="space-y-3 p-4 text-xs">
+        <div className="rounded border border-slate-200 bg-white px-3 py-2">
+          <div className="text-slate-400">元件</div>
+          <div className="mt-1 text-slate-700">CLCD-电力-2024</div>
         </div>
-        <div className="text-right">
-          <div className="text-[10px] text-gray-400 uppercase font-bold mb-1">数据质量 (DQR)</div>
-          <div className="text-sm font-bold text-gray-700">2.1 (优)</div>
-        </div>
+        {showFormula && (
+          <div className="rounded border border-slate-200 bg-white px-3 py-2">
+            <div className="text-slate-400">公式</div>
+            <div className="mt-1 font-mono text-slate-700">Activity_Data * Emission_Factor</div>
+          </div>
+        )}
+        {isConfigured && (
+          <div className="rounded border border-slate-200 bg-slate-50 px-3 py-2 text-slate-600">
+            公式详情：来源于当前模型配置版本，可追溯。
+          </div>
+        )}
+      </div>
+    </section>
+  );
+};
+
+export const VariableInfoModule = ({ node, isConfigured }) => {
+  const isSplit = node.subType === PROCESS_SUB_TYPES.SPLIT_REF;
+  const isWhole = node.subType === PROCESS_SUB_TYPES.WHOLE_REF;
+
+  const renderFactorBody = () => {
+    if (!isConfigured && !isWhole) {
+      return <div className="rounded border border-dashed border-slate-300 bg-slate-50 p-3 text-xs text-slate-500">变量信息为空，等待输入活动数据。</div>;
+    }
+    if (isSplit) {
+      return <div className="rounded border border-slate-200 bg-white px-3 py-2 text-xs text-slate-700">排放因子：被拆分（按拆分规则映射）。</div>;
+    }
+    return (
+      <div className="rounded border border-slate-200 bg-white px-3 py-2 text-xs text-slate-700">
+        因子数据：0.756 kgCO2e/kWh，不确定性：A 级
       </div>
     );
-  }
+  };
+
+  const factorTitle = isWhole ? '输出产品' : '排放因子';
 
   return (
-    <div className="mx-6 mt-6 p-4 bg-amber-50 border border-amber-100 rounded-md flex gap-3 animate-pulse-subtle">
-      <IconAlertTriangle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
-      <div className="text-sm text-amber-800 leading-relaxed font-medium">
-        当前节点尚未配置完成，计算结果暂时不可用。请在下方完善计算参数与活动数据。
-      </div>
-    </div>
+    <>
+      <section className="rounded-sm border border-slate-200 bg-white shadow-sm">
+        <ModuleHeader title={factorTitle} icon={IconVariable} />
+        <div className="p-4">{renderFactorBody()}</div>
+      </section>
+
+      <section className="rounded-sm border border-slate-200 bg-white shadow-sm">
+        <ModuleHeader title="活动数据" icon={IconVariable} />
+        <div className="p-4">
+          {isConfigured || isWhole ? (
+            <div className="space-y-2 rounded border border-slate-200 bg-white p-3 text-xs text-slate-700">
+              <div>数据记录：2026-02 / 12890.24 kWh</div>
+              <div>分配规则：按物理量分配 100%</div>
+              <div>不确定性：B 级</div>
+            </div>
+          ) : (
+            <div className="rounded border border-dashed border-slate-300 bg-slate-50 p-3 text-xs text-slate-500">活动数据暂未配置。</div>
+          )}
+        </div>
+      </section>
+    </>
   );
 };
 
-/**
- * Brick 3: ConfigBrick (配置参数)
- * 权限逻辑：Inherited = ReadOnly
- */
-export const ConfigBrick = ({ node, readOnly }) => (
-  <div className="px-6 py-8 border-b border-gray-50">
-    <div className="flex items-center justify-between mb-5">
-      <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
-        计算配置 (Logic)
-        {readOnly && <span className="px-2 py-0.5 bg-gray-100 text-gray-400 text-[10px] font-normal rounded">继承锁定</span>}
-      </h3>
-    </div>
-
-    <div className={`space-y-5 ${readOnly ? 'opacity-60 grayscale' : ''}`}>
-      <div className="space-y-1.5">
-        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">计算模型 / 公式</label>
-        <div className="p-3 bg-gray-50 border border-gray-100 rounded-md font-mono text-sm text-gray-600 flex items-center justify-between">
-          <span>Activity_Data * Emission_Factor</span>
-          {!readOnly && <IconPencil className="w-3.5 h-3.5 text-gray-300" />}
+export const AnalysisResultModule = ({ show }) => {
+  if (!show) return null;
+  return (
+    <section className="rounded-sm border border-slate-200 bg-white shadow-sm">
+      <ModuleHeader title="分析结果" icon={IconChartBar} />
+      <div className="grid grid-cols-3 gap-3 p-4 text-xs">
+        <div className="rounded border border-slate-200 bg-white px-3 py-2">
+          <div className="text-slate-400">是否排除</div>
+          <div className="mt-1 text-slate-700">否</div>
+        </div>
+        <div className="rounded border border-slate-200 bg-white px-3 py-2">
+          <div className="text-slate-400">敏感性分析</div>
+          <div className="mt-1 text-slate-700">已启用</div>
+        </div>
+        <div className="rounded border border-slate-200 bg-white px-3 py-2">
+          <div className="text-slate-400">数据质量评分</div>
+          <div className="mt-1 text-slate-700">2.1 (优)</div>
         </div>
       </div>
+    </section>
+  );
+};
 
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-1.5">
-          <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">分配方式</label>
-          <div className="h-10 px-3 bg-white border border-gray-200 rounded-md flex items-center text-sm text-gray-700">
-            按物理量分配 (Physical)
-          </div>
-        </div>
-        <div className="space-y-1.5">
-          <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">分配比例 (%)</label>
-          <div className="h-10 px-3 bg-white border border-gray-200 rounded-md flex items-center text-sm font-mono text-gray-700">
-            100.00
-          </div>
-        </div>
+export const ImportantIssueModule = ({ show }) => {
+  if (!show) return null;
+  return (
+    <section className="rounded-sm border border-slate-200 bg-white shadow-sm">
+      <ModuleHeader title="重要问题识别" icon={IconSparkles} />
+      <div className="p-4 text-xs text-slate-600">
+        当前模块已完成配置，可开启“重要问题识别”进行高贡献过程诊断与标记。
       </div>
-    </div>
-  </div>
+    </section>
+  );
+};
+
+export const EmptySelectionModule = () => (
+  <section className="rounded-sm border border-slate-200 bg-white shadow-sm">
+    <div className="p-8 text-center text-xs text-slate-500">请选择左侧节点查看详情。</div>
+  </section>
 );
 
-/**
- * Brick 4: VariableBrick (变量输入)
- * 权限：始终可编辑（Inherited 修改后变 status=modified）
- */
-export const VariableBrick = ({ node }) => (
-  <div className="px-6 py-8">
-    <div className="flex items-center justify-between mb-5">
-      <h3 className="text-sm font-bold text-gray-900">活动数据 (Activity Data)</h3>
-      <button className="text-[10px] text-[#087F9C] font-bold hover:underline">批量导入</button>
-    </div>
-
-    <div className="grid grid-cols-12 gap-5">
-      <div className="col-span-8 space-y-1.5">
-        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">输入数值</label>
-        <div className="relative group">
-          <input
-            type="number"
-            className="w-full h-11 px-4 bg-white border border-gray-200 rounded-xl text-base font-mono focus:border-[#087F9C] focus:ring-4 focus:ring-[#087F9C]/5 outline-none transition-all placeholder:text-gray-200"
-            placeholder="0.0000"
-            defaultValue={node.value}
-          />
-          <div className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-400 group-focus-within:text-[#087F9C] transition-colors">
-            kWh
-          </div>
-        </div>
+export const CompleteBadge = ({ show }) => {
+  if (!show) return null;
+  return (
+    <section className="rounded-sm border border-slate-200 bg-white shadow-sm">
+      <div className="flex items-center gap-2 p-3 text-xs text-emerald-700">
+        <IconCheck size={16} />
+        节点已配置完成，展示结果和分析模块。
       </div>
-      <div className="col-span-4 space-y-1.5">
-        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">单位</label>
-        <div className="h-11 px-4 bg-gray-50 border border-gray-100 rounded-xl flex items-center text-sm text-gray-500 font-medium">
-          kWh
-        </div>
-      </div>
-    </div>
-
-    <div className="mt-6 p-4 border border-dashed border-gray-100 rounded-xl bg-gray-50/30">
-      <div className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-3">绑定排放因子 / 数据源</div>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-white border border-gray-100 rounded flex items-center justify-center text-blue-500 shadow-sm">
-            <IconArrowRight className="w-4 h-4" />
-          </div>
-          <div>
-            <div className="text-xs font-bold text-gray-700">CLCD-电力-2024</div>
-            <div className="text-[10px] text-gray-400">来源: 公有库 / 分类: 能源</div>
-          </div>
-        </div>
-        <button className="text-xs text-[#087F9C] border border-[#087F9C]/20 px-2 py-1 rounded hover:bg-[#087F9C]/5 transition-all">更换</button>
-      </div>
-    </div>
-  </div>
-);
-
-/**
- * Brick 5: EmptyBrick (空状态)
- */
-export const EmptyBrick = () => (
-  <div className="h-full flex flex-col items-center justify-center bg-gray-50/50 p-10 text-center">
-    <div className="w-16 h-16 bg-white rounded-2xl shadow-xl shadow-gray-200/50 flex items-center justify-center text-gray-100 mb-6">
-      <IconArrowRight className="w-8 h-8 opacity-20" />
-    </div>
-    <h3 className="text-base font-bold text-gray-400 mb-1">未选中有效节点</h3>
-    <p className="text-xs text-gray-300 max-w-[200px] leading-relaxed">请在左侧核算树中选择一个阶段、模块或过程来查看具体的核算参数与结果。</p>
-  </div>
-);
-
-/**
- * Brick 6: AnalysisBrick (分析模块 - 仅 Done 时可见)
- */
-export const AnalysisBrick = () => (
-  <div className="px-6 py-8 border-t border-gray-50 bg-gray-50/20">
-    <h3 className="text-sm font-bold text-gray-900 mb-5">敏感性分析 (Sensitivity)</h3>
-    <div className="h-32 bg-white border border-gray-100 rounded-xl flex items-center justify-center text-[10px] text-gray-300 uppercase tracking-widest font-bold">
-      Chart Component Placeholder
-    </div>
-  </div>
-);
+    </section>
+  );
+};

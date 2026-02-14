@@ -7,78 +7,58 @@
  * 2. 协调左侧树与右侧详情面板 (L3DetailPanel) 的交互。
  * 3. 处理增删改查、拖拽移动等核心数据操作。
  */
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 // 1. 确保路径正确引入组件
 import L3AdvancedTree from './components/L3AdvancedTree';
 import { L3DetailPanel } from './components/L3DetailPanel';
+import { useNotification } from '../../../context/NotificationContext';
+import { ACCOUNTING_COMPARE_TREE_MOCK, ACCOUNTING_CONFIG_TREE_MOCK } from './modelMockData';
+import {
+    CALC_STATUSES,
+    NODE_ORIGINS,
+    NODE_STATUSES,
+    NODE_TYPES,
+    PROCESS_SUB_TYPES,
+    canDropNode,
+    getChildType,
+    shouldDeletePhysically
+} from './modelRules';
 
-// 2. 内置测试数据 (Mock Data) - v2.0 规范
-const MOCK_DATA = [
-    {
-        id: 'root',
-        name: '碳纤维反重力飞行器',
-        type: 'product',
-        origin: 'self',
-        status: 'normal',
-        hasData: true,
-        children: [
-            {
-                id: 'phase_1',
-                name: '原材料获取',
-                type: 'phase',
-                origin: 'inherited',
-                status: 'normal',
-                is_changed: false,
-                hasData: true,
-                children: [
-                    {
-                        id: 'mod_1',
-                        name: '复合材料模块',
-                        type: 'module',
-                        origin: 'inherited',
-                        status: 'normal',
-                        is_changed: true,
-                        hasData: true,
-                        children: [
-                            {
-                                id: 'proc_1',
-                                name: '预浸料生产',
-                                type: 'process',
-                                origin: 'inherited',
-                                status: 'normal',
-                                calc_status: 'done',
-                                value: 45.00
-                            },
-                            {
-                                id: 'mod_metal',
-                                name: '过期金属模块',
-                                type: 'module',
-                                origin: 'inherited',
-                                status: 'excluded',
-                                is_changed: false
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                id: 'phase_2',
-                name: '生产制造 (自建阶段)',
-                type: 'phase',
-                origin: 'self',
-                status: 'normal',
-                children: []
-            }
-        ]
-    }
-];
+export default function AccountingModelConfig({ menuMode = 'config' }) {
+    const { addNotification } = useNotification();
+    const initialTree = menuMode === 'compare' ? ACCOUNTING_COMPARE_TREE_MOCK : ACCOUNTING_CONFIG_TREE_MOCK;
+    const [treeData, setTreeData] = useState(initialTree);
+    const [selectedId, setSelectedId] = useState(initialTree[0]?.id || null);
 
-export default function AccountingModelConfig() {
-    const [treeData, setTreeData] = useState(MOCK_DATA);
-    const [selectedId, setSelectedId] = useState('root');
+    useEffect(() => {
+        const nextTree = menuMode === 'compare' ? ACCOUNTING_COMPARE_TREE_MOCK : ACCOUNTING_CONFIG_TREE_MOCK;
+        setTreeData(nextTree);
+        setSelectedId(nextTree[0]?.id || null);
+    }, [menuMode]);
 
     // 辅助工具：深度克隆数据 (用于安全的 State 更新)
     const cloneData = (data) => JSON.parse(JSON.stringify(data));
+    const makeNodeId = () => `new_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+
+    const findNodeById = (nodes, id) => {
+        for (const node of nodes) {
+            if (node.id === id) return node;
+            if (node.children?.length) {
+                const found = findNodeById(node.children, id);
+                if (found) return found;
+            }
+        }
+        return null;
+    };
+
+    const hasDescendant = (node, childId) => {
+        if (!node?.children?.length) return false;
+        for (const child of node.children) {
+            if (child.id === childId) return true;
+            if (hasDescendant(child, childId)) return true;
+        }
+        return false;
+    };
 
     // ----------------------------------------------------------------
     // 1. 添加下级逻辑
@@ -90,26 +70,27 @@ export default function AccountingModelConfig() {
             for (let node of nodes) {
                 if (node.id === parentId) {
                     // 只有非 Process 节点才能添加子级
-                    if (node.type === 'process') return false;
+                    if (node.type === NODE_TYPES.PROCESS) return false;
 
                     // 根据父级类型自动决定子级类型
-                    let childType = 'process';
-                    if (node.type === 'product') childType = 'phase';
-                    if (node.type === 'phase') childType = 'module';
-                    if (node.type === 'module') childType = 'process';
+                    const childType = getChildType(node.type);
+                    if (!childType) return false;
 
                     const newNode = {
-                        id: `new_${Date.now()}`,
-                        name: `新建${childType === 'phase' ? '阶段' : childType === 'module' ? '模块' : '过程'}`,
+                        id: makeNodeId(),
+                        name: `新建${childType === NODE_TYPES.PHASE ? '阶段' : childType === NODE_TYPES.MODULE ? '模块' : '过程'}`,
                         type: childType,
-                        origin: 'self',
-                        status: 'normal',
-                        calc_status: childType === 'process' ? 'pending' : undefined,
+                        origin: NODE_ORIGINS.SELF,
+                        status: NODE_STATUSES.NORMAL,
+                        subType: childType === NODE_TYPES.PROCESS ? PROCESS_SUB_TYPES.NORMAL : undefined,
+                        calc_status: childType === NODE_TYPES.PROCESS ? CALC_STATUSES.PENDING : undefined,
+                        hasData: false,
                         children: []
                     };
 
                     if (!node.children) node.children = [];
                     node.children.push(newNode);
+                    node._forceExpand = true;
 
                     // 自动选中新节点
                     setSelectedId(newNode.id);
@@ -122,6 +103,7 @@ export default function AccountingModelConfig() {
 
         if (findAndAdd(newData)) {
             setTreeData(newData);
+            addNotification('已添加下级节点', 'success');
         }
     };
 
@@ -143,6 +125,7 @@ export default function AccountingModelConfig() {
 
         if (updateName(newData)) {
             setTreeData(newData);
+            addNotification('节点已重命名', 'success');
         }
     };
 
@@ -155,9 +138,9 @@ export default function AccountingModelConfig() {
         const processDelete = (nodes) => {
             return nodes.filter(node => {
                 if (node.id === id) {
-                    // 核心规则：继承节点(inherited)只能屏蔽，不能物理删除
-                    if (node.origin === 'inherited') {
-                        node.status = 'screened';
+                    // 核心规则：继承节点只能屏蔽，自建节点才物理删除
+                    if (!shouldDeletePhysically(node)) {
+                        node.status = NODE_STATUSES.SCREENED;
                         return true; // 保留节点，但状态变更为 screened
                     }
                     return false; // 自建节点(self)直接移除
@@ -170,6 +153,7 @@ export default function AccountingModelConfig() {
         };
 
         setTreeData(processDelete(newData));
+        addNotification('节点操作已执行', 'success');
     };
 
     // ----------------------------------------------------------------
@@ -179,13 +163,22 @@ export default function AccountingModelConfig() {
         if (draggedId === targetId) return;
 
         const newData = cloneData(treeData);
-        let draggedNode = null;
+        const draggedNode = findNodeById(newData, draggedId);
+        const targetNode = findNodeById(newData, targetId);
+        if (!draggedNode || !targetNode) return;
+        if (hasDescendant(draggedNode, targetId)) {
+            addNotification('不能把父节点拖进自己的子节点里', 'warning');
+            return;
+        }
+        if (!canDropNode(draggedNode, targetNode)) {
+            addNotification('当前拖拽不符合规则', 'warning');
+            return;
+        }
 
         // Step A: 找到并暂时移除被拖拽的节点
         const removeDragged = (nodes) => {
             for (let i = 0; i < nodes.length; i++) {
                 if (nodes[i].id === draggedId) {
-                    draggedNode = nodes[i];
                     nodes.splice(i, 1); // 移除
                     return true;
                 }
@@ -214,6 +207,7 @@ export default function AccountingModelConfig() {
         if (removeDragged(newData)) {
             if (insertToTarget(newData)) {
                 setTreeData(newData); // 只有成功移动才更新状态
+                addNotification('节点已移动', 'success');
             }
         }
     };

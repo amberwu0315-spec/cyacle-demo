@@ -13,8 +13,10 @@ import { documentData } from '../../../data/mockData';
 import { ContentModule, ModuleHeader } from '../../common/ContentModule';
 import MasterDetailPageTemplate from '../../layout/templates/MasterDetailPageTemplate';
 import CreateLiteraturePage from '../create/CreateLiteraturePage';
+import { useNotification } from '../../../context/NotificationContext';
 
 const DocumentPage = ({ onClose, showAddButton = true }) => {
+    const { addNotification } = useNotification();
     // 状态管理
     const [selectedId, setSelectedId] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
@@ -163,7 +165,7 @@ const DocumentPage = ({ onClose, showAddButton = true }) => {
                 <CreateLiteraturePage
                     onCancel={() => setIsCreateMode(false)}
                     onSave={(data) => {
-                        console.log('Save Document:', data);
+                        addNotification(`文档「${data?.name || '未命名文档'}」已保存（演示）`, 'success');
                         setIsCreateMode(false);
                     }}
                 />
@@ -203,7 +205,7 @@ const DocumentPage = ({ onClose, showAddButton = true }) => {
                             <button
                                 className="p-1 text-gray-400 hover:text-[#087F9C] hover:bg-blue-50 rounded transition-colors"
                                 title="打开独立窗口"
-                                onClick={() => console.log('Open window', selectedItem)}
+                                onClick={() => addNotification('独立窗口功能建设中', 'info')}
                             >
                                 <IconExternalLink size={18} />
                             </button>

@@ -14,9 +14,8 @@ import EditableField from './EditableField';
  * 
  * Spacing Rules:
  * - Left/Right padding: 12px (px-3)
- * - Bottom padding: 12px (pb-3)
- * - Top padding: 8px (pt-2) - gap from header
- * - Gap between fields: 2px (gap-0.5)
+ * - Vertical padding: 0 (no extra top/bottom spacing)
+ * - Gap between fields: 4px
  * 
  * Label Width Auto-Calculation:
  * - Scans all EditableField children for label prop
@@ -85,8 +84,8 @@ const FormBlock = ({ children, className = '' }) => {
     const childrenWithProps = injectProps(children);
 
     return (
-        <div className={`px-3 pt-2 pb-3 bg-white flex flex-col ${className}`}>
-            <table className="w-full border-separate border-spacing-y-1 table-fixed">
+        <div className={`px-3 py-0 bg-white flex flex-col ${className}`}>
+            <table className="w-full border-separate border-spacing-y-[4px] table-fixed">
                 <colgroup>
                     {/* Fixed width for the first column to ensure vertical baseline is constant */}
                     <col className={labelWidthClass} />

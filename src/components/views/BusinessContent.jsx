@@ -7,7 +7,7 @@
  * 2. 根据 `target` (L2 ID) 动态切换渲染的子页面 (ComponentPage, LiteraturePage 等)。
  */
 import React, { useEffect } from 'react';
-import { IconStack2, IconFilter, IconSearch, IconPlus, IconLayoutGrid, IconShield, IconMapPin } from '@tabler/icons-react';
+import { IconStack2, IconMapPin } from '@tabler/icons-react';
 import StandardBusinessLayout from './StandardBusinessLayout';
 import Tag from '../common/Tag';
 
@@ -134,18 +134,8 @@ export default function BusinessContent({ activeL1, target, onOpenTab, openedTab
         return <StandardBusinessLayout
             title="全部项目"
             filterOptions={filterOptions}
-            setHeaderActions={(actions) => {
-                // Determine if we need to Override the Create Button
-                setActions(
-                    <button
-                        onClick={() => setProjectLimitMode('create')}
-                        className="flex items-center gap-1.5 h-btn-md px-btn-x-md text-[13px] font-medium text-white bg-primary-action hover:bg-primary-emphasize rounded-sm transition-colors"
-                    >
-                        <IconPlus size={16} />
-                        <span>创建</span>
-                    </button>
-                );
-            }}
+            setHeaderActions={setActions}
+            onCreate={() => setProjectLimitMode('create')}
             defaultFilterType={defaultType}
             onRowClick={onOpenTab}
             columns={projectColumns}
@@ -218,17 +208,8 @@ export default function BusinessContent({ activeL1, target, onOpenTab, openedTab
             filterOptions={filterOptions}
             showFilters={false}
             showGridToolbar={false}
-            setHeaderActions={(actions) => {
-                setActions(
-                    <button
-                        onClick={() => setObjectLimitMode('create')}
-                        className="flex items-center gap-1.5 h-btn-md px-btn-x-md text-[13px] font-medium text-white bg-primary-action hover:bg-primary-emphasize rounded-sm transition-colors"
-                    >
-                        <IconPlus size={16} />
-                        <span>创建</span>
-                    </button>
-                );
-            }}
+            setHeaderActions={setActions}
+            onCreate={() => setObjectLimitMode('create')}
             onRowClick={onOpenTab}
             columns={researchObjectColumns}
             data={researchObjects}

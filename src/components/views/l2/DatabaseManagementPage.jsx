@@ -1,12 +1,12 @@
 import React from 'react';
-import StandardBusinessLayout from '../StandardBusinessLayout';
-import { usePagePresentation } from '../../../context/PagePresentationContext';
 import Tag from '../../common/Tag';
-
 import { databaseData } from '../../../data/mockData';
+import { useNotification } from '../../../context/NotificationContext';
+import EntityModulePage from '../shared/EntityModulePage';
+import CreateDatabaseManagementPage from '../create/CreateDatabaseManagementPage';
 
 const DatabaseManagementPage = () => {
-    const { setActions } = usePagePresentation();
+    const { addNotification } = useNotification();
 
     const filterOptions = {
         types: [
@@ -56,12 +56,13 @@ const DatabaseManagementPage = () => {
     ];
 
     return (
-        <StandardBusinessLayout
+        <EntityModulePage
             title="数据库"
             filterOptions={filterOptions}
-            showFilters={false}
-            showGridToolbar={false}
-            setHeaderActions={setActions}
+            createComponent={CreateDatabaseManagementPage}
+            onCreateSaved={(data) => {
+                addNotification(`数据库「${data?.name || '未命名数据库'}」已保存（演示）`, 'success');
+            }}
             columns={columns}
             data={databaseData}
         />

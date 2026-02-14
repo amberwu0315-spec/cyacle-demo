@@ -46,7 +46,7 @@ const UploadField = ({
             {internalStatus === 'empty' && (
                 <button
                     onClick={handleUploadClick}
-                    className="flex flex-row items-center gap-1.5 h-9 text-sm text-primary-action hover:text-primary-emphasize hover:underline font-medium transition-colors group whitespace-nowrap"
+                    className="flex flex-row items-center gap-1.5 h-9 text-[14px] text-primary-action hover:text-primary-emphasize hover:underline font-medium transition-colors group whitespace-nowrap"
                 >
                     <div className="flex items-center justify-center p-1 rounded-full bg-cyan-50 group-hover:bg-cyan-100 transition-colors">
                         <IconFilePlus size={14} />
@@ -56,7 +56,7 @@ const UploadField = ({
             )}
 
             {internalStatus === 'uploading' && (
-                <div className="flex flex-row items-center gap-2 h-9 text-sm text-gray-400 whitespace-nowrap">
+                <div className="flex flex-row items-center gap-2 h-9 text-[14px] text-gray-400 whitespace-nowrap">
                     <div className="w-3 h-3 border-2 border-primary-action border-t-transparent rounded-full animate-spin"></div>
                     <span>{uploadingText}</span>
                 </div>

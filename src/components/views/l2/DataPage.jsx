@@ -4,16 +4,14 @@
  * 🏢 角色：企业数据中心
  * 📝 职责：管理企业的各类活动数据（如用电量、材料消耗等）。
  */
-import React, { useState } from 'react';
-import StandardBusinessLayout from '../StandardBusinessLayout';
-import { usePagePresentation } from '../../../context/PagePresentationContext';
-import { IconPlus } from '@tabler/icons-react';
+import React from 'react';
 import { dataRecordData } from '../../../data/mockData';
 import CreateDataPage from '../create/CreateDataPage';
+import { useNotification } from '../../../context/NotificationContext';
+import EntityModulePage from '../shared/EntityModulePage';
 
 const DataPage = () => {
-    const { setActions } = usePagePresentation();
-    const [isCreateMode, setIsCreateMode] = useState(false);
+    const { addNotification } = useNotification();
 
     const filterOptions = {
         types: [],
@@ -30,28 +28,14 @@ const DataPage = () => {
         { title: '更新时间', key: 'updatedAt', width: '15%', className: 'text-sm text-gray-500' }
     ];
 
-    if (isCreateMode) {
-        return (
-            <div className="h-full bg-white">
-                <CreateDataPage
-                    onCancel={() => setIsCreateMode(false)}
-                    onSave={(data) => {
-                        console.log('Save Data Record:', data);
-                        setIsCreateMode(false);
-                    }}
-                />
-            </div>
-        );
-    }
-
     return (
-        <StandardBusinessLayout
+        <EntityModulePage
             title="数据记录"
             filterOptions={filterOptions}
-            showFilters={false}
-            showGridToolbar={false}
-            setHeaderActions={setActions}
-            onCreate={() => setIsCreateMode(true)}
+            createComponent={CreateDataPage}
+            onCreateSaved={(data) => {
+                addNotification(`数据记录「${data?.name || '未命名记录'}」已保存（演示）`, 'success');
+            }}
             columns={columns}
             data={dataRecordData}
         />

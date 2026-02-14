@@ -122,14 +122,14 @@ const EditableField = ({
         if (value === '' || value === null || value === undefined) {
             // Rule: No label -> <未命名>
             if (!label) {
-                return <span className="text-xxs text-slate-400">&lt;未命名&gt;</span>;
+                return <span className="text-[14px] text-slate-400">&lt;未命名&gt;</span>;
             }
 
             // For fields with labels, show "请输入" or "请选择" based on type
             const defaultPlaceholder = ['select', 'date', 'dataCard'].includes(type) ? '请选择' : '请输入';
             const placeholderText = rest.placeholder || defaultPlaceholder;
 
-            return <span className="text-xxs text-slate-400">{placeholderText}</span>;
+            return <span className="text-[14px] text-slate-400">{placeholderText}</span>;
         }
 
         if (type === 'dataCard' && value) {
@@ -138,7 +138,7 @@ const EditableField = ({
 
         if (type === 'number' && unit) {
             return (
-                <span className="text-xs text-slate-900">
+                <span className="text-[14px] text-slate-900">
                     {value} <span className="text-slate-500 ml-1">{unit}</span>
                 </span>
             );
@@ -146,7 +146,7 @@ const EditableField = ({
 
         if (type === 'textarea') {
             return (
-                <span className="text-xs text-slate-900 whitespace-pre-wrap">
+                <span className="text-[14px] text-slate-900 whitespace-pre-wrap">
                     {value || '未填写'}
                 </span>
             );
@@ -154,10 +154,10 @@ const EditableField = ({
 
         if (type === 'select') {
             const selectedOption = options.find(opt => String(opt.value) === String(value));
-            return <span className="text-xs text-slate-900">{selectedOption?.label || value}</span>;
+            return <span className="text-[14px] text-slate-900">{selectedOption?.label || value}</span>;
         }
 
-        return <span className="text-xs text-slate-900">{value}</span>;
+        return <span className="text-[14px] text-slate-900">{value}</span>;
     };
 
     const shouldShowToolbar = ['textarea', 'multiSelect', 'rich-text'].includes(type);
@@ -186,7 +186,12 @@ const EditableField = ({
             onKeyDown: handleKeyDown,
             onBlur: handleBlur,
             disabled: isLoading, // Disable input while saving
-            styles: { input: { borderRadius: '4px' } },
+            styles: {
+                input: {
+                    borderRadius: '4px',
+                    fontSize: '14px'
+                }
+            },
             placeholder: rest.placeholder || (!label ? '<未命名>' : (['select', 'date', 'dataCard'].includes(type) ? '请选择' : '请输入')),
             // Add right section for loading spinner
             rightSection: null
@@ -213,9 +218,15 @@ const EditableField = ({
                             maxLength={maxLength}
                             minRows={rows}
                             autosize
-                        // Textarea doesn't support rightSection in Mantine v7 easily inside props, keep it simple
+                            styles={{
+                                input: {
+                                    borderRadius: '4px',
+                                    fontSize: '14px',
+                                    minHeight: '36px'
+                                }
+                            }}
                         />
-                        {maxLength && <div className="text-xs text-gray-400 mt-1 text-right">{tempValue?.length || 0}/{maxLength}</div>}
+                        {maxLength && <div className="text-[12px] text-gray-400 mt-1 text-right">{tempValue?.length || 0}/{maxLength}</div>}
                     </div>
                 );
             case 'number':
@@ -302,19 +313,19 @@ const EditableField = ({
 
         const isMultiLine = ['textarea', 'rich-text'].includes(type);
         // Shared text styles for zero-jump
-        const textStyles = `text-xs font-normal ${isMultiLine ? 'leading-[1.6]' : 'leading-none h-full flex items-center'}`;
+        const textStyles = `text-[14px] font-normal ${isMultiLine ? 'leading-[1.5]' : 'leading-none h-full flex items-center'}`;
 
         return (
             <div
-                className={`flex items-center rounded-md transition-all duration-200 ease-in-out relative ${!isEditing ? 'group' : ''} ${!isMultiLine ? 'min-h-9' : ''} ${isEditing ? 'z-[60]' : ''}`}
+                className={`flex items-center rounded-md transition-all duration-200 ease-in-out relative ${!isEditing ? 'group' : ''} ${!isMultiLine ? 'h-9' : ''} ${isEditing ? 'z-[60]' : ''}`}
             >
                 {isEditing ? (
-                    <div className={`w-full h-full flex items-center ${isMultiLine ? 'py-1' : ''}`}>
+                    <div className="w-full h-full flex items-center">
                         {renderEditInput()}
                     </div>
                 ) : (
                     <div
-                        className={`relative flex-1 w-full ${isMultiLine ? 'min-h-[36px] items-start py-2' : 'min-h-[36px] items-center py-1'} flex px-3 border border-transparent overflow-visible group-hover:bg-slate-50 rounded-md cursor-pointer transition-colors duration-200`}
+                        className={`relative flex-1 w-full ${isMultiLine ? 'min-h-[36px] items-start py-0' : 'h-9 items-center py-0'} flex px-3 border border-transparent overflow-visible group-hover:bg-slate-50 rounded-md cursor-pointer transition-colors duration-200`}
                         onClick={handleEdit}
                     >
                         <div className={`pr-12 w-full whitespace-pre-wrap break-words ${textStyles}`}>
@@ -324,7 +335,7 @@ const EditableField = ({
                         <div className="absolute right-0 top-1/2 -translate-y-1/2 pl-4 bg-gradient-to-l from-slate-50 via-slate-50 to-transparent flex items-center h-[calc(100%-2px)] mr-[1px] opacity-0 group-hover:opacity-100 transition-opacity">
                             <button
                                 onClick={(e) => { e.stopPropagation(); handleEdit(); }}
-                                className="flex items-center gap-1 px-2 h-6 bg-white border border-slate-200 text-xs text-slate-600 hover:text-[#0EA5B7] hover:border-[#0EA5B7] rounded-md shadow-sm transition-all whitespace-nowrap"
+                                className="flex items-center gap-1 px-2 h-6 bg-white border border-slate-200 text-[12px] text-slate-600 hover:text-[#0EA5B7] hover:border-[#0EA5B7] rounded-md shadow-sm transition-all whitespace-nowrap"
                                 title="编辑"
                             >
                                 <IconPencil size={14} />
@@ -360,12 +371,12 @@ const EditableField = ({
         </div>
     );
 
-    if (layout === 'table') {
-        const isMultiLine = ['textarea', 'rich-text'].includes(type);
-        return (
-            <tr ref={containerRef}>
-                <td className={`pr-0 ${isMultiLine ? 'align-top pt-[9px]' : 'align-middle'}`}>
-                    <div className={`flex text-xxs text-slate-500 font-normal ${!isMultiLine ? 'h-9 items-center' : ''}`}>
+        if (layout === 'table') {
+            const isMultiLine = ['textarea', 'rich-text'].includes(type);
+            return (
+            <tr ref={containerRef} className="h-9">
+                <td className={`pr-0 ${isMultiLine ? 'align-top' : 'align-middle'}`}>
+                    <div className={`flex text-[14px] text-slate-500 font-normal ${!isMultiLine ? 'h-9 items-center' : 'h-9 items-center'}`}>
                         {renderKeyArea()}
                     </div>
                 </td>
@@ -382,9 +393,9 @@ const EditableField = ({
 
     const isMultiLine = ['textarea', 'rich-text'].includes(type);
     return (
-        <div ref={containerRef} className={`relative flex items-start min-h-9 ${rest.className || ''}`} {...rest}>
+        <div ref={containerRef} className={`relative flex items-start h-9 ${rest.className || ''}`} {...rest}>
             {label && (
-                <div className={`${labelWidth} text-xxs text-slate-500 font-normal shrink-0 flex ${!isMultiLine ? 'h-9 items-center' : 'pt-[9px]'}`}>
+                <div className={`${labelWidth} text-[14px] text-slate-500 font-normal shrink-0 flex ${!isMultiLine ? 'h-9 items-center' : 'h-9 items-center'}`}>
                     {renderKeyArea()}
                 </div>
             )}

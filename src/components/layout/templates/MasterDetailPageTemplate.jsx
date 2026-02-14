@@ -41,6 +41,7 @@ export const MasterDetailPageTemplate = ({
 
     // ========== 可选配置 ==========
     leftWidth = "w-80",               // 左栏宽度（列表通常固定宽度更好）
+    managePageHeader = true,          // 是否由模板接管页面顶部栏显隐
 
 }) => {
 
@@ -52,15 +53,15 @@ export const MasterDetailPageTemplate = ({
 
     // 通用规则：双栏布局（主从页）自动隐藏顶部系统标题栏
     useEffect(() => {
-        if (setShowHeader) {
+        if (managePageHeader && setShowHeader) {
             setShowHeader(false);
         }
         return () => {
-            if (setShowHeader) {
+            if (managePageHeader && setShowHeader) {
                 setShowHeader(true);
             }
         };
-    }, [setShowHeader]);
+    }, [setShowHeader, managePageHeader]);
 
     // ========== 左栏Header ==========
     const leftHeaderContent = listHeaderSlot || (

@@ -4,16 +4,14 @@
  * 🏢 角色：企业产品库
  * 📝 职责：管理企业生产的产品信息。
  */
-import React, { useState } from 'react';
-import StandardBusinessLayout from '../StandardBusinessLayout';
-import { usePagePresentation } from '../../../context/PagePresentationContext';
-import { IconPlus } from '@tabler/icons-react';
+import React from 'react';
 import { productFooterData } from '../../../data/mockData';
 import CreateProductPage from '../create/CreateProductPage';
+import { useNotification } from '../../../context/NotificationContext';
+import EntityModulePage from '../shared/EntityModulePage';
 
 const ProductPage = () => {
-    const { setActions } = usePagePresentation();
-    const [isCreateMode, setIsCreateMode] = useState(false);
+    const { addNotification } = useNotification();
 
     const filterOptions = {
         types: [],
@@ -28,28 +26,14 @@ const ProductPage = () => {
         { title: '创建人', key: 'creator', width: '15%', className: 'text-sm text-gray-500' }
     ];
 
-    if (isCreateMode) {
-        return (
-            <div className="h-full bg-white">
-                <CreateProductPage
-                    onCancel={() => setIsCreateMode(false)}
-                    onSave={(data) => {
-                        console.log('Save Product:', data);
-                        setIsCreateMode(false);
-                    }}
-                />
-            </div>
-        );
-    }
-
     return (
-        <StandardBusinessLayout
+        <EntityModulePage
             title="产品列表"
             filterOptions={filterOptions}
-            showFilters={false}
-            showGridToolbar={false}
-            setHeaderActions={setActions}
-            onCreate={() => setIsCreateMode(true)}
+            createComponent={CreateProductPage}
+            onCreateSaved={(data) => {
+                addNotification(`产品「${data?.name || '未命名产品'}」已保存（演示）`, 'success');
+            }}
             columns={columns}
             data={productFooterData}
         />

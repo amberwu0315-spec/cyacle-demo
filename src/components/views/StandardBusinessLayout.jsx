@@ -29,6 +29,7 @@ const StandardBusinessLayout = ({
     showGridToolbar = true,
     setHeaderActions,
     onCreate,
+    onRowDoubleClick,
     defaultFilterType = 'all',
     onRowClick,
     columns,
@@ -196,6 +197,7 @@ const StandardBusinessLayout = ({
                 rows={filteredData}
                 rowKey={(row, index) => row?.id ?? `${title}-${index}`}
                 onRowClick={(row) => onRowClick?.(row)}
+                onRowDoubleClick={(row) => onRowDoubleClick?.(row)}
                 storageKey={storageKey}
                 emptyText={`暂无${title}数据`}
                 className="flex-1"

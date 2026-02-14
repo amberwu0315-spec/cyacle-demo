@@ -13,7 +13,7 @@ import MainContent from '../views/MainContent';
 import Footer from './Footer';
 import Modal from './Modal';
 import ViewActionGroup from './ViewActionGroup';
-import { NavigationProvider, useNavigation } from '../../context/NavigationContext';
+import { useNavigation } from '../../context/NavigationContext';
 import { useAppNavigation } from '../../context/AppNavigationContext'; // New Hook
 import { useData } from '../../context/DataContext'; // New Hook
 import { usePagePresentation } from '../../context/PagePresentationContext';
@@ -288,18 +288,6 @@ export default function Workbench() {
     // Only manage local UI state like Header Title here
     const [headerTitle, setHeaderTitle] = useState('');
     const [sidebarTitle, setSidebarTitle] = useState('');
-
-    const { activeL2, setBusinessTarget, isProjectLayout, setActiveL2 } = useAppNavigation();
-
-    // Adapter for inner NavigationProvider
-    const handleNavigationEvent = (id) => {
-        // This is a bit tricky, L2Sidebar calls strict onSelect.
-        // We need to mirror checking logic if we want to support any 'onNavigate' callback here?
-        // Actually the inner L2Sidebar calls setActiveL2 directly in my new code above.
-        // But NavigationProvider expects an 'onNavigate' prop sometimes.
-        // Let's keep it simple: if NavigationProvider calls onNavigate, it's usually from internal logic.
-        // But we are driving everything from AppNavigationContext now.
-    }
 
     return (
         <WorkbenchContent

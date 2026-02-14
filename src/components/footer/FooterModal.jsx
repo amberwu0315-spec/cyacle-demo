@@ -8,6 +8,7 @@
  */
 import React from 'react';
 import { IconExternalLink, IconX, IconChevronLeft } from '@tabler/icons-react';
+import { useNotification } from '../../context/NotificationContext';
 
 /**
  * FooterModal 通用组件
@@ -25,9 +26,10 @@ import { IconExternalLink, IconX, IconChevronLeft } from '@tabler/icons-react';
  * - isCreateMode: 是否为创建模式（隐藏Header）
  */
 const FooterModal = ({ title, businessActions, onClose, onCollapse, children, isCreateMode = false, headless = false }) => {
+    const { addNotification } = useNotification();
+
     const handleOpenWindow = () => {
-        console.log('Open in new window:', title);
-        // TODO: 实现独立窗口功能
+        addNotification(`「${title}」独立窗口功能建设中`, 'info');
     };
 
     // 创建模式：移除边框和Header，让CreatePageTemplate全屏显示

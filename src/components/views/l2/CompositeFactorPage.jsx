@@ -6,16 +6,11 @@
  * 1. 它通常由多个基本流组合而成。
  */
 import React from 'react';
-import StandardBusinessLayout from '../StandardBusinessLayout';
-import { usePagePresentation } from '../../../context/PagePresentationContext';
-import { IconPlus } from '@tabler/icons-react';
 import CreateCompositeFactorPage from '../create/CreateCompositeFactorPage';
 import { compositeFactorData } from '../../../data/mockData';
+import EntityModulePage from '../shared/EntityModulePage';
 
 const CompositeFactorPage = () => {
-    const { setActions } = usePagePresentation();
-    const [isCreateMode, setIsCreateMode] = React.useState(false);
-
     const filterOptions = {
         types: [
             { value: 'emission', label: '排放因子' },
@@ -38,28 +33,14 @@ const CompositeFactorPage = () => {
         { title: '技术', key: 'tech', width: '10%', className: 'text-sm text-gray-500' }
     ];
 
-    if (isCreateMode) {
-        return (
-            <div className="h-full bg-white">
-                <CreateCompositeFactorPage
-                    onCancel={() => setIsCreateMode(false)}
-                    onSave={(data) => {
-                        console.log('Save Composite Factor:', data);
-                        setIsCreateMode(false);
-                    }}
-                />
-            </div>
-        );
-    }
-
     return (
-        <StandardBusinessLayout
+        <EntityModulePage
             title="复合因子"
             filterOptions={filterOptions}
-            showFilters={false}
-            showGridToolbar={false}
-            setHeaderActions={setActions}
-            onCreate={() => setIsCreateMode(true)}
+            createComponent={CreateCompositeFactorPage}
+            onCreateSaved={(data) => {
+                console.log('Save Composite Factor:', data);
+            }}
             columns={columns}
             data={compositeFactorData}
         />

@@ -4,16 +4,14 @@
  * 🏢 角色：企业地点库
  * 📝 职责：管理企业的生产地点、仓库等位置信息。
  */
-import React, { useState } from 'react';
-import StandardBusinessLayout from '../StandardBusinessLayout';
-import { usePagePresentation } from '../../../context/PagePresentationContext';
-import { IconPlus } from '@tabler/icons-react';
+import React from 'react';
 import { locationData } from '../../../data/mockData';
 import CreateLocationPage from '../create/CreateLocationPage';
+import { useNotification } from '../../../context/NotificationContext';
+import EntityModulePage from '../shared/EntityModulePage';
 
 const LocationPage = () => {
-    const { setActions } = usePagePresentation();
-    const [isCreateMode, setIsCreateMode] = useState(false);
+    const { addNotification } = useNotification();
 
     const filterOptions = {
         types: [],
@@ -29,28 +27,14 @@ const LocationPage = () => {
         { title: '创建人', key: 'creator', width: '10%', className: 'text-sm text-gray-500' }
     ];
 
-    if (isCreateMode) {
-        return (
-            <div className="h-full bg-white">
-                <CreateLocationPage
-                    onCancel={() => setIsCreateMode(false)}
-                    onSave={(data) => {
-                        console.log('Save Location:', data);
-                        setIsCreateMode(false);
-                    }}
-                />
-            </div>
-        );
-    }
-
     return (
-        <StandardBusinessLayout
+        <EntityModulePage
             title="地点列表"
             filterOptions={filterOptions}
-            showFilters={false}
-            showGridToolbar={false}
-            setHeaderActions={setActions}
-            onCreate={() => setIsCreateMode(true)}
+            createComponent={CreateLocationPage}
+            onCreateSaved={(data) => {
+                addNotification(`地点「${data?.name || '未命名地点'}」已保存（演示）`, 'success');
+            }}
             columns={columns}
             data={locationData}
         />

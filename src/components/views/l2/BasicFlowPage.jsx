@@ -7,16 +7,11 @@
  * 2. 属于 DatabaseManagement 的子模块。
  */
 import React from 'react';
-import StandardBusinessLayout from '../StandardBusinessLayout';
-import { usePagePresentation } from '../../../context/PagePresentationContext';
-import { IconPlus } from '@tabler/icons-react';
 import CreateBasicFlowPage from '../create/CreateBasicFlowPage';
 import { basicFlowData } from '../../../data/mockData';
+import EntityModulePage from '../shared/EntityModulePage';
 
 const BasicFlowPage = () => {
-    const { setActions } = usePagePresentation();
-    const [isCreateMode, setIsCreateMode] = React.useState(false);
-
     const filterOptions = {
         types: [
             { value: 'material', label: '物料流' },
@@ -39,28 +34,14 @@ const BasicFlowPage = () => {
         { title: '地理', key: 'geo', width: '15%', className: 'text-sm text-gray-500' }
     ];
 
-    if (isCreateMode) {
-        return (
-            <div className="h-full bg-white">
-                <CreateBasicFlowPage
-                    onCancel={() => setIsCreateMode(false)}
-                    onSave={(data) => {
-                        console.log('Save Basic Flow:', data);
-                        setIsCreateMode(false);
-                    }}
-                />
-            </div>
-        );
-    }
-
     return (
-        <StandardBusinessLayout
+        <EntityModulePage
             title="基本流"
             filterOptions={filterOptions}
-            showFilters={false}
-            showGridToolbar={false}
-            setHeaderActions={setActions}
-            onCreate={() => setIsCreateMode(true)}
+            createComponent={CreateBasicFlowPage}
+            onCreateSaved={(data) => {
+                console.log('Save Basic Flow:', data);
+            }}
             columns={columns}
             data={basicFlowData}
         />

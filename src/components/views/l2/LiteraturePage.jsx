@@ -6,16 +6,11 @@
  * 1. 作为数据来源的凭证。
  */
 import React from 'react';
-import StandardBusinessLayout from '../StandardBusinessLayout';
-import { usePagePresentation } from '../../../context/PagePresentationContext';
-import { IconPlus } from '@tabler/icons-react';
 import CreateLiteraturePage from '../create/CreateLiteraturePage';
 import { documentData } from '../../../data/mockData';
+import EntityModulePage from '../shared/EntityModulePage';
 
 const LiteraturePage = () => {
-    const { setActions } = usePagePresentation();
-    const [isCreateMode, setIsCreateMode] = React.useState(false);
-
     const filterOptions = {
         types: [
             { value: 'journal', label: '期刊论文' },
@@ -37,28 +32,14 @@ const LiteraturePage = () => {
         { title: '创建用户', key: 'creator', width: '8%', className: 'text-sm text-gray-500' }
     ];
 
-    if (isCreateMode) {
-        return (
-            <div className="h-full bg-white">
-                <CreateLiteraturePage
-                    onCancel={() => setIsCreateMode(false)}
-                    onSave={(data) => {
-                        console.log('Save Literature:', data);
-                        setIsCreateMode(false);
-                    }}
-                />
-            </div>
-        );
-    }
-
     return (
-        <StandardBusinessLayout
+        <EntityModulePage
             title="文献"
             filterOptions={filterOptions}
-            showFilters={false}
-            showGridToolbar={false}
-            setHeaderActions={setActions}
-            onCreate={() => setIsCreateMode(true)}
+            createComponent={CreateLiteraturePage}
+            onCreateSaved={(data) => {
+                console.log('Save Literature:', data);
+            }}
             columns={columns}
             data={documentData}
         />

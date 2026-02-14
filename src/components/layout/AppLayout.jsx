@@ -9,6 +9,7 @@
 import React from 'react';
 import L1Sidebar from './L1Sidebar';
 import Workbench from './Workbench';
+import NotificationViewport from '../common/NotificationViewport';
 
 export default function AppLayout() {
     return (
@@ -18,6 +19,9 @@ export default function AppLayout() {
 
             {/* Workbench - Main Content Area */}
             <Workbench />
+
+            {/* Global Notifications */}
+            <NotificationViewport />
         </div>
     );
 }
