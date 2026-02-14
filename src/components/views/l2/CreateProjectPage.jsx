@@ -37,9 +37,6 @@ const CreateProjectPage = ({ onCancel, onSave, researchObjects = [] }) => {
 
     const [isTitleTouched, setIsTitleTouched] = React.useState(false);
 
-    // Validation
-    const isFormValid = Boolean(formData.research_object_name && formData.type);
-
     // Hide Header on Mount
     React.useEffect(() => {
         setShowHeader(false);
@@ -79,11 +76,6 @@ const CreateProjectPage = ({ onCancel, onSave, researchObjects = [] }) => {
     };
 
     const handleCreate = () => {
-        if (!isFormValid) {
-            console.warn("Validation Failed: Missing research_object_name or type", formData);
-            alert("请完善必填信息：\n1. 请选择所属服务企业\n2. 请选择需求类型");
-            return;
-        }
         if (onSave) {
             onSave(formData);
         } else {
@@ -173,10 +165,7 @@ const CreateProjectPage = ({ onCancel, onSave, researchObjects = [] }) => {
                         </button>
                         <button
                             onClick={handleCreate}
-                            className={`px-3 py-1.5 text-xs text-white rounded-md transition-colors flex items-center gap-1 ${isFormValid
-                                ? 'bg-[#087F9C] hover:bg-[#076A82]'
-                                : 'bg-gray-400 hover:bg-gray-500'
-                                }`}
+                            className="px-3 py-1.5 text-xs text-white rounded-md transition-colors flex items-center gap-1 bg-[#087F9C] hover:bg-[#076A82]"
                         >
                             <IconDeviceFloppy size={14} />
                             <span>创建项目</span>

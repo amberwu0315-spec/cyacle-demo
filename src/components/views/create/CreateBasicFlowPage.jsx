@@ -28,10 +28,6 @@ const CreateBasicFlowPage = ({ onSave, onCancel }) => {
     };
 
     const handleSave = () => {
-        if (!isValid) {
-            alert('请填写必填项：名称（中文）');
-            return;
-        }
         onSave && onSave(formData);
     };
 

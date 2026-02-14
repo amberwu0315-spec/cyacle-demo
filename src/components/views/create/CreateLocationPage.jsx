@@ -27,10 +27,6 @@ const CreateLocationPage = ({ onSave, onCancel }) => {
     };
 
     const handleSave = () => {
-        if (!isValid) {
-            alert('请填写必填项：名称和地点类型');
-            return;
-        }
         onSave && onSave(formData);
     };
 

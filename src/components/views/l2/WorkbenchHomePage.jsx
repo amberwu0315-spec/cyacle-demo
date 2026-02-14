@@ -17,16 +17,62 @@ import {
 import { useAppNavigation } from '../../../context/AppNavigationContext';
 
 const topCapabilityCards = [
-    { title: '元件', desc1: '同属性物质与活动的结构化', desc2: '因子集合', icon: Cpu, tone: 'text-cyan-700 bg-cyan-50' },
-    { title: '文献因子', desc1: '来自权威文献的可追溯核算', desc2: '因子数据', icon: FlaskConical, tone: 'text-indigo-600 bg-indigo-50' },
-    { title: '复合因子', desc1: '基于模型计算形成的多源', desc2: '综合因子', icon: Layers, tone: 'text-violet-600 bg-violet-50' },
-    { title: '文献', desc1: '支撑因子取值、模型设定与', desc2: '审计依据', icon: Book, tone: 'text-blue-700 bg-blue-50' }
+    {
+        title: '元件',
+        desc1: '同属性物质与活动的结构化',
+        desc2: '因子集合',
+        icon: Cpu,
+        tone: 'text-cyan-700 bg-cyan-50',
+        navigate: { l1: 'background_data', target: 'components' }
+    },
+    {
+        title: '文献因子',
+        desc1: '来自权威文献的可追溯核算',
+        desc2: '因子数据',
+        icon: FlaskConical,
+        tone: 'text-indigo-600 bg-indigo-50',
+        navigate: { l1: 'background_data', target: 'factors_literature' }
+    },
+    {
+        title: '复合因子',
+        desc1: '基于模型计算形成的多源',
+        desc2: '综合因子',
+        icon: Layers,
+        tone: 'text-violet-600 bg-violet-50',
+        navigate: { l1: 'background_data', target: 'factors_composite' }
+    },
+    {
+        title: '文献',
+        desc1: '支撑因子取值、模型设定与',
+        desc2: '审计依据',
+        icon: Book,
+        tone: 'text-blue-700 bg-blue-50',
+        navigate: { l1: 'background_data', target: 'literature' }
+    }
 ];
 
 const secondCapabilityCards = [
-    { title: '供应链碳盘查', desc: '管理供应商与物料排放数据', icon: Activity, tone: 'text-cyan-700 bg-cyan-50' },
-    { title: '组织碳盘查', desc: '组织级核算、核查与汇总', icon: Building, tone: 'text-sky-700 bg-sky-50' },
-    { title: '园区碳足迹', desc: '园区多主体排放管理与协同', icon: MapPin, tone: 'text-emerald-700 bg-emerald-50' }
+    {
+        title: '供应链碳盘查',
+        desc: '管理供应商与物料排放数据',
+        icon: Activity,
+        tone: 'text-cyan-700 bg-cyan-50',
+        navigate: { l1: 'project_mgmt', target: 'all_projects' }
+    },
+    {
+        title: '组织碳盘查',
+        desc: '组织级核算、核查与汇总',
+        icon: Building,
+        tone: 'text-sky-700 bg-sky-50',
+        navigate: { l1: 'project_mgmt', target: 'ocf' }
+    },
+    {
+        title: '园区碳足迹',
+        desc: '园区多主体排放管理与协同',
+        icon: MapPin,
+        tone: 'text-emerald-700 bg-emerald-50',
+        navigate: { l1: 'enterprise', target: 'all_objects' }
+    }
 ];
 
 const recentProjects = [
@@ -161,10 +207,19 @@ const WorkbenchHomePage = () => {
     const { setActiveL1, setBusinessTarget } = useAppNavigation();
 
     const handleNavigation = (l1, target) => {
+        const nextL2 = l1 === 'project_tag'
+            ? 'navigation'
+            : l1 === 'workspace'
+                ? 'workbench_home'
+                : null;
+        const nextL3 = l1 === 'project_tag' ? 'acct_basic' : null;
         setActiveL1(l1);
         if (target) {
-            // Small timeout to ensure L1 switch processes first (though state updates are batched, this is safer for context switching)
-            setTimeout(() => setBusinessTarget(target), 0);
+            setBusinessTarget(target, {
+                l1Override: l1,
+                l2Override: nextL2,
+                l3Override: nextL3
+            });
         }
     };
 
@@ -225,12 +280,7 @@ const WorkbenchHomePage = () => {
                     {topCapabilityCards.map((item) => (
                         <button
                             key={item.title}
-                            onClick={() => {
-                                if (item.title === '元件') handleNavigation('background_data', 'components');
-                                if (item.title === '文献因子') handleNavigation('background_data', 'factors_literature');
-                                if (item.title === '复合因子') handleNavigation('background_data', 'factors_composite');
-                                if (item.title === '文献') handleNavigation('background_data', 'literature');
-                            }}
+                            onClick={() => handleNavigation(item.navigate.l1, item.navigate.target)}
                             className="qy-grid-card text-left flex items-center justify-between gap-4"
                         >
                             <div className="flex items-center gap-3.5">
@@ -252,6 +302,7 @@ const WorkbenchHomePage = () => {
                     {secondCapabilityCards.map((item) => (
                         <button
                             key={item.title}
+                            onClick={() => handleNavigation(item.navigate.l1, item.navigate.target)}
                             className="qy-grid-card text-left flex items-center justify-between gap-4"
                         >
                             <div className="flex items-center gap-3.5">

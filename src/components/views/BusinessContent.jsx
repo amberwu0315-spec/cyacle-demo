@@ -28,6 +28,7 @@ import { usePagePresentation } from '../../context/PagePresentationContext';
 import WorkbenchHomePage from './l2/WorkbenchHomePage';
 import CarbonPanoramaPage from './l2/CarbonPanoramaPage';
 import CarbonAssetMgmtPage from './l2/CarbonAssetMgmtPage';
+import { buildUntitledName } from '../../utils/createEntityRow';
 
 export default function BusinessContent({ activeL1, target, onOpenTab, openedTabs = [], projects = [], onAddProject, researchObjects = [], onAddResearchObject }) {
     const { setActions } = usePagePresentation();
@@ -90,16 +91,21 @@ export default function BusinessContent({ activeL1, target, onOpenTab, openedTab
                         const selectedObject = researchObjects.find(
                             (obj) => String(obj.id) === String(newProjectData.research_object_name)
                         );
+                        const fallbackName = buildUntitledName();
 
                         // Create new project object
                         const newProject = {
+                            ...newProjectData,
                             id: String(projects.length + 1),
-                            name: newProjectData.name || '未命名项目',
+                            name: newProjectData.name || fallbackName,
                             object: selectedObject?.name || '-',
-                            type: newProjectData.type === 'CFP' ? 'PCF' : 'OCF', // Mapping 'CFP'->'PCF', 'CFO'->'OCF' to match list data
+                            type: newProjectData.type === 'CFP'
+                                ? 'PCF'
+                                : newProjectData.type === 'CFO'
+                                    ? 'OCF'
+                                    : '-',
                             createTime: new Date().toISOString().split('T')[0], // Simple YYYY-MM-DD
-                            updateTime: new Date().toISOString().split('T')[0],
-                            ...newProjectData
+                            updateTime: new Date().toISOString().split('T')[0]
                         };
 
                         if (onAddProject) {
@@ -176,16 +182,19 @@ export default function BusinessContent({ activeL1, target, onOpenTab, openedTab
                 <CreateResearchObjectPage
                     onCancel={() => setObjectLimitMode('list')}
                     onSave={(newData) => {
+                        const fallbackName = buildUntitledName();
                         const newObj = {
+                            ...newData,
                             id: String(researchObjects.length + 100), // simple ID
                             createTime: new Date().toISOString(),
                             creator: 'Current User',
-                            ...newData
+                            name: newData?.name || fallbackName
                         };
                         if (onAddResearchObject) {
                             onAddResearchObject(newObj);
                         }
                         setObjectLimitMode('list');
+                        onOpenTab(newObj);
                     }}
                 />
             );

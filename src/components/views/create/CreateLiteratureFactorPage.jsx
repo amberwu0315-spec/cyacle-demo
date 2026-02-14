@@ -28,10 +28,6 @@ const CreateLiteratureFactorPage = ({ onSave, onCancel }) => {
     };
 
     const handleSave = () => {
-        if (!isValid) {
-            alert('请填写必填项：名称和类别');
-            return;
-        }
         onSave && onSave(formData);
     };
 

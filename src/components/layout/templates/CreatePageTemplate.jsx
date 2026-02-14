@@ -36,7 +36,7 @@ export const CreatePageTemplate = ({
     onCancel = () => { },              // 取消/退出回调
 
     // ========== 验证状态 ==========
-    isValid = false,                  // 表单是否通过验证
+    isValid = true,                   // 表单是否通过验证（当前创建流程允许空表单提交）
 
     // ========== 可选配置 ==========
     saveButtonText = null,            // 自定义保存按钮文案（默认"创建{entityType}"）
@@ -121,11 +121,7 @@ export const CreatePageTemplate = ({
                 </button>
                 <button
                     onClick={onSave}
-                    disabled={!isValid}
-                    className={`px-3 py-1.5 text-xs text-white rounded-md transition-colors flex items-center gap-1 ${isValid
-                        ? 'bg-[#087F9C] hover:bg-[#076A82]'
-                        : 'bg-gray-400 cursor-not-allowed'
-                        }`}
+                    className="px-3 py-1.5 text-xs text-white rounded-md transition-colors flex items-center gap-1 bg-[#087F9C] hover:bg-[#076A82]"
                 >
                     <IconDeviceFloppy size={14} />
                     <span>{finalSaveButtonText}</span>

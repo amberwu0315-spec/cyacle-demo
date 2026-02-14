@@ -28,10 +28,6 @@ const CreateDataPage = ({ onSave, onCancel }) => {
     };
 
     const handleSave = () => {
-        if (!isValid) {
-            alert('请填写必填项：名称和数值');
-            return;
-        }
         onSave && onSave(formData);
     };
 

@@ -6,7 +6,7 @@
  * 2. 也是 AppNavigationContext 和 View 层 (MainContent) 之间的关键桥梁。
  * 3. 它决定了当前是“项目模式”还是“业务模式”。
  */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import L2Sidebar from './L2Sidebar';
 import Header from './Header';
 import MainContent from '../views/MainContent';
@@ -18,6 +18,9 @@ import { useAppNavigation } from '../../context/AppNavigationContext'; // New Ho
 import { useData } from '../../context/DataContext'; // New Hook
 import { usePagePresentation } from '../../context/PagePresentationContext';
 import { useUser } from '../../context/UserContext';
+import { readStore, writeStore } from '../../utils/persistStore';
+
+const FOOTER_MODAL_SESSION_KEY = 'cyacle:overlay:footer-modal';
 
 /**
  * Inner Component to Consume Navigation Context
@@ -35,6 +38,7 @@ const WorkbenchContent = ({
         activeL2, setActiveL2,
         activeL3, setActiveL3,
         mode,
+        isHydrated,
         businessTarget, setBusinessTarget,
         openedTabs,
         openTab, clickTab, closeTab,
@@ -64,6 +68,7 @@ const WorkbenchContent = ({
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [activeFooterAction, setActiveFooterAction] = useState(null);
     const [modalTitle, setModalTitle] = useState('');
+    const footerModalRestoredRef = useRef(false);
 
     useEffect(() => {
         if ((isProjectLayout || isDetailView) && activeL2) {
@@ -192,6 +197,52 @@ const WorkbenchContent = ({
     useEffect(() => {
         if (isModalOpen) handleCloseModal();
     }, [activeL1, activeL2, activeL3]);
+
+    useEffect(() => {
+        if (!isHydrated || footerModalRestoredRef.current) {
+            return;
+        }
+
+        const saved = readStore(FOOTER_MODAL_SESSION_KEY, null);
+        footerModalRestoredRef.current = true;
+        if (!saved?.isOpen) {
+            return;
+        }
+
+        const sameRoute = saved?.route?.activeL1 === activeL1
+            && saved?.route?.activeL2 === activeL2
+            && saved?.route?.businessTarget === businessTarget;
+
+        if (!sameRoute) {
+            return;
+        }
+
+        setActiveFooterAction(saved.activeFooterAction || null);
+        setModalTitle(saved.modalTitle || '');
+        setIsModalOpen(true);
+    }, [isHydrated, activeL1, activeL2, businessTarget]);
+
+    useEffect(() => {
+        if (!isHydrated) {
+            return;
+        }
+        writeStore(FOOTER_MODAL_SESSION_KEY, {
+            isOpen: isModalOpen,
+            activeFooterAction,
+            modalTitle,
+            route: {
+                activeL1,
+                activeL2,
+                businessTarget
+            }
+        });
+    }, [isHydrated, isModalOpen, activeFooterAction, modalTitle, activeL1, activeL2, businessTarget]);
+
+    useEffect(() => {
+        if (isModalOpen && !(isProjectLayout || isDetailView)) {
+            handleCloseModal();
+        }
+    }, [isModalOpen, isProjectLayout, isDetailView]);
 
     const handleOpenModal = (action, title) => {
         if (isModalOpen && activeFooterAction === action) {

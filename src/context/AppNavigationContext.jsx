@@ -5,7 +5,8 @@
  * 📝 职责：规划宏观路线，管理一级菜单 (L1) 和应用整体模式 (Split/Wide)。
  * 🔧 包含：activeL1 (一级菜单), mode (宽屏/分栏模式), openedTabs (多页签状态).
  */
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { readStore, writeStore } from '../utils/persistStore';
 
 // Modes
 export const MODES = {
@@ -15,6 +16,17 @@ export const MODES = {
 };
 
 const AppNavigationContext = createContext(null);
+const NAV_SESSION_KEY = 'cyacle:nav:session';
+
+const DEFAULT_TARGET_MAP = {
+    background_data: 'database_mgmt',
+    project_mgmt: 'all_projects',
+    enterprise: 'all_objects',
+    workspace: 'workbench_home',
+    project_tag: 'all_projects'
+};
+
+const resolveDefaultBusinessTarget = (l1) => DEFAULT_TARGET_MAP[l1] || 'database_mgmt';
 
 export const AppNavigationProvider = ({ children }) => {
     // App State
@@ -30,6 +42,24 @@ export const AppNavigationProvider = ({ children }) => {
     // Scoped History
     const [projHistory, setProjHistory] = useState([]);
     const [historyIndex, setHistoryIndex] = useState(-1);
+    const [isHydrated, setIsHydrated] = useState(false);
+
+    const activeL1Ref = useRef(activeL1);
+    const activeL2Ref = useRef(activeL2);
+    const activeL3Ref = useRef(activeL3);
+    const openedTabsRef = useRef(openedTabs);
+    useEffect(() => {
+        activeL1Ref.current = activeL1;
+    }, [activeL1]);
+    useEffect(() => {
+        activeL2Ref.current = activeL2;
+    }, [activeL2]);
+    useEffect(() => {
+        activeL3Ref.current = activeL3;
+    }, [activeL3]);
+    useEffect(() => {
+        openedTabsRef.current = openedTabs;
+    }, [openedTabs]);
 
     // Derived State
     const isProjectLayout = activeL1 === 'project_tag';
@@ -57,7 +87,7 @@ export const AppNavigationProvider = ({ children }) => {
     }, [activeL1, businessTarget, activeL2, isProjectLayout, isBusinessLayout]);
 
     // 2. URL Synchronization
-    const updateUrl = (l1, l2, l3) => {
+    const updateUrl = (l1, l2, l3, target, replace = false) => {
         const url = new URL(window.location);
         if (l1) {
             url.searchParams.set('l1', l1);
@@ -74,7 +104,14 @@ export const AppNavigationProvider = ({ children }) => {
         } else {
             url.searchParams.delete('l3');
         }
-        window.history.pushState({ l1, l2, l3 }, '', url);
+        if (target) {
+            url.searchParams.set('target', target);
+        } else {
+            url.searchParams.delete('target');
+        }
+
+        const historyMethod = replace ? 'replaceState' : 'pushState';
+        window.history[historyMethod]({ l1, l2, l3, target }, '', url);
     };
 
     // 3. History Management helpers
@@ -87,12 +124,41 @@ export const AppNavigationProvider = ({ children }) => {
         setHistoryIndex(prev => prev + 1);
     };
 
+    useEffect(() => {
+        if (!isHydrated) {
+            return;
+        }
+        writeStore(NAV_SESSION_KEY, {
+            activeL1,
+            activeL2,
+            activeL3,
+            businessTarget,
+            openedTabs,
+            projHistory,
+            historyIndex
+        });
+    }, [activeL1, activeL2, activeL3, businessTarget, openedTabs, projHistory, historyIndex, isHydrated]);
+
     // --- Actions ---
 
     // Keep detail entry behavior consistent across "open new tab" and "click existing tab".
     const getDetailDefaultL2 = (l1Context) => (
         l1Context === 'enterprise' ? 'ent_projects' : 'navigation'
     );
+
+    const handleBusinessTargetChange = (target, options = {}) => {
+        const {
+            replace = false,
+            l1Override,
+            l2Override,
+            l3Override
+        } = options;
+        const nextL1 = l1Override !== undefined ? l1Override : activeL1Ref.current;
+        const nextL2 = l2Override !== undefined ? l2Override : activeL2Ref.current;
+        const nextL3 = l3Override !== undefined ? l3Override : activeL3Ref.current;
+        setBusinessTarget(target);
+        updateUrl(nextL1, nextL2, nextL3, target, replace);
+    };
 
     const handleL1Change = (val) => {
         const nextL2 = val === 'project_tag'
@@ -101,16 +167,13 @@ export const AppNavigationProvider = ({ children }) => {
                 ? 'workbench_home'
                 : null;
         const nextL3 = val === 'project_tag' ? 'acct_basic' : null;
+        const nextTarget = resolveDefaultBusinessTarget(val);
 
         setActiveL1(val);
         setActiveL2(nextL2);
         setActiveL3(nextL3);
-        updateUrl(val, nextL2, nextL3);
-
-        if (val === 'background_data') setBusinessTarget('database_mgmt');
-        else if (val === 'project_mgmt') setBusinessTarget('all_projects');
-        else if (val === 'enterprise') setBusinessTarget('all_objects');
-        else if (val === 'workspace') setBusinessTarget('workbench_home');
+        setBusinessTarget(nextTarget);
+        updateUrl(val, nextL2, nextL3, nextTarget);
 
         if (val === 'project_tag') {
             setProjHistory([{ l2: nextL2, l3: nextL3 }]);
@@ -120,7 +183,7 @@ export const AppNavigationProvider = ({ children }) => {
 
     const handleL2Change = (val) => {
         setActiveL2(val);
-        updateUrl(activeL1, val, activeL3);
+        updateUrl(activeL1, val, activeL3, businessTarget);
 
         if (activeL1 === 'project_tag') {
             const current = projHistory[historyIndex];
@@ -132,7 +195,7 @@ export const AppNavigationProvider = ({ children }) => {
 
     const handleL3Change = (val) => {
         setActiveL3(val);
-        updateUrl(activeL1, activeL2, val);
+        updateUrl(activeL1, activeL2, val, businessTarget);
 
         if (activeL1 === 'project_tag') {
             const current = projHistory[historyIndex];
@@ -158,6 +221,7 @@ export const AppNavigationProvider = ({ children }) => {
         }
         setBusinessTarget(tabId);
         setActiveL2(detailL2);
+        updateUrl(activeL1, detailL2, activeL3, tabId);
     };
 
     const handleCloseTab = (tabId, e) => {
@@ -166,10 +230,9 @@ export const AppNavigationProvider = ({ children }) => {
         setOpenedTabs(newTabs);
 
         if (businessTarget === tabId) {
-            let defaultTarget = 'all_projects';
-            if (activeL1 === 'background_data') defaultTarget = 'database_mgmt';
-            if (activeL1 === 'enterprise') defaultTarget = 'all_objects';
+            const defaultTarget = resolveDefaultBusinessTarget(activeL1);
             setBusinessTarget(defaultTarget);
+            updateUrl(activeL1, activeL2, activeL3, defaultTarget);
         }
     };
 
@@ -177,7 +240,9 @@ export const AppNavigationProvider = ({ children }) => {
         const tab = openedTabs.find(t => t.id === tabId);
         if (tab) {
             setBusinessTarget(tabId);
-            setActiveL2(getDetailDefaultL2(tab.l1Context));
+            const detailL2 = getDetailDefaultL2(tab.l1Context);
+            setActiveL2(detailL2);
+            updateUrl(activeL1, detailL2, activeL3, tabId);
         }
     };
 
@@ -189,7 +254,7 @@ export const AppNavigationProvider = ({ children }) => {
             setHistoryIndex(prevIndex);
             setActiveL2(state.l2);
             setActiveL3(state.l3);
-            updateUrl('project_tag', state.l2, state.l3);
+            updateUrl('project_tag', state.l2, state.l3, businessTarget);
         }
     };
 
@@ -200,39 +265,60 @@ export const AppNavigationProvider = ({ children }) => {
             setHistoryIndex(nextIndex);
             setActiveL2(state.l2);
             setActiveL3(state.l3);
-            updateUrl('project_tag', state.l2, state.l3);
+            updateUrl('project_tag', state.l2, state.l3, businessTarget);
         }
     };
 
     // Initialization & Event Listeners
     useEffect(() => {
-        const syncStateFromUrl = () => {
+        const syncStateFromUrl = (isPopState = false) => {
             const params = new URLSearchParams(window.location.search);
+            const persisted = readStore(NAV_SESSION_KEY, {});
             const rawL1 = params.get('l1');
             const validL1 = ['workspace', 'background_data', 'project_mgmt', 'enterprise', 'project_tag'];
-            const l1 = validL1.includes(rawL1) ? rawL1 : 'workspace';
-            const l2 = params.get('l2') || (
+            const l1 = validL1.includes(rawL1)
+                ? rawL1
+                : (validL1.includes(persisted?.activeL1) ? persisted.activeL1 : 'workspace');
+            const l2 = params.get('l2') || persisted?.activeL2 || (
                 l1 === 'project_tag'
                     ? 'navigation'
                     : l1 === 'workspace'
                         ? 'workbench_home'
                         : null
             );
-            const l3 = params.get('l3') || (l1 === 'project_tag' ? 'acct_basic' : null);
+            const l3 = params.get('l3') || persisted?.activeL3 || (l1 === 'project_tag' ? 'acct_basic' : null);
+
+            const persistedTabs = Array.isArray(persisted?.openedTabs) ? persisted.openedTabs : [];
+            const targetFromUrl = params.get('target');
+            const fallbackTarget = resolveDefaultBusinessTarget(l1);
+            let target = targetFromUrl || persisted?.businessTarget || fallbackTarget;
+
+            if (target?.startsWith('detail_')) {
+                const hasTargetTab = persistedTabs.some((tab) => tab.id === target)
+                    || openedTabsRef.current.some((tab) => tab.id === target);
+                if (!hasTargetTab) {
+                    target = fallbackTarget;
+                }
+            }
 
             setActiveL1(l1);
             setActiveL2(l2);
             setActiveL3(l3);
+            setBusinessTarget(target);
 
-            if (l1 === 'background_data') setBusinessTarget('database_mgmt');
-            else if (l1 === 'project_mgmt') setBusinessTarget('all_projects');
-            else if (l1 === 'enterprise') setBusinessTarget('all_objects');
-            else if (l1 === 'workspace') setBusinessTarget('workbench_home');
+            if (!isPopState) {
+                setOpenedTabs(persistedTabs);
+                setProjHistory(Array.isArray(persisted?.projHistory) ? persisted.projHistory : []);
+                setHistoryIndex(Number.isInteger(persisted?.historyIndex) ? persisted.historyIndex : -1);
+                setIsHydrated(true);
+            }
+
+            updateUrl(l1, l2, l3, target, true);
         };
 
-        syncStateFromUrl();
+        syncStateFromUrl(false);
 
-        const handlePopState = () => syncStateFromUrl();
+        const handlePopState = () => syncStateFromUrl(true);
         window.addEventListener('popstate', handlePopState);
         return () => window.removeEventListener('popstate', handlePopState);
     }, []);
@@ -241,6 +327,7 @@ export const AppNavigationProvider = ({ children }) => {
         // State
         activeL1, activeL2, activeL3, mode,
         businessTarget, openedTabs,
+        isHydrated,
         isProjectLayout, isBusinessLayout,
         canGoBack: historyIndex > 0,
         canGoForward: historyIndex < projHistory.length - 1,
@@ -249,7 +336,7 @@ export const AppNavigationProvider = ({ children }) => {
         setActiveL1: handleL1Change,
         setActiveL2: handleL2Change,
         setActiveL3: handleL3Change,
-        setBusinessTarget, // Directly exposed if needed
+        setBusinessTarget: handleBusinessTargetChange,
 
         // Tab Actions
         openTab: handleOpenTab,

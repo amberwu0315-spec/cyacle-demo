@@ -42,3 +42,30 @@
 - [ ] 打开条件正确
 - [ ] 可关闭且不残留遮罩
 - [ ] 不影响主页面滚动与交互
+
+## 8. 执行记录（2026-02-14 / Day 1）
+- [x] `npm run lint` 通过
+- [x] `npm run build` 通过
+- [x] `WorkbenchHomePage` 已补齐卡片导航链路（代码级验证）
+- [x] `DocumentPage` 已打通列表/创建/主从/返回列表链路（代码级验证）
+- [x] `TC-WorkbenchHomePage-001` UI 回归执行（Pass）
+- [x] `TC-DocumentPage-001` UI 回归执行（Pass）
+
+## 9. 执行记录（2026-02-14 / Day 2）
+- [x] `npm run lint` 通过
+- [x] `npm run build` 通过
+- [x] A 类 12 页面 P0 用例执行完成并回填结果（全部 Pass）
+- [x] `WorkbenchHomePage` 卡片跳转 URL 同步问题修复并验证通过
+- [x] `DocumentPage`（`ent_docs`）创建入口恢复并验证通过
+
+## 10. 执行记录（2026-02-14 / Day 3）
+- [x] B 类 23 项用例执行完成并回填结果（全部 Pass）
+- [x] B 类 8 个 L2 页面可达性与核心模块展示验证通过
+- [x] B 类 12 个 Create 页面进入/取消返回链路验证通过
+- [x] B 类 3 个 Drawer 打开/关闭链路验证通过
+
+## 11. 执行记录（2026-02-14 / Day 4）
+- [x] C 类 20 项用例执行完成并回填结果（全部 Pass）
+- [x] C 类 9 个 L3 页面入口可达性与核心模块展示验证通过
+- [x] C 类 11 个 Footer 弹层打开/关闭与主链路验证通过
+- [x] 占位态页面（`AccountingCalc`、`AccountingTools`）已按当前实现完成回归并记录

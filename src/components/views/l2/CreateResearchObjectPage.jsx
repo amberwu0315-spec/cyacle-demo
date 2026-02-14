@@ -299,16 +299,9 @@ const CreateResearchObjectPage = ({ onCancel, onSave }) => {
                         </button>
                         <button
                             onClick={() => {
-                                if (!isValid) {
-                                    alert('请输入名称');
-                                    return;
-                                }
                                 onSave && onSave(formData);
                             }}
-                            className={`px-3 py-1.5 text-xs text-white rounded-md transition-colors flex items-center gap-1 ${isValid
-                                ? 'bg-[#087f9c] hover:bg-[#076a82]'
-                                : 'bg-gray-300 cursor-not-allowed'
-                                }`}
+                            className="px-3 py-1.5 text-xs text-white rounded-md transition-colors flex items-center gap-1 bg-[#087f9c] hover:bg-[#076a82]"
                         >
                             <IconDeviceFloppy size={14} />
                             <span>创建服务企业</span>

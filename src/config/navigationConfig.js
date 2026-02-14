@@ -232,8 +232,8 @@ export const NAV_SCHEME = {
     // Documents - Double Column (MasterDetail)
     ent_docs: {
         modes: {
-            config: { headerWidgets: [], sidebarGroups: [] }, // Hide Top Header
-            version: { headerWidgets: [], sidebarGroups: [] }
+            config: { headerWidgets: ['title', 'business_actions'], sidebarGroups: [] },
+            version: { headerWidgets: ['title'], sidebarGroups: [] }
         }
     }
 };

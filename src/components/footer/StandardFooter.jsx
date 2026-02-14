@@ -1,9 +1,11 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { IconPlus, IconSearch } from '@tabler/icons-react';
 import FooterModal from './FooterModal';
 import DataGrid from '../common/DataGrid';
 import { footerModelConfig } from '../../data/footerModelConfig';
 import EntityMasterDetailPage from '../views/shared/EntityMasterDetailPage';
+import { buildCreatedEntityRow } from '../../utils/createEntityRow';
+import { readStore, writeStore } from '../../utils/persistStore';
 
 // 导入创建页面
 import CreateComponentPage from '../views/create/CreateComponentPage';
@@ -20,15 +22,66 @@ import DocumentPage from '../views/l2/DocumentPage';
 
 const StandardFooter = ({ moduleKey, onClose }) => {
   const config = footerModelConfig[moduleKey];
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeRowId, setActiveRowId] = useState(null);
-  const [mode, setMode] = useState('list'); // 'list' | 'detail' | 'create'
+  const persistKey = `cyacle:footer-created:${moduleKey}`;
+  const uiPersistKey = `cyacle:footer-ui:${moduleKey}`;
+  const [searchQuery, setSearchQuery] = useState(() => {
+    const saved = readStore(uiPersistKey, {});
+    return saved?.searchQuery || '';
+  });
+  const [activeRowId, setActiveRowId] = useState(() => {
+    const saved = readStore(uiPersistKey, {});
+    return saved?.activeRowId ?? null;
+  });
+  const [mode, setMode] = useState(() => {
+    const saved = readStore(uiPersistKey, {});
+    return saved?.mode || 'list';
+  }); // 'list' | 'detail' | 'create'
+  const [createdRows, setCreatedRows] = useState(() => {
+    const persisted = readStore(persistKey, []);
+    return Array.isArray(persisted) ? persisted : [];
+  });
 
-  const rows = config?.rows || [];
   const columns = config?.columns || [];
+  const rows = useMemo(() => {
+    const baseRows = config?.rows || [];
+    if (!createdRows.length) {
+      return baseRows;
+    }
+    const baseIds = new Set(baseRows.map((item) => String(item?.id)));
+    const uniqueCreatedRows = createdRows.filter((item) => !baseIds.has(String(item?.id)));
+    return [...uniqueCreatedRows, ...baseRows];
+  }, [config?.rows, createdRows]);
   const activeRow = rows.find((item) => String(item.id) === String(activeRowId));
   const isDetailMode = mode === 'detail' && Boolean(activeRow);
   const isCreateMode = mode === 'create';
+
+  useEffect(() => {
+    const persisted = readStore(persistKey, []);
+    setCreatedRows(Array.isArray(persisted) ? persisted : []);
+    const savedUi = readStore(uiPersistKey, {});
+    setActiveRowId(savedUi?.activeRowId ?? null);
+    setMode(savedUi?.mode || 'list');
+    setSearchQuery(savedUi?.searchQuery || '');
+  }, [moduleKey, persistKey, uiPersistKey]);
+
+  useEffect(() => {
+    writeStore(persistKey, createdRows);
+  }, [persistKey, createdRows]);
+
+  useEffect(() => {
+    writeStore(uiPersistKey, {
+      searchQuery,
+      activeRowId,
+      mode
+    });
+  }, [uiPersistKey, searchQuery, activeRowId, mode]);
+
+  useEffect(() => {
+    if (mode === 'detail' && activeRowId !== null && !rows.some((item) => String(item.id) === String(activeRowId))) {
+      setMode('list');
+      setActiveRowId(null);
+    }
+  }, [mode, activeRowId, rows]);
 
   const filteredRows = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
@@ -60,9 +113,16 @@ const StandardFooter = ({ moduleKey, onClose }) => {
 
   // 保存创建的数据
   const handleSaveCreate = (formData) => {
-    console.log('创建数据：', formData);
-    // TODO: 实际保存逻辑
-    setMode('list');
+    const createdRow = buildCreatedEntityRow({
+      moduleKey,
+      label: config?.title || '记录',
+      payload: formData,
+      columns,
+      existingCount: rows.length
+    });
+    setCreatedRows((prev) => [createdRow, ...prev]);
+    setActiveRowId(createdRow.id);
+    setMode('detail');
   };
 
   // 取消创建
@@ -169,7 +229,7 @@ const StandardFooter = ({ moduleKey, onClose }) => {
       {isCreateMode ? (
         renderCreateView()
       ) : moduleKey === 'docs' ? (
-        <DocumentPage onClose={onClose} />
+        <DocumentPage onClose={onClose} showAddButton={false} />
       ) : (
         <>
           {!isDetailMode && renderSearchBar()}

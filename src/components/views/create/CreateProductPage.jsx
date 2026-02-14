@@ -26,10 +26,6 @@ const CreateProductPage = ({ onSave, onCancel }) => {
     };
 
     const handleSave = () => {
-        if (!isValid) {
-            alert('请填写必填项：产品名称');
-            return;
-        }
         onSave && onSave(formData);
     };
 

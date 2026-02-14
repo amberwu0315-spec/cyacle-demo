@@ -5,8 +5,9 @@
  * 📝 职责：处理纯界面的交互，不涉及核心生产。比如“把侧边栏关一下”、“打开那个弹窗”。
  * 🔧 包含：sidebarOpen (侧边栏状态), activeModal (当前弹窗).
  */
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
 import { useAppNavigation } from './AppNavigationContext';
+import { readStore, writeStore } from '../utils/persistStore';
 
 // Define the context
 const ViewActionsContext = createContext({
@@ -17,6 +18,8 @@ const ViewActionsContext = createContext({
     closeModal: () => { },
 });
 
+const VIEW_MODAL_SESSION_KEY = 'cyacle:overlay:view-modal';
+
 // Custom hook to use the context
 export const useViewActions = () => useContext(ViewActionsContext);
 
@@ -25,16 +28,54 @@ export const ViewActionsProvider = ({ children }) => {
     // Manage purely UI state that doesn't belong in specific pages
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [activeModal, setActiveModal] = useState(null);
+    const restoreDoneRef = useRef(false);
+    const prevRouteRef = useRef({ activeL1: null, activeL2: null, activeL3: null });
 
     // 🔧 修复深层状态断层：监听 L1 导航变化，自动清理 Modal 状态
-    const { activeL1 } = useAppNavigation();
+    const { activeL1, activeL2, activeL3, isHydrated } = useAppNavigation();
 
     useEffect(() => {
-        // 当一级导航切换时，强制关闭所有可能打开的弹窗或抽屉
-        // 这确保用户从深层视图（如三级菜单+InnerDrawer）切换到其他 L1 时，
-        // 不会出现"UI 残影"或状态残留问题
-        setActiveModal(null);
-    }, [activeL1]);
+        if (!isHydrated || restoreDoneRef.current) {
+            return;
+        }
+        const saved = readStore(VIEW_MODAL_SESSION_KEY, null);
+        restoreDoneRef.current = true;
+        if (!saved?.activeModal) {
+            prevRouteRef.current = { activeL1, activeL2, activeL3 };
+            return;
+        }
+
+        const sameRoute = saved?.route?.activeL1 === activeL1
+            && saved?.route?.activeL2 === activeL2
+            && saved?.route?.activeL3 === activeL3;
+        if (sameRoute) {
+            setActiveModal(saved.activeModal);
+        }
+        prevRouteRef.current = { activeL1, activeL2, activeL3 };
+    }, [activeL1, activeL2, activeL3, isHydrated]);
+
+    useEffect(() => {
+        if (!isHydrated) {
+            return;
+        }
+        writeStore(VIEW_MODAL_SESSION_KEY, {
+            activeModal,
+            route: { activeL1, activeL2, activeL3 }
+        });
+    }, [activeModal, activeL1, activeL2, activeL3, isHydrated]);
+
+    useEffect(() => {
+        if (!isHydrated) {
+            return;
+        }
+        const prev = prevRouteRef.current;
+        const routeChanged = prev.activeL1 !== null
+            && (prev.activeL1 !== activeL1 || prev.activeL2 !== activeL2 || prev.activeL3 !== activeL3);
+        if (routeChanged) {
+            setActiveModal(null);
+        }
+        prevRouteRef.current = { activeL1, activeL2, activeL3 };
+    }, [activeL1, activeL2, activeL3, isHydrated]);
 
     const toggleSidebar = useCallback(() => {
         setSidebarOpen(prev => !prev);

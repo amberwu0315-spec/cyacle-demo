@@ -28,10 +28,6 @@ const CreateLiteraturePage = ({ onSave, onCancel }) => {
     };
 
     const handleSave = () => {
-        if (!isValid) {
-            alert('请填写必填项：文献标题');
-            return;
-        }
         onSave && onSave(formData);
     };
 
