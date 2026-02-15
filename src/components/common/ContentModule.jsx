@@ -56,7 +56,7 @@ export const ContentModule = ({
 
     return (
         <div
-            className={`w-full min-h-0 bg-white rounded-sm shadow-sm ${overflowClass} ${typeClasses[resolvedType] || typeClasses.detail} ${status ? statusClasses[status] : ''} ${className}`}
+            className={`w-full shrink-0 bg-white rounded-sm shadow-sm ${overflowClass} ${typeClasses[resolvedType] || typeClasses.detail} ${status ? statusClasses[status] : ''} ${className}`}
             data-type={resolvedType}
             data-status={status}
             data-has-header={hasHeader ? 'true' : 'false'}
