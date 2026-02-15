@@ -96,7 +96,7 @@ const CarbonAssetMgmtPage = () => {
 
     return (
         <CanvasPage className="bg-[var(--qy-bg-canvas)] p-3">
-            <div className="h-full flex flex-col gap-3 overflow-y-auto">
+            <div className="flex-1 min-h-0 flex flex-col gap-3 overflow-y-auto">
                 <div className="flex items-center justify-between">
                     <div>
                         <h2 className="text-xl font-semibold text-slate-900 flex items-center gap-2">

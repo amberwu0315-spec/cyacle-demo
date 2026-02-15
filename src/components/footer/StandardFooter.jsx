@@ -1,11 +1,14 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { IconPlus, IconSearch } from '@tabler/icons-react';
+import { IconExternalLink, IconPlus, IconX } from '@tabler/icons-react';
 import FooterModal from './FooterModal';
 import DataGrid from '../common/DataGrid';
+import DataController from '../common/DataController';
 import { footerModelConfig } from '../../data/footerModelConfig';
 import EntityMasterDetailPage from '../views/shared/EntityMasterDetailPage';
 import { buildCreatedEntityRow } from '../../utils/createEntityRow';
 import { readStore, writeStore } from '../../utils/persistStore';
+import { buildStandardDataControllerRules } from '../../config/dataControllerRules';
+import { useNotification } from '../../context/NotificationContext';
 
 // 导入创建页面
 import CreateComponentPage from '../views/create/CreateComponentPage';
@@ -20,13 +23,22 @@ import CreateBasicFlowPage from '../views/create/CreateBasicFlowPage';
 // 导入特殊布局页面
 import DocumentPage from '../views/l2/DocumentPage';
 
-const StandardFooter = ({ moduleKey, onClose }) => {
+const StandardFooter = ({ moduleKey, onClose, filterOptions = {} }) => {
+  const { addNotification } = useNotification();
   const config = footerModelConfig[moduleKey];
   const persistKey = `cyacle:footer-created:${moduleKey}`;
   const uiPersistKey = `cyacle:footer-ui:${moduleKey}`;
   const [searchQuery, setSearchQuery] = useState(() => {
     const saved = readStore(uiPersistKey, {});
     return saved?.searchQuery || '';
+  });
+  const [filterType, setFilterType] = useState(() => {
+    const saved = readStore(uiPersistKey, {});
+    return saved?.filterType || 'all';
+  });
+  const [filterStatus, setFilterStatus] = useState(() => {
+    const saved = readStore(uiPersistKey, {});
+    return saved?.filterStatus || 'all';
   });
   const [activeRowId, setActiveRowId] = useState(() => {
     const saved = readStore(uiPersistKey, {});
@@ -40,6 +52,7 @@ const StandardFooter = ({ moduleKey, onClose }) => {
     const persisted = readStore(persistKey, []);
     return Array.isArray(persisted) ? persisted : [];
   });
+  const [activeView, setActiveView] = useState('table');
 
   const columns = config?.columns || [];
   const rows = useMemo(() => {
@@ -51,9 +64,49 @@ const StandardFooter = ({ moduleKey, onClose }) => {
     const uniqueCreatedRows = createdRows.filter((item) => !baseIds.has(String(item?.id)));
     return [...uniqueCreatedRows, ...baseRows];
   }, [config?.rows, createdRows]);
+  const controllerRules = useMemo(() => buildStandardDataControllerRules({
+    title: config?.title || '列表',
+    filterOptions,
+    viewOptions: [{ value: 'table', label: '表格' }],
+    defaultView: 'table'
+  }), [config?.title, filterOptions]);
+  const conditionItems = useMemo(() => {
+    const items = [{
+      ...controllerRules.searchRule,
+      value: searchQuery,
+      isActive: searchQuery.trim().length > 0,
+      onChange: setSearchQuery
+    }];
+
+    controllerRules.filterRules.forEach((rule) => {
+      if (rule.id === 'type') {
+        items.push({
+          ...rule,
+          value: filterType,
+          isActive: filterType !== (rule.allValue ?? 'all'),
+          onChange: setFilterType
+        });
+      }
+      if (rule.id === 'status') {
+        items.push({
+          ...rule,
+          value: filterStatus,
+          isActive: filterStatus !== (rule.allValue ?? 'all'),
+          onChange: setFilterStatus
+        });
+      }
+    });
+
+    return items;
+  }, [controllerRules, searchQuery, filterType, filterStatus]);
+  const hasActiveConditions = useMemo(() => (
+    searchQuery.trim().length > 0 || filterType !== 'all' || filterStatus !== 'all'
+  ), [searchQuery, filterType, filterStatus]);
+
   const activeRow = rows.find((item) => String(item.id) === String(activeRowId));
   const isDetailMode = mode === 'detail' && Boolean(activeRow);
   const isCreateMode = mode === 'create';
+  const hideTopBar = isDetailMode || moduleKey === 'docs';
 
   useEffect(() => {
     const persisted = readStore(persistKey, []);
@@ -62,6 +115,8 @@ const StandardFooter = ({ moduleKey, onClose }) => {
     setActiveRowId(savedUi?.activeRowId ?? null);
     setMode(savedUi?.mode || 'list');
     setSearchQuery(savedUi?.searchQuery || '');
+    setFilterType(savedUi?.filterType || 'all');
+    setFilterStatus(savedUi?.filterStatus || 'all');
   }, [moduleKey, persistKey, uiPersistKey]);
 
   useEffect(() => {
@@ -71,10 +126,12 @@ const StandardFooter = ({ moduleKey, onClose }) => {
   useEffect(() => {
     writeStore(uiPersistKey, {
       searchQuery,
+      filterType,
+      filterStatus,
       activeRowId,
       mode
     });
-  }, [uiPersistKey, searchQuery, activeRowId, mode]);
+  }, [uiPersistKey, searchQuery, filterType, filterStatus, activeRowId, mode]);
 
   useEffect(() => {
     if (mode === 'detail' && activeRowId !== null && !rows.some((item) => String(item.id) === String(activeRowId))) {
@@ -87,10 +144,18 @@ const StandardFooter = ({ moduleKey, onClose }) => {
     const query = searchQuery.trim().toLowerCase();
     return rows.filter((item) => {
       const searchMatched = !query || Object.values(item).some((val) => String(val || '').toLowerCase().includes(query));
+      const typeCandidate = item?.type ?? item?.category ?? item?.kind ?? item?.sourceType ?? item?.locationType ?? item?.docType ?? item?.descType;
+      const statusCandidate = item?.status ?? item?.state;
+      const typeMatched = filterType === 'all'
+        || !typeCandidate
+        || String(typeCandidate).toLowerCase() === filterType.toLowerCase();
+      const statusMatched = filterStatus === 'all'
+        || !statusCandidate
+        || String(statusCandidate).toLowerCase() === filterStatus.toLowerCase();
 
-      return searchMatched;
+      return searchMatched && typeMatched && statusMatched;
     });
-  }, [rows, searchQuery]);
+  }, [rows, searchQuery, filterType, filterStatus]);
 
   // 创建页面映射
   const createPageMap = {
@@ -144,21 +209,48 @@ const StandardFooter = ({ moduleKey, onClose }) => {
     </button>
   ) : null;
 
-  const renderSearchBar = () => {
-    return (
-      <div className="p-3 pb-0">
-        <div className="relative max-w-md">
-          <IconSearch size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input
-            value={searchQuery}
-            onChange={(event) => setSearchQuery(event.target.value)}
-            placeholder={`搜索${config?.title || ''}...`}
-            className="w-full pl-9 pr-4 py-1.5 text-[13px] border border-slate-300 rounded-md bg-white hover:border-[#0EA5B7] focus:outline-none focus:border-[#0EA5B7] transition-colors"
-          />
-        </div>
-      </div>
-    );
+  const detailActions = (
+    <>
+      <button
+        type="button"
+        onClick={() => addNotification(`「${config?.title || '模块'}」独立窗口功能建设中`, 'info')}
+        className="p-0 w-7 h-7 rounded text-slate-600 hover:text-[#0EA5B7] hover:bg-slate-100 inline-flex items-center justify-center transition-colors"
+        title="打开独立窗口"
+      >
+        <IconExternalLink size={16} />
+      </button>
+      <button
+        type="button"
+        onClick={onClose}
+        className="p-0 w-7 h-7 rounded text-slate-500 hover:text-slate-700 hover:bg-slate-100 inline-flex items-center justify-center transition-colors"
+        title="关闭"
+      >
+        <IconX size={16} />
+      </button>
+    </>
+  );
+
+  const handleResetConditions = () => {
+    setSearchQuery('');
+    setFilterType('all');
+    setFilterStatus('all');
   };
+
+  const renderDataController = () => (
+    <div className="p-3 pb-0">
+      <DataController
+        controllerLabel={controllerRules.controllerLabel}
+        conditionItems={conditionItems}
+        showViewSettings
+        viewOptions={controllerRules.viewOptions}
+        activeView={activeView}
+        onViewChange={setActiveView}
+        onReset={handleResetConditions}
+        resetDisabled={!hasActiveConditions}
+        columnSettingsPlaceholder={controllerRules.columnSettingsPlaceholder}
+      />
+    </div>
+  );
 
   const renderTableView = () => (
     <div className="p-3 h-full">
@@ -187,11 +279,14 @@ const StandardFooter = ({ moduleKey, onClose }) => {
       listData={rows}
       selectedId={activeRowId}
       onSelect={setActiveRowId}
+      showAddButton={Boolean(CreatePageComponent && shouldShowAddButton)}
+      onAdd={handleCreate}
       onCollapse={() => {
         setActiveRowId(null);
         setMode('list');
       }}
       sections={config?.modules || []}
+      detailActions={detailActions}
       managePageHeader={false}
     />
   );
@@ -224,15 +319,15 @@ const StandardFooter = ({ moduleKey, onClose }) => {
         setMode('list');
       } : undefined}
       isCreateMode={isCreateMode}
-      headless={moduleKey === 'docs'}
+      headless={hideTopBar}
     >
       {isCreateMode ? (
         renderCreateView()
       ) : moduleKey === 'docs' ? (
-        <DocumentPage onClose={onClose} showAddButton={false} />
+        <DocumentPage onClose={onClose} showAddButton={false} masterDetailOnly />
       ) : (
         <>
-          {!isDetailMode && renderSearchBar()}
+          {!isDetailMode && renderDataController()}
           {isDetailMode ? renderDetailModules() : renderTableView()}
         </>
       )}

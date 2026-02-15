@@ -5,6 +5,7 @@ import {
     IconArrowUp,
     IconArrowsSort,
     IconColumns3,
+    IconDotsVertical,
     IconFilter,
     IconEyeOff,
     IconGripVertical,
@@ -112,6 +113,17 @@ const normalizeColumn = (col, index, prevByKey = null) => {
         editable: col.editable ?? prev?.editable ?? false,
         lockPosition: col.lockPosition ?? prev?.lockPosition ?? index === 0,
         lockVisibility: col.lockVisibility ?? prev?.lockVisibility ?? index === 0
+    };
+};
+
+const resolveHeaderMenuRules = (column = {}) => {
+    const menuConfig = column.headerMenu || {};
+    return {
+        sort: menuConfig.sort ?? Boolean(column.sortable),
+        filter: menuConfig.filter ?? Boolean(column.filterable),
+        group: menuConfig.group ?? Boolean(column.groupable),
+        visibility: menuConfig.visibility ?? true,
+        align: menuConfig.align ?? true
     };
 };
 
@@ -766,7 +778,7 @@ const DataGrid = ({
     return (
         <div ref={gridRef} className={`relative bg-white border border-slate-200 rounded-md flex flex-col min-h-0 overflow-hidden ${className}`}>
             {showToolbar && (
-                <div className="h-9 px-3 border-b border-slate-200 flex items-center justify-between bg-white">
+                <div className="h-9 shrink-0 px-3 border-b border-slate-200 flex items-center justify-between bg-white">
                     <div className="flex items-center gap-2 text-[11px] text-slate-500">
                         <span className="inline-flex items-center gap-1">
                             <IconColumns3 size={14} />
@@ -852,7 +864,7 @@ const DataGrid = ({
                 </div>
             )}
 
-            <div className="flex-1 overflow-auto">
+            <div className="flex-1 min-h-0 overflow-auto">
                 <table className="text-xs border-collapse table-fixed min-w-full" style={{ width: `${Math.max(totalWidth, minTableWidth)}px` }}>
                     <colgroup>
                         {showCheckboxSelection && <col style={{ width: `${SELECTION_COLUMN_WIDTH}px` }} />}
@@ -880,9 +892,19 @@ const DataGrid = ({
                                 const stickyLeft = showCheckboxSelection ? SELECTION_COLUMN_WIDTH : 0;
                                 const isSticky = col.lockPosition && index === 0;
                                 const currentFilter = filters[col.key] ?? '';
-                                const canSort = Boolean(col.sortable);
-                                const canFilter = Boolean(col.filterable);
-                                const canGroup = Boolean(col.groupable);
+                                const menuRules = resolveHeaderMenuRules(col);
+                                const canSort = menuRules.sort;
+                                const canFilter = menuRules.filter;
+                                const canGroup = menuRules.group;
+                                const canHide = menuRules.visibility;
+                                const canAlign = menuRules.align;
+                                const showMenuButton = enableColumnMenu && (
+                                    canSort
+                                    || canFilter
+                                    || canGroup
+                                    || canHide
+                                    || canAlign
+                                );
                                 return (
                                     <th
                                         key={col.key}
@@ -916,7 +938,7 @@ const DataGrid = ({
                                                         <IconFilter size={14} />
                                                     </span>
                                                 )}
-                                                {enableColumnMenu && (
+                                                {showMenuButton && (
                                                     <button
                                                         type="button"
                                                         onClick={(event) => {
@@ -925,53 +947,56 @@ const DataGrid = ({
                                                         }}
                                                         className="w-5 h-5 rounded hover:bg-slate-200 text-slate-500 inline-flex items-center justify-center"
                                                     >
-                                                        <IconArrowsSort size={14} />
+                                                        <IconDotsVertical size={14} />
                                                     </button>
                                                 )}
                                             </div>
                                         </div>
 
-                                        {menuColumnKey === col.key && (
+                                        {menuColumnKey === col.key && showMenuButton && (
                                             <div
                                                 ref={menuRef}
                                                 className="absolute right-2 top-8 z-30 w-52 bg-white border border-slate-200 rounded-md shadow-lg p-2 space-y-1 text-xs"
                                             >
-                                                <button
-                                                    type="button"
-                                                    disabled={!canSort}
-                                                    className="w-full h-7 px-2 rounded hover:bg-slate-100 text-left inline-flex items-center gap-2 disabled:opacity-40"
-                                                    onClick={() => {
-                                                        setSortState({ key: col.key, order: 'asc' });
-                                                        setMenuColumnKey(null);
-                                                    }}
-                                                >
-                                                    <IconSortAscending size={14} />
-                                                    升序
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    disabled={!canSort}
-                                                    className="w-full h-7 px-2 rounded hover:bg-slate-100 text-left inline-flex items-center gap-2 disabled:opacity-40"
-                                                    onClick={() => {
-                                                        setSortState({ key: col.key, order: 'desc' });
-                                                        setMenuColumnKey(null);
-                                                    }}
-                                                >
-                                                    <IconSortDescending size={14} />
-                                                    降序
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    disabled={!canGroup}
-                                                    className="w-full h-7 px-2 rounded hover:bg-slate-100 text-left inline-flex items-center gap-2 disabled:opacity-40"
-                                                    onClick={() => {
-                                                        setGroupBy((prev) => (prev === col.key ? null : col.key));
-                                                        setMenuColumnKey(null);
-                                                    }}
-                                                >
-                                                    <IconLayersIntersect size={14} />
-                                                    {groupBy === col.key ? '取消分组' : '按此列分组'}
-                                                </button>
+                                                {canSort && (
+                                                    <button
+                                                        type="button"
+                                                        className="w-full h-7 px-2 rounded hover:bg-slate-100 text-left inline-flex items-center gap-2"
+                                                        onClick={() => {
+                                                            setSortState({ key: col.key, order: 'asc' });
+                                                            setMenuColumnKey(null);
+                                                        }}
+                                                    >
+                                                        <IconSortAscending size={14} />
+                                                        升序
+                                                    </button>
+                                                )}
+                                                {canSort && (
+                                                    <button
+                                                        type="button"
+                                                        className="w-full h-7 px-2 rounded hover:bg-slate-100 text-left inline-flex items-center gap-2"
+                                                        onClick={() => {
+                                                            setSortState({ key: col.key, order: 'desc' });
+                                                            setMenuColumnKey(null);
+                                                        }}
+                                                    >
+                                                        <IconSortDescending size={14} />
+                                                        降序
+                                                    </button>
+                                                )}
+                                                {canGroup && (
+                                                    <button
+                                                        type="button"
+                                                        className="w-full h-7 px-2 rounded hover:bg-slate-100 text-left inline-flex items-center gap-2"
+                                                        onClick={() => {
+                                                            setGroupBy((prev) => (prev === col.key ? null : col.key));
+                                                            setMenuColumnKey(null);
+                                                        }}
+                                                    >
+                                                        <IconLayersIntersect size={14} />
+                                                        {groupBy === col.key ? '取消分组' : '按此列分组'}
+                                                    </button>
+                                                )}
                                                 {canFilter ? (
                                                     <label className="block pt-1">
                                                         <span className="text-[11px] text-slate-400">筛选（包含）</span>
@@ -989,31 +1014,35 @@ const DataGrid = ({
                                                 ) : (
                                                     <div className="pt-1 text-[11px] text-slate-400">此列不支持筛选</div>
                                                 )}
-                                                <div className="h-px bg-slate-200 my-1" />
-                                                <button
-                                                    type="button"
-                                                    disabled={col.lockVisibility}
-                                                    className="w-full h-7 px-2 rounded hover:bg-slate-100 text-left inline-flex items-center gap-2 disabled:opacity-40"
-                                                    onClick={() => {
-                                                        setColumnPatch(col.key, { hidden: true });
-                                                        setMenuColumnKey(null);
-                                                    }}
-                                                >
-                                                    <IconEyeOff size={14} />
-                                                    隐藏此列
-                                                </button>
-                                                <div className="grid grid-cols-3 gap-1">
-                                                    {['left', 'center', 'right'].map((align) => (
-                                                        <button
-                                                            key={align}
-                                                            type="button"
-                                                            onClick={() => setColumnPatch(col.key, { align })}
-                                                            className={`h-6 rounded border ${col.align === align ? 'border-cyan-500 text-cyan-600' : 'border-slate-200 text-slate-500'}`}
-                                                        >
-                                                            {align === 'left' ? '左' : align === 'center' ? '中' : '右'}
-                                                        </button>
-                                                    ))}
-                                                </div>
+                                                {(canHide || canAlign) && <div className="h-px bg-slate-200 my-1" />}
+                                                {canHide && (
+                                                    <button
+                                                        type="button"
+                                                        disabled={col.lockVisibility}
+                                                        className="w-full h-7 px-2 rounded hover:bg-slate-100 text-left inline-flex items-center gap-2 disabled:opacity-40"
+                                                        onClick={() => {
+                                                            setColumnPatch(col.key, { hidden: true });
+                                                            setMenuColumnKey(null);
+                                                        }}
+                                                    >
+                                                        <IconEyeOff size={14} />
+                                                        隐藏此列
+                                                    </button>
+                                                )}
+                                                {canAlign && (
+                                                    <div className="grid grid-cols-3 gap-1">
+                                                        {['left', 'center', 'right'].map((align) => (
+                                                            <button
+                                                                key={align}
+                                                                type="button"
+                                                                onClick={() => setColumnPatch(col.key, { align })}
+                                                                className={`h-6 rounded border ${col.align === align ? 'border-cyan-500 text-cyan-600' : 'border-slate-200 text-slate-500'}`}
+                                                            >
+                                                                {align === 'left' ? '左' : align === 'center' ? '中' : '右'}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                )}
                                             </div>
                                         )}
 
@@ -1069,7 +1098,7 @@ const DataGrid = ({
             </div>
 
             {showFooter && (
-                <div className="h-8 px-3 border-t border-slate-200 bg-slate-50/70 text-[11px] text-slate-500 flex items-center justify-between">
+                <div className="h-8 shrink-0 px-3 border-t border-slate-200 bg-slate-50/70 text-[11px] text-slate-500 flex items-center justify-between">
                     <span>{footerText || `共 ${processedRows.length} 条记录`}</span>
                     {rowSelection?.enabled && (
                         <span>已选中 {selectedRowKeys.length} 条</span>

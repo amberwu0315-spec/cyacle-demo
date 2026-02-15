@@ -6,7 +6,10 @@ import EntityModulePage from '../shared/EntityModulePage';
 import { useNotification } from '../../../context/NotificationContext';
 import { ContentModule, ModuleHeader } from '../../common/ContentModule';
 
-const DocumentPage = ({ showAddButton = true }) => {
+const DocumentPage = ({
+    showAddButton = true,
+    masterDetailOnly = true
+}) => {
     const { addNotification } = useNotification();
 
     const columns = [
@@ -112,6 +115,7 @@ const DocumentPage = ({ showAddButton = true }) => {
             data={documentData}
             createComponent={CreateLiteraturePage}
             showAddButton={showAddButton}
+            masterDetailOnly={masterDetailOnly}
             onCreateSaved={(data) => {
                 addNotification(`文档「${data?.name || '未命名文档'}」已保存（演示）`, 'success');
             }}

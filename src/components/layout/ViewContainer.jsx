@@ -17,7 +17,7 @@ import React from 'react';
 const ViewContainer = ({ type = 'scroll', className = '', children }) => {
 
     // Base classes for all views
-    const baseClasses = "w-full h-full relative transition-all duration-300";
+    const baseClasses = "w-full h-full min-h-0 min-w-0 relative transition-all duration-300";
 
     // Type-specific strategies
     const typeClasses = {

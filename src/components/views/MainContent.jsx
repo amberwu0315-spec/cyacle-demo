@@ -24,7 +24,7 @@ export default function MainContent({ mode, activeL1, activeL2, activeL3, onL3Ch
     const effectiveL1 = isDetailView ? activeTab?.l1Context : activeL1;
 
     return (
-        <div className="flex-1 flex flex-row overflow-hidden relative bg-[#F5F6F8]">
+        <div className="flex-1 min-h-0 min-w-0 flex flex-row overflow-hidden relative bg-[#F5F6F8]">
 
             {/* Dashboard (Home) */}
             {!isProject && !isBusiness && !isWorkspace && !isDetailView && (

@@ -35,6 +35,7 @@ export default function EntityMasterDetailPage({
     managePageHeader = true,
     showAddButton = false,
     onAdd = () => { },
+    detailActions = null,
     renderDetailHeader = null,
     renderDetailContent = null,
     listItemRenderer = null
@@ -53,13 +54,20 @@ export default function EntityMasterDetailPage({
         </button>
     ) : null;
 
+    const detailActionGroup = (
+        <div className="inline-flex items-center gap-1.5 shrink-0">
+            {detailActions}
+            {collapseAction}
+        </div>
+    );
+
     const resolvedDetailHeader = renderDetailHeader
         ? (
             <div className="w-full flex items-center justify-between gap-2">
                 <div className="min-w-0 flex-1">
                     {renderDetailHeader({ selectedItem, listData, selectedId, onCollapse })}
                 </div>
-                {collapseAction}
+                {detailActionGroup}
             </div>
         )
         : (
@@ -67,7 +75,7 @@ export default function EntityMasterDetailPage({
                 <h2 className="text-sm font-semibold text-slate-800 truncate">
                     {pickName(selectedItem)}
                 </h2>
-                {collapseAction}
+                {detailActionGroup}
             </div>
         );
 

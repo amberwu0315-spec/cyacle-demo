@@ -7,9 +7,11 @@
  * 2. 也是 CanvasPage 的一种具体实现。
  */
 import React, { useState, useEffect, useMemo } from 'react';
-import { IconPlus, IconFilter, IconSearch } from '@tabler/icons-react';
+import { IconPlus } from '@tabler/icons-react';
 import { CanvasPage } from '../layout/PageLayouts';
 import DataGrid from '../common/DataGrid';
+import DataController from '../common/DataController';
+import { buildStandardDataControllerRules } from '../../config/dataControllerRules';
 
 /**
  * 用于创建带有筛选器+表格的标准背景数据页面
@@ -33,13 +35,72 @@ const StandardBusinessLayout = ({
     defaultFilterType = 'all',
     onRowClick,
     columns,
-    data
+    data,
+    dataControllerConfig = {}
 }) => {
     const [filterType, setFilterType] = useState(defaultFilterType);
     const [filterStatus, setFilterStatus] = useState('all');
     const [searchQuery, setSearchQuery] = useState('');
+    const [activeView, setActiveView] = useState(dataControllerConfig.defaultView || 'table');
 
     const safeData = Array.isArray(data) ? data : [];
+
+    const controllerRules = useMemo(() => buildStandardDataControllerRules({
+        title,
+        filterOptions,
+        ...dataControllerConfig
+    }), [title, filterOptions, dataControllerConfig]);
+
+    const filterValueMap = {
+        type: filterType,
+        status: filterStatus
+    };
+
+    const filterSetterMap = {
+        type: setFilterType,
+        status: setFilterStatus
+    };
+
+    const hasActiveConditions = useMemo(() => {
+        const hasSearch = showSearch && searchQuery.trim().length > 0;
+        if (hasSearch) return true;
+        if (!showFilters) return false;
+
+        return controllerRules.filterRules.some((rule) => {
+            const value = filterValueMap[rule.id];
+            return value !== undefined && value !== (rule.allValue ?? 'all');
+        });
+    }, [showSearch, searchQuery, showFilters, controllerRules.filterRules, filterValueMap]);
+
+    const conditionItems = useMemo(() => {
+        const items = [];
+        if (showSearch && controllerRules.searchRule) {
+            items.push({
+                ...controllerRules.searchRule,
+                value: searchQuery,
+                isActive: searchQuery.trim().length > 0,
+                onChange: setSearchQuery
+            });
+        }
+
+        if (showFilters) {
+            controllerRules.filterRules.forEach((rule) => {
+                const value = filterValueMap[rule.id] ?? rule.allValue ?? 'all';
+                const setter = filterSetterMap[rule.id];
+                if (!setter) return;
+                items.push({
+                    ...rule,
+                    value,
+                    isActive: value !== (rule.allValue ?? 'all'),
+                    onChange: setter
+                });
+            });
+        }
+
+        return items;
+    }, [showSearch, showFilters, controllerRules, searchQuery, filterValueMap, filterSetterMap]);
+
+    const showDataController = conditionItems.length > 0 || showGridToolbar;
 
     const filteredData = useMemo(() => {
         const normalizedQuery = searchQuery.trim().toLowerCase();
@@ -48,15 +109,15 @@ const StandardBusinessLayout = ({
             const typeCandidate = item?.type ?? item?.category ?? item?.kind;
             const statusCandidate = item?.status;
 
-            const typeMatched = filterType === 'all'
+            const typeMatched = !showFilters || filterType === 'all'
                 || !typeCandidate
                 || String(typeCandidate).toLowerCase() === filterType.toLowerCase();
 
-            const statusMatched = filterStatus === 'all'
+            const statusMatched = !showFilters || filterStatus === 'all'
                 || !statusCandidate
                 || String(statusCandidate).toLowerCase() === filterStatus.toLowerCase();
 
-            const searchMatched = !normalizedQuery || Object.values(item || {}).some((val) => (
+            const searchMatched = !showSearch || !normalizedQuery || Object.values(item || {}).some((val) => (
                 val !== null
                 && val !== undefined
                 && String(val).toLowerCase().includes(normalizedQuery)
@@ -64,12 +125,16 @@ const StandardBusinessLayout = ({
 
             return typeMatched && statusMatched && searchMatched;
         });
-    }, [safeData, filterType, filterStatus, searchQuery]);
+    }, [safeData, filterType, filterStatus, searchQuery, showFilters, showSearch]);
 
     // Update filterType when defaultFilterType changes (e.g. switching sidebar items)
     useEffect(() => {
         setFilterType(defaultFilterType);
     }, [defaultFilterType]);
+
+    useEffect(() => {
+        setActiveView(controllerRules.defaultView || 'table');
+    }, [controllerRules.defaultView]);
 
     // 使用 ref 保持 onCreate 的最新引用，避免 useEffect 依赖变化导致死循环
     const onCreateRef = React.useRef(onCreate);
@@ -104,73 +169,10 @@ const StandardBusinessLayout = ({
         };
     }, [setHeaderActions]); // 移除 onCreate 依赖，打破死循环
 
-    // 渲染搜索栏
-    const renderSearchBar = () => {
-        if (!showSearch) return null;
-
-        return (
-            <div className="mb-3">
-                <div className="relative max-w-md">
-                    <IconSearch size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                    <input
-                        type="text"
-                        placeholder={`搜索${title}...`}
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-9 pr-4 py-1.5 text-[13px] border border-slate-300 rounded-md bg-white hover:border-[#0EA5B7] focus:outline-none focus:border-[#0EA5B7] transition-colors"
-                    />
-                </div>
-            </div>
-        );
-    };
-
-    // 渲染筛选器
-    const renderFilters = () => {
-        if (!showFilters) {
-            return null;
-        }
-
-        const { types = [], statuses = [] } = filterOptions;
-
-        // 如果没有筛选项，不渲染筛选器
-        if (types.length === 0 && statuses.length === 0) {
-            return null;
-        }
-
-        return (
-            <div className="flex items-center gap-3 p-3 bg-[#edf4f7] rounded-md border border-slate-200 mb-3">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <IconFilter size={14} />
-                    <span className="text-xs font-medium">筛选：</span>
-                </div>
-
-                {types.length > 0 && (
-                    <select
-                        value={filterType}
-                        onChange={(e) => setFilterType(e.target.value)}
-                        className="px-2 py-1 text-xs border border-slate-300 rounded-md bg-white hover:border-[#0EA5B7] focus:outline-none focus:border-[#0EA5B7] transition-colors"
-                    >
-                        <option value="all">全部类型</option>
-                        {types.map(type => (
-                            <option key={type.value} value={type.value}>{type.label}</option>
-                        ))}
-                    </select>
-                )}
-
-                {statuses.length > 0 && (
-                    <select
-                        value={filterStatus}
-                        onChange={(e) => setFilterStatus(e.target.value)}
-                        className="px-2 py-1 text-xs border border-slate-300 rounded-md bg-white hover:border-[#0EA5B7] focus:outline-none focus:border-[#0EA5B7] transition-colors"
-                    >
-                        <option value="all">全部状态</option>
-                        {statuses.map(status => (
-                            <option key={status.value} value={status.value}>{status.label}</option>
-                        ))}
-                    </select>
-                )}
-            </div>
-        );
+    const handleResetConditions = () => {
+        setSearchQuery('');
+        setFilterType(defaultFilterType);
+        setFilterStatus('all');
     };
 
     // 渲染表格容器
@@ -202,7 +204,7 @@ const StandardBusinessLayout = ({
                 emptyText={`暂无${title}数据`}
                 className="flex-1"
                 rowSelection={{ enabled: false, mode: 'click', multiple: false }}
-                showToolbar={showGridToolbar}
+                showToolbar={false}
                 showFooter
                 minTableWidth={960}
             />
@@ -211,13 +213,20 @@ const StandardBusinessLayout = ({
 
     return (
         <CanvasPage className="p-3 bg-[#F5F6F8]">
-            {/* 搜索栏 */}
-            {renderSearchBar()}
+            {showDataController && (
+                <DataController
+                    controllerLabel={controllerRules.controllerLabel}
+                    conditionItems={conditionItems}
+                    showViewSettings={showGridToolbar}
+                    viewOptions={controllerRules.viewOptions}
+                    activeView={activeView}
+                    onViewChange={setActiveView}
+                    onReset={handleResetConditions}
+                    resetDisabled={!hasActiveConditions}
+                    columnSettingsPlaceholder={controllerRules.columnSettingsPlaceholder}
+                />
+            )}
 
-            {/* 筛选器 */}
-            {renderFilters()}
-
-            {/* 表格容器 */}
             {renderTable()}
         </CanvasPage>
     );

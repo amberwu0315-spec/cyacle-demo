@@ -1,22 +1,30 @@
 import React from 'react';
-import { useNavigation } from '../../../context/NavigationContext';
+import { ContentModule, ModuleHeader } from '../../common/ContentModule';
+import ControlledDataGridPanel from './ControlledDataGridPanel';
+import { activityDataViewRules } from '../../../config/accountingPerspectiveRules';
+import { activityDataRecords } from '../../../data/accountingPerspectiveData';
 
 const ActivityDataView = () => {
-    const { activeDimension } = useNavigation();
-
-    return (
-        <div className="p-3">
-            <h2 className="text-xl font-bold mb-3">Activity Data (透视)</h2>
-            <div className="bg-white p-4 rounded shadow-sm border border-gray-200">
-                <p className="text-gray-600 mb-2">
-                    Current Scope: <span className="font-semibold text-[#087F9C] uppercase">{activeDimension}</span>
-                </p>
-                <div className="h-64 bg-gray-50 flex items-center justify-center rounded border border-dashed border-gray-300 text-gray-400">
-                    Activity Data Table for {activeDimension === 'accounting' ? 'Accounting Instance' : 'Model Definition'}
-                </div>
-            </div>
+  return (
+    <div className="flex flex-col gap-3 p-3 w-full h-full overflow-hidden bg-[#F5F6F8]">
+      <ContentModule className="flex-1 min-h-0">
+        <ModuleHeader title="活动数据" />
+        <div className="p-3 pt-2 flex-1 min-h-0">
+          <ControlledDataGridPanel
+            title={activityDataViewRules.title}
+            rows={activityDataRecords}
+            columns={activityDataViewRules.columns}
+            dataControllerConfig={activityDataViewRules.dataControllerConfig}
+            searchKeys={activityDataViewRules.searchKeys}
+            storageKey="perspective:activity"
+            emptyText="暂无活动数据"
+            minTableWidth={1000}
+            gridClassName="flex-1 min-h-[420px]"
+          />
         </div>
-    );
+      </ContentModule>
+    </div>
+  );
 };
 
 export default ActivityDataView;

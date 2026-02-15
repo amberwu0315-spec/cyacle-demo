@@ -23,6 +23,7 @@ import { useAppNavigation } from '../../context/AppNavigationContext';
 import { useData } from '../../context/DataContext';
 import ProjectManagementModule from './shared/ProjectManagementModule';
 import { ENTERPRISE_DETAIL_ROUTE_IDS } from '../../config/enterpriseDetailConfig';
+import EnterpriseInfoContent from './shared/EnterpriseInfoContent';
 
 const EnterprisePlaceholderPage = ({ title, description }) => (
     <div className="flex-1 flex items-center justify-center bg-white m-3 rounded-md border border-gray-100 shadow-sm">
@@ -32,6 +33,30 @@ const EnterprisePlaceholderPage = ({ title, description }) => (
         </div>
     </div>
 );
+
+const ENTERPRISE_ROUTE_ALIAS_MAP = {
+    all_projects: 'ent_projects',
+    all_objects: 'ent_projects',
+    info: 'ent_info',
+    product: 'ent_products',
+    products: 'ent_products',
+    location: 'ent_locations',
+    locations: 'ent_locations',
+    data: 'ent_data',
+    datasource: 'ent_datasources',
+    datasources: 'ent_datasources',
+    docs: 'ent_docs',
+    documents: 'ent_docs'
+};
+
+const resolveEnterpriseRouteId = (routeId) => {
+    const normalized = String(routeId ?? '').trim().toLowerCase();
+    if (!normalized) return '';
+    if (ENTERPRISE_ROUTE_ALIAS_MAP[normalized]) {
+        return ENTERPRISE_ROUTE_ALIAS_MAP[normalized];
+    }
+    return normalized;
+};
 
 export default function ProjectLayout({ mode, activeL2, activeL3, onL3Change, activeL1 }) {
     const { activeDimension } = useNavigation();
@@ -74,17 +99,12 @@ export default function ProjectLayout({ mode, activeL2, activeL3, onL3Change, ac
                 />
             );
         },
-        ent_info: () => (
-            <EnterprisePlaceholderPage
-                title="服务企业信息"
-                description="此处展示企业基本信息与工商信息。"
-            />
-        ),
+        ent_info: () => <EnterpriseInfoContent entity={resolvedEnterpriseObject} />,
         ent_products: () => <ProductPage />,
         ent_locations: () => <LocationPage />,
         ent_data: () => <DataPage />,
         ent_datasources: () => <DataSourcePage />,
-        ent_docs: () => <DocumentPage showAddButton />
+        ent_docs: () => <DocumentPage showAddButton masterDetailOnly />
     };
 
     const missingEnterpriseRoutes = ENTERPRISE_DETAIL_ROUTE_IDS.filter((routeId) => !enterpriseDetailRenderers[routeId]);
@@ -100,13 +120,14 @@ export default function ProjectLayout({ mode, activeL2, activeL3, onL3Change, ac
         // Special Case: Research Object Detail View
         // Special Case: Research Object Detail View (dimension A/B/C)
         if (activeL1 === 'enterprise') {
-            const renderer = enterpriseDetailRenderers[activeL2];
+            const resolvedRouteId = resolveEnterpriseRouteId(activeL2);
+            const renderer = enterpriseDetailRenderers[resolvedRouteId];
             if (renderer) {
                 return renderer();
             }
             return (
                 <EnterprisePlaceholderPage
-                    title={`未知的模块: ${activeL2}`}
+                    title={`未知的模块: ${activeL2 || '(empty)'}`}
                     description="该路由未映射到企业详情页面。"
                 />
             );
@@ -133,7 +154,7 @@ export default function ProjectLayout({ mode, activeL2, activeL3, onL3Change, ac
     };
 
     return (
-        <div className="w-full h-full flex flex-col bg-[#F5F6F8]">
+        <div className="w-full h-full min-h-0 min-w-0 flex flex-col bg-[#F5F6F8]">
             {/* Note: Components handle their own padding/layout structure inside */}
             {renderPage()}
         </div>

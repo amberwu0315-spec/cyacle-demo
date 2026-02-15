@@ -229,7 +229,7 @@ const WorkbenchHomePage = () => {
 
     return (
         <CanvasPage className="bg-[var(--qy-bg-canvas)] p-3">
-            <div className="h-full flex flex-col gap-3 overflow-y-auto">
+            <div className="flex-1 min-h-0 flex flex-col gap-3 overflow-y-auto">
                 <div className="h-10 px-1 flex items-center justify-between text-sm">
                     <div className="text-slate-800 font-semibold tracking-[0.01em]">青钥工作台</div>
                     <div className="text-slate-600 font-medium">{formatToday()}</div>

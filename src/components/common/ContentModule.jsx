@@ -26,7 +26,13 @@ const containsModuleHeader = (nodes) => {
     return found;
 };
 
-export const ContentModule = ({ children, className = '', type = 'auto', status = '' }) => {
+export const ContentModule = ({
+    children,
+    className = '',
+    type = 'auto',
+    status = '',
+    clipContent = true
+}) => {
     const hasHeader = containsModuleHeader(children);
     const resolvedType = type === 'auto' ? (hasHeader ? 'detail' : 'global') : type;
 
@@ -46,9 +52,11 @@ export const ContentModule = ({ children, className = '', type = 'auto', status 
         <div className="p-4">{children}</div>
     ) : children;
 
+    const overflowClass = clipContent ? 'overflow-hidden' : 'overflow-visible';
+
     return (
         <div
-            className={`w-full bg-white rounded-sm shadow-sm overflow-hidden ${typeClasses[resolvedType] || typeClasses.detail} ${status ? statusClasses[status] : ''} ${className}`}
+            className={`w-full min-h-0 bg-white rounded-sm shadow-sm ${overflowClass} ${typeClasses[resolvedType] || typeClasses.detail} ${status ? statusClasses[status] : ''} ${className}`}
             data-type={resolvedType}
             data-status={status}
             data-has-header={hasHeader ? 'true' : 'false'}

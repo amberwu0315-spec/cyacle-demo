@@ -124,12 +124,12 @@ const AccountingPage = ({ activeL3, onL3Change }) => {
     const isVersionMode = activeMode === 'version';
 
     return (
-        <div className="w-full h-full flex flex-row relative overflow-hidden">
+        <div className="w-full h-full min-h-0 min-w-0 flex flex-row relative overflow-hidden">
             {!isVersionMode && (
                 <L3Sidebar activeL2="accounting" activeL3={activeL3 || 'acct_basic'} onSelect={onL3Change} />
             )}
 
-            <main className="flex-1 bg-[#F5F6F8] relative flex flex-col overflow-hidden">
+            <main className="flex-1 min-h-0 min-w-0 bg-[#F5F6F8] relative flex flex-col overflow-hidden">
                 {isVersionMode ? (
                     <div className="flex-1 flex flex-col items-center justify-center text-gray-400">
                         <div className="text-2xl font-semibold mb-2">版本模式 (Version Mode)</div>
@@ -148,7 +148,7 @@ const AccountingPage = ({ activeL3, onL3Change }) => {
                             </div>
                         ) : (
                             // Content State: 加载完成后淡入显示
-                            <div className="flex-1 flex flex-col h-full overflow-hidden animate-in fade-in duration-500">
+                            <div className="flex-1 min-h-0 flex flex-col overflow-hidden animate-in fade-in duration-500">
                                 {renderL3Content()}
                             </div>
                         )}

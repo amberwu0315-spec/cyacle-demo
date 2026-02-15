@@ -113,7 +113,7 @@ const CarbonPanoramaPage = () => {
 
     return (
         <CanvasPage className="bg-[#f3f6f8] p-3">
-            <div className="h-full flex flex-col gap-3 overflow-y-auto">
+            <div className="flex-1 min-h-0 flex flex-col gap-3 overflow-y-auto">
                 <div className="rounded-sm shadow-sm border border-slate-200 bg-white px-3 py-2 flex flex-wrap items-center justify-between gap-2">
                     <div className="flex flex-wrap items-center gap-2">
                         <Tag variant="success" size="sm" icon={Check}>
@@ -194,10 +194,10 @@ const CarbonPanoramaPage = () => {
                     </ContentModule>
                 </div>
 
-                <ContentModule>
-                    <ModuleHeader
-                        title="碳排及能源趋势分析"
-                        icon={BarChart3}
+                    <ContentModule>
+                        <ModuleHeader
+                            title="碳排及能源趋势分析"
+                            icon={BarChart3}
                         actions={
                             <div className="flex flex-wrap items-center gap-2">
                                 {['总碳排放趋势', '总能源消耗趋势', '强度分析'].map((tab, idx) => (
@@ -226,8 +226,11 @@ const CarbonPanoramaPage = () => {
                             </div>
                         }
                     />
-                    <div className="p-4">
-                        <svg viewBox={`0 0 ${chartGeometry.width} ${chartGeometry.height}`} className="w-full h-auto">
+                    <div className="p-4 pb-5">
+                        <svg
+                            viewBox={`0 0 ${chartGeometry.width} ${chartGeometry.height}`}
+                            className="w-full h-[280px] min-h-[220px]"
+                        >
                             <defs>
                                 <linearGradient id="carbonAreaFill" x1="0" x2="0" y1="0" y2="1">
                                     <stop offset="0%" stopColor="#0EA5B7" stopOpacity="0.35" />

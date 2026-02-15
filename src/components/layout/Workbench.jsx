@@ -19,7 +19,11 @@ import { useData } from '../../context/DataContext'; // New Hook
 import { usePagePresentation } from '../../context/PagePresentationContext';
 import { useUser } from '../../context/UserContext';
 import { readStore, writeStore } from '../../utils/persistStore';
-import { ENTERPRISE_DETAIL_TITLE_MAP } from '../../config/enterpriseDetailConfig';
+import {
+    ENTERPRISE_DETAIL_DEFAULT_L2,
+    ENTERPRISE_DETAIL_ROUTE_IDS,
+    ENTERPRISE_DETAIL_TITLE_MAP
+} from '../../config/enterpriseDetailConfig';
 import {
     PROJECT_DETAIL_DEFAULT_L2,
     getProjectDetailRouteIdsByType
@@ -67,6 +71,8 @@ const WorkbenchContent = ({
     const isDetailView = businessTarget && businessTarget.startsWith('detail_');
     const activeTab = openedTabs.find(t => t.id === businessTarget);
     const effectiveL1 = isDetailView ? activeTab?.l1Context : activeL1;
+    const isEnterpriseDetailView = isDetailView && effectiveL1 === 'enterprise';
+    const shouldShowFooter = isProjectLayout || (isDetailView && !isEnterpriseDetailView);
     const hasWorkspaceL2Menu = activeL1 === 'workspace' && workspaceTargets.length > 1;
     const activeProjectTab = isDetailView && activeTab?.l1Context === 'project_mgmt' ? activeTab : null;
     const activeProjectType = activeProjectTab?.data?.type || null;
@@ -116,6 +122,16 @@ const WorkbenchContent = ({
             setActiveL2(fallbackL2);
         }
     }, [activeL2, activeProjectType, activeProjectTab, isProjectLayout, setActiveL2]);
+
+    // Enterprise detail guard: always keep activeL2 inside enterprise-detail routes.
+    useEffect(() => {
+        if (!isDetailView || effectiveL1 !== 'enterprise') {
+            return;
+        }
+        if (!ENTERPRISE_DETAIL_ROUTE_IDS.includes(activeL2)) {
+            setActiveL2(ENTERPRISE_DETAIL_DEFAULT_L2);
+        }
+    }, [isDetailView, effectiveL1, activeL2, setActiveL2]);
 
     // Update header title based on context
     useEffect(() => {
@@ -219,6 +235,9 @@ const WorkbenchContent = ({
 
         const saved = readStore(FOOTER_MODAL_SESSION_KEY, null);
         footerModalRestoredRef.current = true;
+        if (!shouldShowFooter) {
+            return;
+        }
         if (!saved?.isOpen) {
             return;
         }
@@ -234,7 +253,7 @@ const WorkbenchContent = ({
         setActiveFooterAction(saved.activeFooterAction || null);
         setModalTitle(saved.modalTitle || '');
         setIsModalOpen(true);
-    }, [isHydrated, activeL1, activeL2, businessTarget]);
+    }, [isHydrated, activeL1, activeL2, businessTarget, shouldShowFooter]);
 
     useEffect(() => {
         if (!isHydrated) {
@@ -253,10 +272,10 @@ const WorkbenchContent = ({
     }, [isHydrated, isModalOpen, activeFooterAction, modalTitle, activeL1, activeL2, businessTarget]);
 
     useEffect(() => {
-        if (isModalOpen && !(isProjectLayout || isDetailView)) {
+        if (isModalOpen && !shouldShowFooter) {
             handleCloseModal();
         }
-    }, [isModalOpen, isProjectLayout, isDetailView]);
+    }, [isModalOpen, shouldShowFooter]);
 
     const handleOpenModal = (action, title) => {
         if (isModalOpen && activeFooterAction === action) {
@@ -299,7 +318,7 @@ const WorkbenchContent = ({
                 )}
 
                 {/* Right Column: Header + Content + Footer */}
-                <div className="flex-1 flex flex-col h-full overflow-hidden relative">
+                <div className="flex-1 min-h-0 min-w-0 flex flex-col h-full overflow-hidden relative">
                     {/* Header: Visible for Project & Business, Hidden for Dashboard & Workspace */}
                     {((isProjectLayout || isBusinessLayout) && activeL1 !== 'workspace' && showHeader) && (
                         <Header
@@ -319,7 +338,7 @@ const WorkbenchContent = ({
                         />
                     )}
 
-                    <div className="flex-1 relative overflow-hidden flex flex-col">
+                    <div className="flex-1 min-h-0 min-w-0 relative overflow-hidden flex flex-col">
                         <MainContent
                             mode={mode}
                             activeL1={activeL1}
@@ -338,7 +357,7 @@ const WorkbenchContent = ({
                     </div>
 
                     {/* Footer - Show for Project or Detail View */}
-                    {(isProjectLayout || isDetailView) && (
+                    {shouldShowFooter && (
                         <Footer onOpenModal={handleOpenModal} activeAction={activeFooterAction} />
                     )}
 
