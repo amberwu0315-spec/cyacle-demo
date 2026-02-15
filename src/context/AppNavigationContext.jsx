@@ -213,17 +213,18 @@ export const AppNavigationProvider = ({ children }) => {
     };
 
     // Tab Interface
-    const handleOpenTab = (item) => {
-        const existingTab = openedTabs.find((tab) => isSameDetailTab(tab, item, activeL1));
-        const tabId = existingTab?.id || buildDetailTabId(activeL1, item?.id);
-        const detailL2 = getDetailDefaultL2(activeL1);
+    const handleOpenTab = (item, options = {}) => {
+        const tabL1Context = options?.l1Context || activeL1;
+        const existingTab = openedTabs.find((tab) => isSameDetailTab(tab, item, tabL1Context));
+        const tabId = existingTab?.id || buildDetailTabId(tabL1Context, item?.id);
+        const detailL2 = getDetailDefaultL2(tabL1Context);
         if (!existingTab) {
             const newTab = {
                 id: tabId,
                 title: item.name,
                 type: 'detail',
                 data: item,
-                l1Context: activeL1
+                l1Context: tabL1Context
             };
             setOpenedTabs(prev => [...prev, newTab]);
         }

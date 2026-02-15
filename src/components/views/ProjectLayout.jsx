@@ -19,6 +19,9 @@ import DataPage from './l2/DataPage';
 import DataSourcePage from './l2/DataSourcePage';
 import DocumentPage from './l2/DocumentPage';
 import { useNavigation } from '../../context/NavigationContext';
+import { useAppNavigation } from '../../context/AppNavigationContext';
+import { useData } from '../../context/DataContext';
+import ProjectManagementModule from './shared/ProjectManagementModule';
 import { ENTERPRISE_DETAIL_ROUTE_IDS } from '../../config/enterpriseDetailConfig';
 
 const EnterprisePlaceholderPage = ({ title, description }) => (
@@ -30,33 +33,64 @@ const EnterprisePlaceholderPage = ({ title, description }) => (
     </div>
 );
 
-const enterpriseDetailRenderers = {
-    ent_projects: () => (
-        <EnterprisePlaceholderPage
-            title="服务企业项目"
-            description="此处展示当前服务企业下的项目列表与进度。"
-        />
-    ),
-    ent_info: () => (
-        <EnterprisePlaceholderPage
-            title="服务企业信息"
-            description="此处展示企业基本信息与工商信息。"
-        />
-    ),
-    ent_products: () => <ProductPage />,
-    ent_locations: () => <LocationPage />,
-    ent_data: () => <DataPage />,
-    ent_datasources: () => <DataSourcePage />,
-    ent_docs: () => <DocumentPage showAddButton />
-};
-
-const missingEnterpriseRoutes = ENTERPRISE_DETAIL_ROUTE_IDS.filter((routeId) => !enterpriseDetailRenderers[routeId]);
-if (import.meta.env.DEV && missingEnterpriseRoutes.length > 0) {
-    console.warn(`[ProjectLayout] Missing enterprise route renderers: ${missingEnterpriseRoutes.join(', ')}`);
-}
-
 export default function ProjectLayout({ mode, activeL2, activeL3, onL3Change, activeL1 }) {
     const { activeDimension } = useNavigation();
+    const { businessTarget, openedTabs, openTab } = useAppNavigation();
+    const { projects, researchObjects, addProject } = useData();
+
+    const activeEnterpriseTab = openedTabs.find(
+        (tab) => tab.id === businessTarget && tab.l1Context === 'enterprise'
+    );
+    const activeEnterprise = activeEnterpriseTab?.data || null;
+    const activeEnterpriseName = activeEnterprise?.name || activeEnterpriseTab?.title || '';
+    const resolvedEnterpriseObject = activeEnterpriseName
+        ? {
+            ...(activeEnterprise || {}),
+            id: activeEnterprise?.id || activeEnterpriseName,
+            name: activeEnterpriseName
+        }
+        : null;
+
+    const enterpriseDetailRenderers = {
+        ent_projects: () => {
+            if (!resolvedEnterpriseObject) {
+                return (
+                    <EnterprisePlaceholderPage
+                        title="服务企业项目"
+                        description="未找到当前服务企业上下文，请从服务企业列表重新进入详情。"
+                    />
+                );
+            }
+            return (
+                <ProjectManagementModule
+                    projects={projects}
+                    researchObjects={researchObjects}
+                    onAddProject={addProject}
+                    onOpenProject={(project) => openTab(project, { l1Context: 'project_mgmt' })}
+                    defaultType="all"
+                    title="项目"
+                    scopeKey={`ent_projects:${resolvedEnterpriseObject.id}`}
+                    forceResearchObject={resolvedEnterpriseObject}
+                />
+            );
+        },
+        ent_info: () => (
+            <EnterprisePlaceholderPage
+                title="服务企业信息"
+                description="此处展示企业基本信息与工商信息。"
+            />
+        ),
+        ent_products: () => <ProductPage />,
+        ent_locations: () => <LocationPage />,
+        ent_data: () => <DataPage />,
+        ent_datasources: () => <DataSourcePage />,
+        ent_docs: () => <DocumentPage showAddButton />
+    };
+
+    const missingEnterpriseRoutes = ENTERPRISE_DETAIL_ROUTE_IDS.filter((routeId) => !enterpriseDetailRenderers[routeId]);
+    if (import.meta.env.DEV && missingEnterpriseRoutes.length > 0) {
+        console.warn(`[ProjectLayout] Missing enterprise route renderers: ${missingEnterpriseRoutes.join(', ')}`);
+    }
 
     // Route based on activeDimension (Context Priority)
     // Workbench syncs activeL2 -> activeDimension, but Context can also be set internally (e.g. Breadcrumb)

@@ -15,7 +15,12 @@ import { IconDeviceFloppy } from '@tabler/icons-react';
 
 import { usePagePresentation } from '../../../context/PagePresentationContext';
 
-const CreateProjectPage = ({ onCancel, onSave, researchObjects = [] }) => {
+const CreateProjectPage = ({
+    onCancel,
+    onSave,
+    researchObjects = [],
+    initialResearchObjectId = null
+}) => {
     const { setShowHeader } = usePagePresentation();
 
     const RESEARCH_OBJECTS = researchObjects.filter(
@@ -44,6 +49,17 @@ const CreateProjectPage = ({ onCancel, onSave, researchObjects = [] }) => {
     }, [setShowHeader]);
 
     // Auto-Title Linkage
+    React.useEffect(() => {
+        if (!initialResearchObjectId) {
+            return;
+        }
+        setFormData((prev) => (
+            prev.research_object_name
+                ? prev
+                : { ...prev, research_object_name: String(initialResearchObjectId) }
+        ));
+    }, [initialResearchObjectId]);
+
     React.useEffect(() => {
         if (isTitleTouched) return;
 

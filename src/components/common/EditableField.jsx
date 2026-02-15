@@ -222,8 +222,7 @@ const EditableField = ({
                             styles={{
                                 input: {
                                     borderRadius: '4px',
-                                    fontSize: '14px',
-                                    minHeight: '36px'
+                                    fontSize: '14px'
                                 }
                             }}
                         />

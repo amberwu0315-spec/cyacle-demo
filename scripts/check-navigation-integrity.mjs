@@ -28,7 +28,7 @@ if (!fs.existsSync(projectLayoutPath)) {
 } else {
     const projectLayoutContent = fs.readFileSync(projectLayoutPath, 'utf8');
     const rendererMapMatch = projectLayoutContent.match(
-        /const enterpriseDetailRenderers = \{([\s\S]*?)\n\};/
+        /const enterpriseDetailRenderers\s*=\s*\{([\s\S]*?)\n\s*\};/
     );
 
     if (!rendererMapMatch) {
