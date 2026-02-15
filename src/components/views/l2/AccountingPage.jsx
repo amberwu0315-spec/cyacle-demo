@@ -22,6 +22,7 @@ import ActivityDataView from '../shared/ActivityDataView';
 import FactorDataView from '../shared/FactorDataView';
 import ReportInfo from '../l3/ReportInfo';
 import ReportExport from '../l3/ReportExport';
+import AccountingTools from '../l3/AccountingTools';
 
 const AccountingPage = ({ activeL3, onL3Change }) => {
     const { setActions, setLayoutConfig, setBreadcrumbData } = usePagePresentation();
@@ -105,7 +106,7 @@ const AccountingPage = ({ activeL3, onL3Change }) => {
             case 'acct_basic': return <AccountingBasic />;
             case 'acct_model_config': return <AccountingModelConfig menuMode="config" />;
             case 'acct_calc': return <ComingSoon title="计算与分析" />;
-            case 'acct_tools': return <ComingSoon title="分析工具" />;
+            case 'acct_tools': return <AccountingTools />;
             case 'acct_pers_activity': return <ActivityDataView />;
             case 'acct_pers_factor': return <FactorDataView />;
             case 'rpt_info': return <ReportInfo />;
