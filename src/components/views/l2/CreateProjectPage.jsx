@@ -14,6 +14,7 @@ import EditableField from '../../common/EditableField';
 import { IconDeviceFloppy } from '@tabler/icons-react';
 
 import { usePagePresentation } from '../../../context/PagePresentationContext';
+import { getProjectTypeLabel, getProjectTypeOptions } from '../../../config/projectTypeConfig';
 
 const CreateProjectPage = ({
     onCancel,
@@ -27,10 +28,7 @@ const CreateProjectPage = ({
         (obj) => !obj.status || obj.status === 'active'
     );
 
-    const REQ_TYPES = [
-        { id: 'CFP', name: '产品碳足迹 (CFP)' },
-        { id: 'CFO', name: '组织碳足迹 (CFO)' }
-    ];
+    const REQ_TYPES = getProjectTypeOptions({ withCode: true, useLegacyValue: true });
 
     // Form State (Aligned with 数据结构定义.md)
     const [formData, setFormData] = React.useState({
@@ -66,7 +64,7 @@ const CreateProjectPage = ({
         const objName = RESEARCH_OBJECTS.find(
             (o) => String(o.id) === String(formData.research_object_name)
         )?.name || '';
-        const typeName = REQ_TYPES.find(t => t.id === formData.type)?.name?.split(' ')[0] || ''; // '产品碳足迹'
+        const typeName = getProjectTypeLabel(formData.type, { withCode: false, fallback: '' });
 
         let newTitle = '';
         if (objName && typeName) {
@@ -131,7 +129,7 @@ const CreateProjectPage = ({
                             value={formData.type}
                             onSave={(val) => handleChange('type', val)}
                             type="select"
-                            options={REQ_TYPES.map(type => ({ value: type.id, label: type.name }))}
+                            options={REQ_TYPES}
                         />
 
                         <EditableField

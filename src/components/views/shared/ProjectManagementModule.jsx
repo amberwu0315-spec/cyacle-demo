@@ -4,6 +4,12 @@ import StandardBusinessLayout from '../StandardBusinessLayout';
 import CreateProjectPage from '../l2/CreateProjectPage';
 import { buildUntitledName } from '../../../utils/createEntityRow';
 import { usePagePresentation } from '../../../context/PagePresentationContext';
+import {
+    getProjectTypeLabel,
+    getProjectTypeTagVariant,
+    normalizeProjectType,
+    toLegacyProjectType
+} from '../../../config/projectTypeConfig';
 
 const getAvatarColor = (char) => {
     const colors = [
@@ -14,27 +20,6 @@ const getAvatarColor = (char) => {
     ];
     const index = char ? char.charCodeAt(0) % colors.length : 0;
     return colors[index];
-};
-
-const mapProjectType = (rawType) => {
-    if (rawType === 'CFP') return 'PCF';
-    if (rawType === 'CFO') return 'OCF';
-    return rawType || '-';
-};
-
-const normalizeTypeForFilter = (rawType) => {
-    const normalized = String(rawType || '').trim();
-    if (!normalized) {
-        return '';
-    }
-    const upper = normalized.toUpperCase();
-    if (upper === 'CFP' || upper === 'PCF' || normalized === '产品碳足迹') {
-        return 'pcf';
-    }
-    if (upper === 'CFO' || upper === 'OCF' || normalized === '组织碳足迹') {
-        return 'ocf';
-    }
-    return normalized.toLowerCase();
 };
 
 export default function ProjectManagementModule({
@@ -80,14 +65,11 @@ export default function ProjectManagementModule({
             title: '需求类型',
             key: 'type',
             width: '15%',
-            render: (type) => {
-                const isPCF = normalizeTypeForFilter(type) === 'pcf';
-                return (
-                    <Tag variant={isPCF ? 'success' : 'primary'} size="sm">
-                        {isPCF ? '产品碳足迹' : '组织碳足迹'}
-                    </Tag>
-                );
-            }
+            render: (type) => (
+                <Tag variant={getProjectTypeTagVariant(type)} size="sm">
+                    {getProjectTypeLabel(type)}
+                </Tag>
+            )
         },
         { title: '创建时间', key: 'createTime', width: '12%', className: 'text-gray-500 font-mono text-xs' },
         { title: '更新时间', key: 'updateTime', width: '12%', className: 'text-gray-500 font-mono text-xs' }
@@ -122,7 +104,7 @@ export default function ProjectManagementModule({
         if (defaultType === 'all') {
             return byObject;
         }
-        return byObject.filter((item) => normalizeTypeForFilter(item?.type) === defaultType);
+        return byObject.filter((item) => normalizeProjectType(item?.type) === defaultType);
     }, [projects, forceResearchObject, defaultType]);
 
     if (mode === 'create') {
@@ -143,7 +125,7 @@ export default function ProjectManagementModule({
                         name: newProjectData.name || fallbackName,
                         object: selectedObject?.name || forceResearchObject?.name || '-',
                         objectId: String(selectedObject?.id || forceResearchObject?.id || ''),
-                        type: mapProjectType(newProjectData.type),
+                        type: toLegacyProjectType(newProjectData.type, newProjectData.type || '-'),
                         createTime: today,
                         updateTime: today
                     };

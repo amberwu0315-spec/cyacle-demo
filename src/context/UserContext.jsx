@@ -6,20 +6,25 @@
  * 🔧 包含：currentUser (当前用户), permissions (权限列表).
  */
 import React, { createContext, useContext, useState } from 'react';
+import { DEFAULT_ROLE, getRoleConfig } from '../config/permissionConfig';
 
 // Define the context
 const UserContext = createContext({
     currentUser: null,
     setCurrentUser: () => { },
+    currentRole: DEFAULT_ROLE,
+    setCurrentRole: () => { },
+    roleKey: 'enterprise',
     permissions: [],
     setPermissions: () => { },
+    workspaceTargets: [],
+    isL1Allowed: () => false,
+    isWorkspaceTargetAllowed: () => false,
+    getL1Label: (_id, defaultLabel) => defaultLabel
 });
 
 // Custom hook to use the context
 export const useUser = () => useContext(UserContext);
-
-// Import permission config
-import { USER_ROLES, DEFAULT_ROLE } from '../config/permissionConfig';
 
 // Provider component
 export const UserProvider = ({ children }) => {
@@ -27,9 +32,11 @@ export const UserProvider = ({ children }) => {
     const [currentRole, setCurrentRole] = useState(DEFAULT_ROLE);
 
     // 计算当前权限
-    const roleConfig = USER_ROLES[currentRole];
+    const roleConfig = getRoleConfig(currentRole);
     const permissions = roleConfig?.allowedL1 || []; // renamed from allowedIds to match context interface
     const labelOverrides = roleConfig?.labelOverrides || {};
+    const workspaceTargets = roleConfig?.workspaceTargets || [];
+    const roleKey = roleConfig?.roleKey || 'enterprise';
 
     const [currentUser, setCurrentCurrentUser] = useState(null); // kept for future use
 
@@ -41,11 +48,14 @@ export const UserProvider = ({ children }) => {
         // Role & Permissions
         currentRole,
         setCurrentRole, // Expose setter for the switcher
+        roleKey,
         permissions,
         labelOverrides,
+        workspaceTargets,
 
         // Helper to check if an L1 is allowed
         isL1Allowed: (l1Id) => permissions.includes(l1Id),
+        isWorkspaceTargetAllowed: (targetId) => workspaceTargets.includes(targetId),
 
         // Helper to get display label
         getL1Label: (l1Id, defaultLabel) => labelOverrides[l1Id] || defaultLabel

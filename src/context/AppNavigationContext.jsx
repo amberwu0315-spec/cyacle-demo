@@ -8,6 +8,7 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { readStore, writeStore } from '../utils/persistStore';
 import { ENTERPRISE_DETAIL_DEFAULT_L2 } from '../config/enterpriseDetailConfig';
+import { useData } from './DataContext';
 
 // Modes
 export const MODES = {
@@ -34,8 +35,10 @@ const isSameDetailTab = (tab, item, l1Context) => (
     && tab?.l1Context === l1Context
     && String(tab?.data?.id) === String(item?.id)
 );
+const isSameSnapshot = (a, b) => JSON.stringify(a || null) === JSON.stringify(b || null);
 
 export const AppNavigationProvider = ({ children }) => {
+    const { projects, researchObjects } = useData();
     // App State
     const [activeL1, setActiveL1] = useState('workspace');
     const [activeL2, setActiveL2] = useState('workbench_home');
@@ -67,6 +70,50 @@ export const AppNavigationProvider = ({ children }) => {
     useEffect(() => {
         openedTabsRef.current = openedTabs;
     }, [openedTabs]);
+
+    useEffect(() => {
+        setOpenedTabs((prevTabs) => {
+            let changed = false;
+
+            const nextTabs = prevTabs.map((tab) => {
+                if (tab?.type !== 'detail') {
+                    return tab;
+                }
+
+                if (tab.l1Context === 'project_mgmt') {
+                    const latestProject = projects.find((item) => String(item?.id) === String(tab?.data?.id));
+                    if (!latestProject) {
+                        return tab;
+                    }
+                    const nextTitle = latestProject.name || tab.title;
+                    const sameData = isSameSnapshot(tab.data, latestProject);
+                    if (sameData && tab.title === nextTitle) {
+                        return tab;
+                    }
+                    changed = true;
+                    return { ...tab, title: nextTitle, data: latestProject };
+                }
+
+                if (tab.l1Context === 'enterprise') {
+                    const latestObject = researchObjects.find((item) => String(item?.id) === String(tab?.data?.id));
+                    if (!latestObject) {
+                        return tab;
+                    }
+                    const nextTitle = latestObject.name || tab.title;
+                    const sameData = isSameSnapshot(tab.data, latestObject);
+                    if (sameData && tab.title === nextTitle) {
+                        return tab;
+                    }
+                    changed = true;
+                    return { ...tab, title: nextTitle, data: latestObject };
+                }
+
+                return tab;
+            });
+
+            return changed ? nextTabs : prevTabs;
+        });
+    }, [projects, researchObjects]);
 
     // Derived State
     const isProjectLayout = activeL1 === 'project_tag';

@@ -8,36 +8,48 @@
  */
 import React, { useEffect, useState } from 'react';
 import { usePagePresentation } from '../../../context/PagePresentationContext';
-import { IconPlus, IconPencil, IconCheck, IconX } from '@tabler/icons-react';
+import { IconPlus } from '@tabler/icons-react';
 import { ContentModule, ModuleHeader } from '../../common/ContentModule';
 import EditableField from '../../common/EditableField';
+import { useData } from '../../../context/DataContext';
+import { useAppNavigation } from '../../../context/AppNavigationContext';
+import { getProjectTypeLabel } from '../../../config/projectTypeConfig';
 
 const BasisPage = () => {
     const { setActions, setTitleOverride, setLayoutConfig } = usePagePresentation();
+    const {
+        projects,
+        researchObjects,
+        getProjectById,
+        getResearchObjectById,
+        updateProject
+    } = useData();
+    const { businessTarget, openedTabs } = useAppNavigation();
 
-    // 服务企业 - 只读数据
+    const activeProjectTab = openedTabs.find(
+        (tab) => tab.id === businessTarget && tab.type === 'detail' && tab.l1Context === 'project_mgmt'
+    );
+    const fallbackProject = projects?.[0] || null;
+    const activeProjectId = activeProjectTab?.data?.id || fallbackProject?.id || null;
+    const activeProject = getProjectById(activeProjectId) || activeProjectTab?.data || fallbackProject;
+    const linkedResearchObject =
+        getResearchObjectById(activeProject?.objectId)
+        || researchObjects.find((item) => item?.name === activeProject?.object)
+        || null;
+
     const researchObject = {
-        name: '示例门窗生产企业',
+        name: linkedResearchObject?.name || activeProject?.object || '未关联服务企业',
         nameLink: '#',
-        address: '中国广东省深圳市南山区科技园',
-        contact_name: '张伟', // Aligned with schema: contactName -> contact_name
-        contact_email: 'zhangwei@example.com',
-        introduction: '专业生产节能门窗系统，拥有20年行业经验，年产能达到100万平方米。'
+        address: linkedResearchObject?.address || linkedResearchObject?.location || '-',
+        contact_name: linkedResearchObject?.contactName || linkedResearchObject?.contact_name || '-',
+        contact_email: linkedResearchObject?.contactEmail || linkedResearchObject?.contact_email || '-',
+        introduction: linkedResearchObject?.introduction || '-'
     };
 
     // 类型视图-设置列表 - 可编辑表格
     const [typeViewList, setTypeViewList] = useState([
         { id: 1, source: '数据库A', level1: '建筑材料', level2: '门窗系统' }
     ]);
-
-    // 基础信息 - 扩展 Project 实体
-    const [projectData, setProjectData] = useState({
-        type: 'CFP',              // demandType -> type
-        owner: '李明',             // creator -> owner
-        created_at: '2024-01-15 10:30:00',
-        updated_at: '2024-02-03 14:20:00',
-        description: '这是一个示例项目，用于演示碳足迹核算流程。' // remark -> description
-    });
 
     useEffect(() => {
         setLayoutConfig('title-only');
@@ -64,6 +76,13 @@ const BasisPage = () => {
         setTypeViewList(typeViewList.map(item =>
             item.id === id ? { ...item, [field]: value } : item
         ));
+    };
+
+    const handleProjectDescriptionSave = (value) => {
+        if (!activeProject?.id) {
+            return;
+        }
+        updateProject(activeProject.id, { description: value });
     };
 
     return (
@@ -186,34 +205,34 @@ const BasisPage = () => {
                             <div className="flex items-center min-h-9">
                                 <span className="text-sm text-gray-500 w-28">需求类型：</span>
                                 <span className="flex-1 text-sm text-gray-800">
-                                    {projectData.type === 'CFP' ? '产品碳足迹 (CFP)' : '组织碳足迹 (CFO)'}
+                                    {getProjectTypeLabel(activeProject?.type, { withCode: true })}
                                 </span>
                             </div>
 
                             {/* 创建人 - 只读 */}
                             <div className="flex items-center min-h-9">
                                 <span className="text-sm text-gray-500 w-28">创建人：</span>
-                                <span className="flex-1 text-sm text-gray-800">{projectData.owner}</span>
+                                <span className="flex-1 text-sm text-gray-800">{activeProject?.owner || activeProject?.creator || '-'}</span>
                             </div>
 
                             {/* 创建时间 - 只读 */}
                             <div className="flex items-center min-h-9">
                                 <span className="text-sm text-gray-500 w-28">创建时间：</span>
-                                <span className="flex-1 text-sm text-gray-800">{projectData.created_at}</span>
+                                <span className="flex-1 text-sm text-gray-800">{activeProject?.createTime || '-'}</span>
                             </div>
 
                             {/* 更新时间 - 只读 */}
                             <div className="flex items-center min-h-9">
                                 <span className="text-sm text-gray-500 w-28">更新时间：</span>
-                                <span className="flex-1 text-sm text-gray-800">{projectData.updated_at}</span>
+                                <span className="flex-1 text-sm text-gray-800">{activeProject?.updateTime || '-'}</span>
                             </div>
 
                             {/* 项目描述 - 可编辑 */}
                             <div className="pt-2">
                                 <EditableField
                                     label="项目描述"
-                                    value={projectData.description}
-                                    onSave={(val) => setProjectData({ ...projectData, description: val })}
+                                    value={activeProject?.description || ''}
+                                    onSave={handleProjectDescriptionSave}
                                     type="textarea"
                                     rows={3}
                                 />

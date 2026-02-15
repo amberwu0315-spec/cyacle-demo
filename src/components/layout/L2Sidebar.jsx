@@ -1,26 +1,27 @@
 import { useState } from 'react';
 import {
-    IconCompass, IconServer, IconGitBranch, IconBox, IconCalculator, IconShield, IconLayoutGrid, IconBuilding,
+    IconCompass, IconShield, IconLayoutGrid, IconBuilding,
     IconMapPin, IconHexagon, IconDatabase, IconChevronLeft, IconChevronRight,
     IconShare, IconStack2, IconCpu, IconFlask, IconActivity, IconBook
 } from '@tabler/icons-react';
 import Tooltip from '../common/Tooltip';
 import Button from '../common/Button';
 import { ENTERPRISE_DETAIL_MENU_GROUPS } from '../../config/enterpriseDetailConfig';
+import { getProjectDetailMenuGroupsByType } from '../../config/projectDetailConfig';
+import { useUser } from '../../context/UserContext';
 
-export default function L2Sidebar({ activeL2, onSelect, activeL1, enterpriseName = '演示门窗有限公司', isDetailView = false }) {
+export default function L2Sidebar({
+    activeL2,
+    onSelect,
+    activeL1,
+    enterpriseName = '演示门窗有限公司',
+    isDetailView = false,
+    activeProjectType = null
+}) {
     const [isCollapsed, setIsCollapsed] = useState(false);
+    const { isWorkspaceTargetAllowed } = useUser();
 
-    // Standard Project Items
-    const items = [
-        { id: 'navigation', icon: IconCompass, label: '导航' },
-        { id: 'basis', icon: IconServer, label: '基础' },
-        { id: 'allocation', icon: IconGitBranch, label: '分配' },
-    ];
-    const group2 = [
-        { id: 'model', icon: IconBox, label: '模型' },
-        { id: 'accounting', icon: IconCalculator, label: '核算' },
-    ];
+    const projectGroups = getProjectDetailMenuGroupsByType(activeProjectType);
 
     const renderBtn = (item) => {
         const isActive = activeL2 === item.id;
@@ -55,9 +56,15 @@ export default function L2Sidebar({ activeL2, onSelect, activeL1, enterpriseName
             ]
         }
     ];
+    const workspaceGroupsByRole = workspaceGroups
+        .map((group) => ({
+            ...group,
+            items: group.items.filter((item) => isWorkspaceTargetAllowed(item.id))
+        }))
+        .filter((group) => group.items.length > 0);
 
     const businessGroups = {
-        'workspace': workspaceGroups,
+        'workspace': workspaceGroupsByRole,
         'background_data': [
             { title: '数据库', items: [{ id: 'database_mgmt', icon: IconStack2, label: '数据库管理', desc: '管理背景数据库全集' }] },
             { title: '元件', items: [{ id: 'components', icon: IconCpu, label: '元件', desc: '相同物质/活动的因子组' }] },
@@ -220,9 +227,14 @@ export default function L2Sidebar({ activeL2, onSelect, activeL1, enterpriseName
     // ==================== Standard Project Layout (Left Nav - Not Sidebar) ====================
     return (
         <div className="w-[50px] h-full bg-[#f8fbfd] border-r border-slate-200 flex flex-col py-2 shrink-0 items-center gap-[4px]">
-            {items.map(renderBtn)}
-            <div className="border-b border-slate-200 w-6 mx-auto my-[4px]"></div>
-            {group2.map(renderBtn)}
+            {projectGroups.map((group, groupIndex) => (
+                <div key={group.title || `project-group-${groupIndex}`} className="w-full flex flex-col items-center gap-[4px]">
+                    {group.items.map(renderBtn)}
+                    {groupIndex < projectGroups.length - 1 && (
+                        <div className="border-b border-slate-200 w-6 mx-auto my-[4px]"></div>
+                    )}
+                </div>
+            ))}
         </div>
     );
 }

@@ -20,6 +20,10 @@ import { usePagePresentation } from '../../context/PagePresentationContext';
 import { useUser } from '../../context/UserContext';
 import { readStore, writeStore } from '../../utils/persistStore';
 import { ENTERPRISE_DETAIL_TITLE_MAP } from '../../config/enterpriseDetailConfig';
+import {
+    PROJECT_DETAIL_DEFAULT_L2,
+    getProjectDetailRouteIdsByType
+} from '../../config/projectDetailConfig';
 
 const FOOTER_MODAL_SESSION_KEY = 'cyacle:overlay:footer-modal';
 
@@ -57,13 +61,15 @@ const WorkbenchContent = ({
     // 3. Consume App-Level Navigation (Legacy Adapter)
     const { setActiveDimension, setActiveMode } = useNavigation();
     const { showHeader } = usePagePresentation();
-    const { currentRole } = useUser();
+    const { workspaceTargets } = useUser();
 
     // Derived State for Layout Switching
     const isDetailView = businessTarget && businessTarget.startsWith('detail_');
     const activeTab = openedTabs.find(t => t.id === businessTarget);
     const effectiveL1 = isDetailView ? activeTab?.l1Context : activeL1;
-    const hasWorkspaceL2Menu = activeL1 === 'workspace' && currentRole === 'ENTERPRISE';
+    const hasWorkspaceL2Menu = activeL1 === 'workspace' && workspaceTargets.length > 1;
+    const activeProjectTab = isDetailView && activeTab?.l1Context === 'project_mgmt' ? activeTab : null;
+    const activeProjectType = activeProjectTab?.data?.type || null;
 
     // Modal State
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -90,16 +96,32 @@ const WorkbenchContent = ({
 
     // Personal/service role has no workspace L2 sidebar and always lands on workbench_home.
     useEffect(() => {
-        if (activeL1 === 'workspace' && currentRole !== 'ENTERPRISE' && activeL2 !== 'workbench_home') {
-            setActiveL2('workbench_home');
+        if (activeL1 !== 'workspace') {
+            return;
         }
-    }, [activeL1, currentRole, activeL2, setActiveL2]);
+        if (!workspaceTargets.includes(activeL2)) {
+            const fallbackL2 = workspaceTargets[0] || 'workbench_home';
+            setActiveL2(fallbackL2);
+        }
+    }, [activeL1, workspaceTargets, activeL2, setActiveL2]);
+
+    useEffect(() => {
+        const isProjectTypeScoped = isProjectLayout || Boolean(activeProjectTab);
+        if (!isProjectTypeScoped) {
+            return;
+        }
+        const allowedL2 = getProjectDetailRouteIdsByType(activeProjectType);
+        const fallbackL2 = allowedL2[0] || PROJECT_DETAIL_DEFAULT_L2;
+        if (!allowedL2.includes(activeL2)) {
+            setActiveL2(fallbackL2);
+        }
+    }, [activeL2, activeProjectType, activeProjectTab, isProjectLayout, setActiveL2]);
 
     // Update header title based on context
     useEffect(() => {
         // [New] 优先处理 Workspace 模式
         if (activeL1 === 'workspace') {
-            if (currentRole !== 'ENTERPRISE') {
+            if (workspaceTargets.length <= 1) {
                 setHeaderTitle('工作台');
                 setSidebarTitle('工作空间');
                 return;
@@ -183,7 +205,7 @@ const WorkbenchContent = ({
         } else {
             setHeaderTitle('Dashboard');
         }
-    }, [effectiveL1, activeL1, activeL2, isProjectLayout, isBusinessLayout, businessTarget, isDetailView, openedTabs, setHeaderTitle, setSidebarTitle, currentRole]);
+    }, [effectiveL1, activeL1, activeL2, isProjectLayout, isBusinessLayout, businessTarget, isDetailView, openedTabs, setHeaderTitle, setSidebarTitle, workspaceTargets]);
 
     // Auto-Close Modal
     useEffect(() => {
@@ -272,6 +294,7 @@ const WorkbenchContent = ({
                         }}
                         enterpriseName={sidebarTitle}
                         isDetailView={isDetailView}
+                        activeProjectType={activeProjectType}
                     />
                 )}
 
