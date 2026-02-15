@@ -29,6 +29,61 @@ import WorkbenchHomePage from './l2/WorkbenchHomePage';
 import CarbonPanoramaPage from './l2/CarbonPanoramaPage';
 import CarbonAssetMgmtPage from './l2/CarbonAssetMgmtPage';
 import { buildUntitledName } from '../../utils/createEntityRow';
+import { BUSINESS_TARGET_ROUTE_IDS } from '../../config/businessTargetConfig';
+
+const BUSINESS_TARGET_RENDERERS = {
+    workbench_home: () => <WorkbenchHomePage />,
+    carbon_panorama: () => <CarbonPanoramaPage />,
+    carbon_asset_mgmt: () => <CarbonAssetMgmtPage />,
+
+    database_mgmt: () => <DatabaseManagementPage />,
+    components: () => <ComponentPage />,
+    factors_baseflow: () => <BasicFlowPage />,
+    factors_composite: () => <CompositeFactorPage />,
+    factors_literature: () => <LiteratureFactorPage />,
+    literature: () => <LiteraturePage />,
+
+    all_projects: ({ projects, researchObjects, onAddProject, onOpenTab, target }) => (
+        <ProjectManagementModule
+            projects={projects}
+            researchObjects={researchObjects}
+            onAddProject={onAddProject}
+            onOpenProject={(project) => onOpenTab(project)}
+            defaultType="all"
+            title="全部项目"
+            scopeKey={`project_mgmt:${target}`}
+        />
+    ),
+    pcf: ({ projects, researchObjects, onAddProject, onOpenTab, target }) => (
+        <ProjectManagementModule
+            projects={projects}
+            researchObjects={researchObjects}
+            onAddProject={onAddProject}
+            onOpenProject={(project) => onOpenTab(project)}
+            defaultType="pcf"
+            title="全部项目"
+            scopeKey={`project_mgmt:${target}`}
+        />
+    ),
+    ocf: ({ projects, researchObjects, onAddProject, onOpenTab, target }) => (
+        <ProjectManagementModule
+            projects={projects}
+            researchObjects={researchObjects}
+            onAddProject={onAddProject}
+            onOpenProject={(project) => onOpenTab(project)}
+            defaultType="ocf"
+            title="全部项目"
+            scopeKey={`project_mgmt:${target}`}
+        />
+    ),
+    all_objects: ({ renderResearchObjects }) => renderResearchObjects()
+};
+
+const LEGACY_TARGET_RENDERERS = {
+    datasource: () => <DataSourcePage />,
+    product: () => <ProductPage />,
+    data: () => <DataPage />
+};
 
 export default function BusinessContent({ activeL1, target, onOpenTab, openedTabs = [], projects = [], onAddProject, researchObjects = [], onAddResearchObject }) {
     const { setActions } = usePagePresentation();
@@ -126,102 +181,43 @@ export default function BusinessContent({ activeL1, target, onOpenTab, openedTab
         />;
     };
 
-    // ==================== 路由逻辑 ====================
-    switch (target) {
-        // ==================== Workspace ====================
-        case 'workbench_home':
-            return <WorkbenchHomePage />;
-        case 'carbon_panorama':
-            return <CarbonPanoramaPage />;
-        case 'carbon_asset_mgmt':
-            return <CarbonAssetMgmtPage />;
+    const rendererContext = {
+        target,
+        projects,
+        researchObjects,
+        onAddProject,
+        onOpenTab,
+        renderResearchObjects
+    };
 
-        // ==================== Background Data ====================
-        case 'database_mgmt':
-            return <DatabaseManagementPage />;
-
-        case 'datasource':
-            return <DataSourcePage />;
-
-        case 'product':
-            return <ProductPage />;
-
-        case 'data':
-            return <DataPage />;
-
-        case 'components':
-            return <ComponentPage />;
-
-        case 'factors_baseflow':
-            return <BasicFlowPage />;
-
-        case 'factors_composite':
-            return <CompositeFactorPage />;
-
-        case 'factors_literature':
-            return <LiteratureFactorPage />;
-
-        case 'literature':
-            return <LiteraturePage />;
-
-        case 'all_projects':
-            return (
-                <ProjectManagementModule
-                    projects={projects}
-                    researchObjects={researchObjects}
-                    onAddProject={onAddProject}
-                    onOpenProject={(project) => onOpenTab(project)}
-                    defaultType="all"
-                    title="全部项目"
-                    scopeKey={`project_mgmt:${target}`}
-                />
-            );
-
-        case 'pcf':
-            return (
-                <ProjectManagementModule
-                    projects={projects}
-                    researchObjects={researchObjects}
-                    onAddProject={onAddProject}
-                    onOpenProject={(project) => onOpenTab(project)}
-                    defaultType="pcf"
-                    title="全部项目"
-                    scopeKey={`project_mgmt:${target}`}
-                />
-            );
-
-        case 'ocf':
-            return (
-                <ProjectManagementModule
-                    projects={projects}
-                    researchObjects={researchObjects}
-                    onAddProject={onAddProject}
-                    onOpenProject={(project) => onOpenTab(project)}
-                    defaultType="ocf"
-                    title="全部项目"
-                    scopeKey={`project_mgmt:${target}`}
-                />
-            );
-
-        case 'all_objects':
-            return renderResearchObjects();
-
-        default:
-            // 默认占位符（用于其他L1的business内容）
-            return (
-                <div className="h-full w-full flex flex-col p-8">
-                    <div className="flex-1 bg-white rounded-md shadow-sm border border-gray-100 p-8 flex items-center justify-center">
-                        <div className="text-center">
-                            <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <IconStack2 className="w-8 h-8 text-gray-400" />
-                            </div>
-                            <h3 className="text-lg font-medium text-gray-900 mb-2">Content for {target}</h3>
-                            <p className="text-gray-500 max-w-md mx-auto">
-                                此模块的功能正在开发中...
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            );
+    const renderer = BUSINESS_TARGET_RENDERERS[target];
+    if (renderer) {
+        return renderer(rendererContext);
     }
+
+    const legacyRenderer = LEGACY_TARGET_RENDERERS[target];
+    if (legacyRenderer) {
+        return legacyRenderer(rendererContext);
+    }
+
+    if (import.meta.env.DEV && target && !BUSINESS_TARGET_ROUTE_IDS.includes(target)) {
+        console.warn(`[BusinessContent] Unknown target route: ${target}`);
+    }
+
+    // 默认占位符（用于其他L1的business内容）
+    return (
+        <div className="h-full w-full flex flex-col p-8">
+            <div className="flex-1 bg-white rounded-md shadow-sm border border-gray-100 p-8 flex items-center justify-center">
+                <div className="text-center">
+                    <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <IconStack2 className="w-8 h-8 text-gray-400" />
+                    </div>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">Content for {target}</h3>
+                    <p className="text-gray-500 max-w-md mx-auto">
+                        此模块的功能正在开发中...
+                    </p>
+                </div>
+            </div>
+        </div>
+    );
 }

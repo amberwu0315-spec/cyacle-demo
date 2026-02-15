@@ -3,17 +3,17 @@ import { CanvasPage } from '../../layout/PageLayouts';
 import DataGrid from '../../common/DataGrid';
 import { ContentModule, ModuleHeader } from '../../common/ContentModule';
 import {
-    Activity,
-    Book,
-    Building,
-    ChevronRight,
-    Cpu,
-    FlaskConical,
-    MapPin,
-    Layers,
-    Globe,
-    ExternalLink
-} from 'lucide-react';
+    IconActivity,
+    IconBook,
+    IconBuilding,
+    IconChevronRight,
+    IconCpu,
+    IconFlask,
+    IconMapPin,
+    IconLayersIntersect,
+    IconGlobe,
+    IconExternalLink
+} from '@tabler/icons-react';
 import { useAppNavigation } from '../../../context/AppNavigationContext';
 
 const topCapabilityCards = [
@@ -21,7 +21,7 @@ const topCapabilityCards = [
         title: '元件',
         desc1: '同属性物质与活动的结构化',
         desc2: '因子集合',
-        icon: Cpu,
+        icon: IconCpu,
         tone: 'text-cyan-700 bg-cyan-50',
         navigate: { l1: 'background_data', target: 'components' }
     },
@@ -29,7 +29,7 @@ const topCapabilityCards = [
         title: '文献因子',
         desc1: '来自权威文献的可追溯核算',
         desc2: '因子数据',
-        icon: FlaskConical,
+        icon: IconFlask,
         tone: 'text-indigo-600 bg-indigo-50',
         navigate: { l1: 'background_data', target: 'factors_literature' }
     },
@@ -37,7 +37,7 @@ const topCapabilityCards = [
         title: '复合因子',
         desc1: '基于模型计算形成的多源',
         desc2: '综合因子',
-        icon: Layers,
+        icon: IconLayersIntersect,
         tone: 'text-violet-600 bg-violet-50',
         navigate: { l1: 'background_data', target: 'factors_composite' }
     },
@@ -45,7 +45,7 @@ const topCapabilityCards = [
         title: '文献',
         desc1: '支撑因子取值、模型设定与',
         desc2: '审计依据',
-        icon: Book,
+        icon: IconBook,
         tone: 'text-blue-700 bg-blue-50',
         navigate: { l1: 'background_data', target: 'literature' }
     }
@@ -55,21 +55,21 @@ const secondCapabilityCards = [
     {
         title: '供应链碳盘查',
         desc: '管理供应商与物料排放数据',
-        icon: Activity,
+        icon: IconActivity,
         tone: 'text-cyan-700 bg-cyan-50',
         navigate: { l1: 'project_mgmt', target: 'all_projects' }
     },
     {
         title: '组织碳盘查',
         desc: '组织级核算、核查与汇总',
-        icon: Building,
+        icon: IconBuilding,
         tone: 'text-sky-700 bg-sky-50',
         navigate: { l1: 'project_mgmt', target: 'ocf' }
     },
     {
         title: '园区碳足迹',
         desc: '园区多主体排放管理与协同',
-        icon: MapPin,
+        icon: IconMapPin,
         tone: 'text-emerald-700 bg-emerald-50',
         navigate: { l1: 'enterprise', target: 'all_objects' }
     }
@@ -241,7 +241,7 @@ const WorkbenchHomePage = () => {
                             <div className="max-w-3xl">
                                 <div className="flex items-center gap-2">
                                     <div className="w-10 h-10 rounded-full bg-white/15 border border-white/30 flex items-center justify-center">
-                                        <Globe size={21} strokeWidth={1.8} />
+                                        <IconGlobe size={21} stroke={1.8} />
                                     </div>
                                     <div>
                                         <div className="text-3xl leading-8 tracking-tight font-semibold">青钥</div>
@@ -293,7 +293,7 @@ const WorkbenchHomePage = () => {
                                     <div className="text-xs text-slate-500">{item.desc2}</div>
                                 </div>
                             </div>
-                            <ChevronRight size={16} className="text-cyan-600 shrink-0" />
+                            <IconChevronRight size={16} className="text-cyan-600 shrink-0" />
                         </button>
                     ))}
                 </div>
@@ -314,7 +314,7 @@ const WorkbenchHomePage = () => {
                                     <div className="text-xs text-slate-500 mt-1">{item.desc}</div>
                                 </div>
                             </div>
-                            <ChevronRight size={16} className="text-cyan-600 shrink-0" />
+                            <IconChevronRight size={16} className="text-cyan-600 shrink-0" />
                         </button>
                     ))}
                 </div>
@@ -324,7 +324,7 @@ const WorkbenchHomePage = () => {
                         <ModuleHeader
                             title="近期项目"
                             onClick={() => handleNavigation('project_mgmt')}
-                            actions={<ChevronRight size={16} className="text-cyan-700" />}
+                            actions={<IconChevronRight size={16} className="text-cyan-700" />}
                         />
                         <DataGrid
                             title="近期项目"
@@ -345,7 +345,7 @@ const WorkbenchHomePage = () => {
                         <ModuleHeader
                             title="近期服务客户"
                             onClick={() => handleNavigation('enterprise')}
-                            actions={<ChevronRight size={16} className="text-cyan-700" />}
+                            actions={<IconChevronRight size={16} className="text-cyan-700" />}
                         />
                         <DataGrid
                             title="近期服务客户"
@@ -367,9 +367,9 @@ const WorkbenchHomePage = () => {
                     <ContentModule>
                         <ModuleHeader
                             title="行业资讯"
-                            icon={ExternalLink}
+                            icon={IconExternalLink}
                             onClick={() => handleExternalLink('https://www.carbonnt.com/news')}
-                            actions={<ChevronRight size={16} className="text-cyan-700" />}
+                            actions={<IconChevronRight size={16} className="text-cyan-700" />}
                         />
                         <div className="px-4 py-3 space-y-3">
                             {newsItems.map((item, idx) => (
@@ -395,9 +395,9 @@ const WorkbenchHomePage = () => {
                     <ContentModule>
                         <ModuleHeader
                             title="帮助中心"
-                            icon={ExternalLink}
+                            icon={IconExternalLink}
                             onClick={() => handleExternalLink('https://doc.cyacle.cn/')}
-                            actions={<ChevronRight size={16} className="text-cyan-700" />}
+                            actions={<IconChevronRight size={16} className="text-cyan-700" />}
                         />
                         <div className="px-4 py-3 space-y-3">
                             {helpItems.map((item) => (

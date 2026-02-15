@@ -5,6 +5,7 @@
 - [ ] 关键链路改动后通过 `npm run build`
 - [ ] 未引入重复 Header（双栏页面）
 - [ ] 未破坏导航切换和返回链路
+- [ ] 若涉及导航相关文件改动，已执行 `docs/qa/navigation-regression-matrix.md` 的 P0 场景
 
 ## 2. 页面通用验收（按页面勾选）
 - [ ] 页面可达（导航能进入）

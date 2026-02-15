@@ -143,7 +143,7 @@ const EditableField = ({
                     {value} <span className="text-slate-500 ml-1">{unit}</span>
                 </span>
             );
-        };
+        }
 
         if (type === 'textarea') {
             return (

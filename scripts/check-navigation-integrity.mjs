@@ -10,6 +10,9 @@ import {
     PROJECT_DETAIL_ROUTE_IDS,
     PROJECT_TYPE_ROUTE_MATRIX
 } from '../src/config/projectDetailConfig.js';
+import {
+    BUSINESS_TARGET_ROUTE_IDS
+} from '../src/config/businessTargetConfig.js';
 
 const errors = [];
 const warnings = [];
@@ -38,6 +41,13 @@ if (!PROJECT_DETAIL_ROUTE_IDS.includes(PROJECT_DETAIL_DEFAULT_L2)) {
     errors.push(
         `default project L2 "${PROJECT_DETAIL_DEFAULT_L2}" is missing in route ids`
     );
+}
+
+const duplicateBusinessRouteIds = BUSINESS_TARGET_ROUTE_IDS.filter((routeId, index, arr) => (
+    arr.indexOf(routeId) !== index
+));
+if (duplicateBusinessRouteIds.length > 0) {
+    errors.push(`business route ids duplicated: ${[...new Set(duplicateBusinessRouteIds)].join(', ')}`);
 }
 
 Object.entries(PROJECT_TYPE_ROUTE_MATRIX).forEach(([projectType, routeIds]) => {
@@ -95,6 +105,45 @@ if (!fs.existsSync(l2SidebarPath)) {
     if (!l2SidebarContent.includes('activeProjectType')) {
         errors.push('L2Sidebar missing activeProjectType input');
     }
+
+    const workspaceGroupsMatch = l2SidebarContent.match(
+        /const workspaceGroups\s*=\s*\[([\s\S]*?)\n\s*\];/
+    );
+    if (!workspaceGroupsMatch) {
+        errors.push('cannot parse workspaceGroups array in L2Sidebar.jsx');
+    }
+
+    const businessGroupsMatch = l2SidebarContent.match(
+        /const businessGroups\s*=\s*\{([\s\S]*?)\n\s*\};/
+    );
+    if (!businessGroupsMatch) {
+        errors.push('cannot parse businessGroups object in L2Sidebar.jsx');
+    } else {
+        const workspaceIds = workspaceGroupsMatch
+            ? [...workspaceGroupsMatch[1].matchAll(/id:\s*'([a-z0-9_]+)'/gim)].map((match) => match[1])
+            : [];
+        const businessGroupIds = [...businessGroupsMatch[1].matchAll(/id:\s*'([a-z0-9_]+)'/gim)]
+            .map((match) => match[1]);
+        const uniqueSidebarBusinessIds = [...new Set([...workspaceIds, ...businessGroupIds])];
+
+        const missingInBusinessConfig = uniqueSidebarBusinessIds.filter(
+            (routeId) => !BUSINESS_TARGET_ROUTE_IDS.includes(routeId)
+        );
+        if (missingInBusinessConfig.length > 0) {
+            errors.push(
+                `L2Sidebar business ids missing in businessTargetConfig: ${missingInBusinessConfig.join(', ')}`
+            );
+        }
+
+        const missingInSidebar = BUSINESS_TARGET_ROUTE_IDS.filter(
+            (routeId) => !uniqueSidebarBusinessIds.includes(routeId)
+        );
+        if (missingInSidebar.length > 0) {
+            errors.push(
+                `businessTargetConfig ids missing in L2Sidebar businessGroups: ${missingInSidebar.join(', ')}`
+            );
+        }
+    }
 }
 
 const workbenchPath = path.resolve(process.cwd(), 'src/components/layout/Workbench.jsx');
@@ -104,6 +153,40 @@ if (!fs.existsSync(workbenchPath)) {
     const workbenchContent = fs.readFileSync(workbenchPath, 'utf8');
     if (!workbenchContent.includes('activeProjectType')) {
         errors.push('Workbench does not wire activeProjectType to sidebar');
+    }
+}
+
+const businessContentPath = path.resolve(process.cwd(), 'src/components/views/BusinessContent.jsx');
+if (!fs.existsSync(businessContentPath)) {
+    errors.push(`BusinessContent not found: ${businessContentPath}`);
+} else {
+    const businessContent = fs.readFileSync(businessContentPath, 'utf8');
+    const rendererMatch = businessContent.match(
+        /const BUSINESS_TARGET_RENDERERS\s*=\s*\{([\s\S]*?)\n\};/
+    );
+    if (!rendererMatch) {
+        errors.push('cannot parse BUSINESS_TARGET_RENDERERS object in BusinessContent.jsx');
+    } else {
+        const rendererIds = [...rendererMatch[1].matchAll(/^\s*([a-z0-9_]+)\s*:/gim)]
+            .map((match) => match[1]);
+
+        const missingInRenderers = BUSINESS_TARGET_ROUTE_IDS.filter(
+            (routeId) => !rendererIds.includes(routeId)
+        );
+        if (missingInRenderers.length > 0) {
+            errors.push(
+                `BusinessContent missing business target renderers: ${missingInRenderers.join(', ')}`
+            );
+        }
+
+        const extraRenderers = rendererIds.filter(
+            (routeId) => !BUSINESS_TARGET_ROUTE_IDS.includes(routeId)
+        );
+        if (extraRenderers.length > 0) {
+            warnings.push(
+                `BusinessContent has extra business target renderers: ${extraRenderers.join(', ')}`
+            );
+        }
     }
 }
 
@@ -117,5 +200,5 @@ if (errors.length > 0) {
 }
 
 console.log(
-    `[check:navigation] ok: ${ENTERPRISE_DETAIL_ROUTE_IDS.length} enterprise routes, ${PROJECT_DETAIL_ROUTE_IDS.length} project routes verified`
+    `[check:navigation] ok: ${ENTERPRISE_DETAIL_ROUTE_IDS.length} enterprise routes, ${PROJECT_DETAIL_ROUTE_IDS.length} project routes, ${BUSINESS_TARGET_ROUTE_IDS.length} business routes verified`
 );

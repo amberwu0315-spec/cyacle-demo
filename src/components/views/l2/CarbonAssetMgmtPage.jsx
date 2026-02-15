@@ -7,13 +7,13 @@ import { ContentModule, ModuleHeader } from '../../common/ContentModule';
 import KpiCard from '../../dashboard/KpiCard';
 
 import {
-    ChevronRight,
-    Database,
-    FileText,
-    Scale,
-    Layers,
-    ArrowUpRight
-} from 'lucide-react';
+    IconArrowUpRight,
+    IconChevronRight,
+    IconDatabase,
+    IconFileText,
+    IconLayersIntersect,
+    IconScale
+} from '@tabler/icons-react';
 
 const yearlyBars = [
     { year: '2020', quota: 45000, actual: 43000 },
@@ -100,7 +100,7 @@ const CarbonAssetMgmtPage = () => {
                 <div className="flex items-center justify-between">
                     <div>
                         <h2 className="text-xl font-semibold text-slate-900 flex items-center gap-2">
-                            <Layers size={22} className="text-cyan-700" />
+                            <IconLayersIntersect size={22} className="text-cyan-700" />
                             碳资产管理
                         </h2>
                         <p className="text-xs text-slate-500 mt-1">动态管理配额、CCER及碳资产账户，支持履约评估与资产运营决策</p>
@@ -111,7 +111,7 @@ const CarbonAssetMgmtPage = () => {
                 </div>
 
                 <div className="text-base font-semibold text-slate-800 flex items-center gap-1.5">
-                    <FileText size={16} className="text-slate-400" />
+                    <IconFileText size={16} className="text-slate-400" />
                     企业碳账本
                 </div>
 
@@ -120,7 +120,7 @@ const CarbonAssetMgmtPage = () => {
                         title="年度履约配额总量"
                         value="50,000"
                         unit="tCO₂e"
-                        icon={Scale}
+                        icon={IconScale}
                     >
                         <div className="flex items-center justify-between text-sm">
                             <span className="text-slate-500">已核查排放量</span>
@@ -135,7 +135,7 @@ const CarbonAssetMgmtPage = () => {
                         title="配额盈缺估算"
                         value="+7,500"
                         unit="tCO₂e"
-                        icon={ArrowUpRight}
+                        icon={IconArrowUpRight}
                     >
                         <div className="flex items-center gap-2 text-xs">
                             <span className="h-6 px-2 rounded bg-emerald-50 text-emerald-600 inline-flex items-center font-medium">↗ 资产盈余</span>
@@ -147,7 +147,7 @@ const CarbonAssetMgmtPage = () => {
                         title="CCER 持仓量"
                         value="5,000"
                         unit="tCO₂e"
-                        icon={Database}
+                        icon={IconDatabase}
                     >
                         <div className="grid grid-cols-2 gap-2 text-sm">
                             <div>
@@ -238,7 +238,7 @@ const CarbonAssetMgmtPage = () => {
                         title="资产变动记录"
                         actions={
                             <button className="text-sm text-cyan-700 font-medium inline-flex items-center gap-1">
-                                查看全部交易 <ChevronRight size={14} />
+                                查看全部交易 <IconChevronRight size={14} />
                             </button>
                         }
                     />

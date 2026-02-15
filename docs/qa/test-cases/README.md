@@ -17,4 +17,5 @@
 ## 维护规则
 - 每次关键交互变更后，至少更新对应模块的 `P0/P1` 用例。
 - 阶段提测前，必须执行 A 类页面的 `P0` 用例。
+- 导航相关改动时，必须补跑 `TC-AppNavigation-Regression-001`（矩阵见 `docs/qa/navigation-regression-matrix.md`）。
 - 用例执行结果需同步到 `docs/qa/stage-review-log.md`。

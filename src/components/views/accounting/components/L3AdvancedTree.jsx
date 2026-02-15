@@ -137,18 +137,16 @@ const TreeNode = memo(({
     onForceExpand,
     parentLineX = 0
 }) => {
-    if (!node) return null;
-
-    const isExpanded = expandedIds?.includes(node.id);
-    const isSelected = selectedId === node.id;
-    const isEditing = editingId === node.id;
-    const hasChildren = Array.isArray(node.children) && node.children.length > 0;
+    const isExpanded = Boolean(node && expandedIds?.includes(node.id));
+    const isSelected = Boolean(node && selectedId === node.id);
+    const isEditing = Boolean(node && editingId === node.id);
+    const hasChildren = Array.isArray(node?.children) && node.children.length > 0;
 
     // Product 节点永不显示展开箭头，其他节点如果是 Phase/Module 常驻显示
-    const showExpandArrow = node.type !== NODE_TYPES.PRODUCT && canExpand(node);
+    const showExpandArrow = Boolean(node && node.type !== NODE_TYPES.PRODUCT && canExpand(node));
 
-    const textStyle = getNodeTextClass(node);
-    const rowHeight = node.type === NODE_TYPES.PRODUCT ? 'h-[36px]' : 'h-[32px]';
+    const textStyle = node ? getNodeTextClass(node) : '';
+    const rowHeight = node?.type === NODE_TYPES.PRODUCT ? 'h-[36px]' : 'h-[32px]';
 
     // --- 智能对齐计算 (V3.0 Radial Alignment) ---
     // 基准：行容器距离父级引导线固定 4px (Requirement 9)
@@ -158,6 +156,7 @@ const TreeNode = memo(({
     const lineLeft = paddingLeft + 10;
     // --- 条件引导线逻辑 ---
     const showGuideLine = useMemo(() => {
+        if (!node) return false;
         if (!isExpanded || !hasChildren || level === 0) return false;
         if (node.type === NODE_TYPES.PHASE) {
             // 阶段节点：仅当有模块或过程子节点时显示
@@ -186,8 +185,10 @@ const TreeNode = memo(({
         if (draggedId && draggedId !== node.id) onMoveNode?.(draggedId, node.id);
     };
 
-    const [tempName, setTempName] = useState(node.name);
-    useEffect(() => { if (isEditing) setTempName(node.name); }, [isEditing, node.name]);
+    const [tempName, setTempName] = useState(node?.name || '');
+    useEffect(() => { if (isEditing) setTempName(node?.name || ''); }, [isEditing, node?.name]);
+
+    if (!node) return null;
 
     const bgGap = parentLineX > 0 ? parentLineX + 4 : 0;
     const bgOpacity = isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100';

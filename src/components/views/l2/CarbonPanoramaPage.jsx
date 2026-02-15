@@ -1,14 +1,14 @@
 import React, { useMemo } from 'react';
 import { CanvasPage } from '../../layout/PageLayouts';
 import {
-    Activity,
-    BarChart3,
-    ChevronRight,
-    Check,
-    FlaskConical,
-    LayoutGrid,
-    RefreshCw
-} from 'lucide-react';
+    IconActivity,
+    IconChartBar,
+    IconChevronRight,
+    IconCheck,
+    IconFlask,
+    IconLayoutGrid,
+    IconRefresh
+} from '@tabler/icons-react';
 import { ContentModule, ModuleHeader } from '../../common/ContentModule';
 import Tag from '../../common/Tag';
 
@@ -116,13 +116,13 @@ const CarbonPanoramaPage = () => {
             <div className="flex-1 min-h-0 flex flex-col gap-3 overflow-y-auto">
                 <div className="rounded-sm shadow-sm border border-slate-200 bg-white px-3 py-2 flex flex-wrap items-center justify-between gap-2">
                     <div className="flex flex-wrap items-center gap-2">
-                        <Tag variant="success" size="sm" icon={Check}>
+                        <Tag variant="success" size="sm" icon={IconCheck}>
                             管理状态：<strong>已核查</strong>
                         </Tag>
-                        <Tag variant="primary" size="sm" icon={FlaskConical}>
+                        <Tag variant="primary" size="sm" icon={IconFlask}>
                             核算机构：<strong>SGS 通标</strong>
                         </Tag>
-                        <Tag variant="neutral" size="sm" icon={LayoutGrid}>
+                        <Tag variant="neutral" size="sm" icon={IconLayoutGrid}>
                             核算认证标准：<strong>《企业温室气体排放核算与报告指南及电设施》</strong>
                         </Tag>
                     </div>
@@ -147,7 +147,7 @@ const CarbonPanoramaPage = () => {
                             unit="tCO₂e"
                             trend="14.9%"
                             footer="较去年同期"
-                            icon={BarChart3}
+                            icon={IconChartBar}
                         />
                         <MetricCard
                             title="年度能源消耗总量"
@@ -155,7 +155,7 @@ const CarbonPanoramaPage = () => {
                             unit="MWh"
                             trend="1.2%"
                             footer="较去年同期"
-                            icon={Activity}
+                            icon={IconActivity}
                         />
                         <MetricCard
                             title="综合碳排放效益"
@@ -163,13 +163,13 @@ const CarbonPanoramaPage = () => {
                             unit="亿元"
                             trend="5.6%"
                             footer="较去年同期"
-                            icon={FlaskConical}
+                            icon={IconFlask}
                         />
                         <MetricCard
                             title="清洁能源占比"
                             value={data.metrics.cleanEnergy}
                             unit="%"
-                            icon={RefreshCw}
+                            icon={IconRefresh}
                             progress={data.metrics.cleanEnergy}
                         />
                     </div>
@@ -197,7 +197,7 @@ const CarbonPanoramaPage = () => {
                     <ContentModule>
                         <ModuleHeader
                             title="碳排及能源趋势分析"
-                            icon={BarChart3}
+                            icon={IconChartBar}
                         actions={
                             <div className="flex flex-wrap items-center gap-2">
                                 {['总碳排放趋势', '总能源消耗趋势', '强度分析'].map((tab, idx) => (
@@ -301,7 +301,7 @@ const CarbonPanoramaPage = () => {
                         </div>
                         <div className="px-4 py-3 border-t border-slate-100 text-right">
                             <button className="text-xs text-slate-500 inline-flex items-center gap-1 hover:text-[#0B7285]">
-                                查看全部 <ChevronRight size={16} />
+                                查看全部 <IconChevronRight size={16} />
                             </button>
                         </div>
                     </ContentModule>
@@ -335,7 +335,7 @@ const CarbonPanoramaPage = () => {
                         </div>
                         <div className="px-4 py-3 border-t border-slate-100 text-right">
                             <button className="text-xs text-slate-500 inline-flex items-center gap-1 hover:text-[#0B7285]">
-                                查看全部 <ChevronRight size={16} />
+                                查看全部 <IconChevronRight size={16} />
                             </button>
                         </div>
                     </ContentModule>

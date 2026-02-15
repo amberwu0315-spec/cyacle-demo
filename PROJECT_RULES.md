@@ -36,3 +36,15 @@
     - 对应页面在 `page-inventory-55.md` 的状态与备注。
     - 对应模块在 `acceptance-checklist.md` 的通过结果。
 *   每个阶段结束（例如 Day 1 / Day 2 / Day 3）必须追加一次 `stage-review-log.md` 记录。
+
+## 6. 颜色与样式令牌增量治理
+*   新增代码禁止直接写硬编码颜色值（如 `#xxxxxx`、`rgb(...)`），优先使用：
+    - `tailwind.config.js` 中的语义 token（如 `text-primary` / `bg-canvas`）。
+    - `src/index.css` 中的 `--qy-*` 变量和 `qy-*` 语义类。
+*   存量页面不做一次性全量替换；采用“触碰即收敛”策略：
+    - 本次改动涉及的文件，顺手替换明显可替换的硬编码颜色。
+*   可视化图表、渐变背景等确需硬编码的场景，需在代码附近写明用途，避免误删。
+
+## 7. 占位与半成品页面台账
+*   占位态/半成品页面统一登记在 `docs/qa/placeholder-pages.md`。
+*   每次将占位页面转为实装后，必须同步更新该台账与 `page-inventory-55.md`。
