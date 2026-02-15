@@ -7,6 +7,7 @@
  */
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { readStore, writeStore } from '../utils/persistStore';
+import { ENTERPRISE_DETAIL_DEFAULT_L2 } from '../config/enterpriseDetailConfig';
 
 // Modes
 export const MODES = {
@@ -27,6 +28,12 @@ const DEFAULT_TARGET_MAP = {
 };
 
 const resolveDefaultBusinessTarget = (l1) => DEFAULT_TARGET_MAP[l1] || 'database_mgmt';
+const buildDetailTabId = (l1Context, itemId) => `detail_${l1Context}_${itemId}`;
+const isSameDetailTab = (tab, item, l1Context) => (
+    tab?.type === 'detail'
+    && tab?.l1Context === l1Context
+    && String(tab?.data?.id) === String(item?.id)
+);
 
 export const AppNavigationProvider = ({ children }) => {
     // App State
@@ -143,7 +150,7 @@ export const AppNavigationProvider = ({ children }) => {
 
     // Keep detail entry behavior consistent across "open new tab" and "click existing tab".
     const getDetailDefaultL2 = (l1Context) => (
-        l1Context === 'enterprise' ? 'ent_projects' : 'navigation'
+        l1Context === 'enterprise' ? ENTERPRISE_DETAIL_DEFAULT_L2 : 'navigation'
     );
 
     const handleBusinessTargetChange = (target, options = {}) => {
@@ -207,9 +214,10 @@ export const AppNavigationProvider = ({ children }) => {
 
     // Tab Interface
     const handleOpenTab = (item) => {
-        const tabId = `detail_${item.id}`;
+        const existingTab = openedTabs.find((tab) => isSameDetailTab(tab, item, activeL1));
+        const tabId = existingTab?.id || buildDetailTabId(activeL1, item?.id);
         const detailL2 = getDetailDefaultL2(activeL1);
-        if (!openedTabs.find(t => t.id === tabId)) {
+        if (!existingTab) {
             const newTab = {
                 id: tabId,
                 title: item.name,

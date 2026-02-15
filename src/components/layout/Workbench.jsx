@@ -19,6 +19,7 @@ import { useData } from '../../context/DataContext'; // New Hook
 import { usePagePresentation } from '../../context/PagePresentationContext';
 import { useUser } from '../../context/UserContext';
 import { readStore, writeStore } from '../../utils/persistStore';
+import { ENTERPRISE_DETAIL_TITLE_MAP } from '../../config/enterpriseDetailConfig';
 
 const FOOTER_MODAL_SESSION_KEY = 'cyacle:overlay:footer-modal';
 
@@ -142,16 +143,7 @@ const WorkbenchContent = ({
                 setHeaderTitle(projectName);
             } else if (effectiveL1 === 'enterprise') {
                 // Enterprise Detail View: Header Title = Active Menu Name
-                const entTitleMap = {
-                    'ent_projects': '项目',
-                    'ent_info': '信息',
-                    'ent_locations': '地点',
-                    'ent_products': '产品',
-                    'ent_data': '数据',
-                    'ent_datasources': '数据源',
-                    'ent_docs': '文档'
-                };
-                setHeaderTitle(entTitleMap[activeL2] || '详情');
+                setHeaderTitle(ENTERPRISE_DETAIL_TITLE_MAP[activeL2] || '详情');
             } else {
                 setHeaderTitle(titleMap[activeL2] || '项目');
             }

@@ -19,6 +19,41 @@ import DataPage from './l2/DataPage';
 import DataSourcePage from './l2/DataSourcePage';
 import DocumentPage from './l2/DocumentPage';
 import { useNavigation } from '../../context/NavigationContext';
+import { ENTERPRISE_DETAIL_ROUTE_IDS } from '../../config/enterpriseDetailConfig';
+
+const EnterprisePlaceholderPage = ({ title, description }) => (
+    <div className="flex-1 flex items-center justify-center bg-white m-3 rounded-md border border-gray-100 shadow-sm">
+        <div className="text-center text-gray-400">
+            <p className="text-lg font-medium mb-1">{title}</p>
+            <p className="text-xs">{description}</p>
+        </div>
+    </div>
+);
+
+const enterpriseDetailRenderers = {
+    ent_projects: () => (
+        <EnterprisePlaceholderPage
+            title="服务企业项目"
+            description="此处展示当前服务企业下的项目列表与进度。"
+        />
+    ),
+    ent_info: () => (
+        <EnterprisePlaceholderPage
+            title="服务企业信息"
+            description="此处展示企业基本信息与工商信息。"
+        />
+    ),
+    ent_products: () => <ProductPage />,
+    ent_locations: () => <LocationPage />,
+    ent_data: () => <DataPage />,
+    ent_datasources: () => <DataSourcePage />,
+    ent_docs: () => <DocumentPage showAddButton />
+};
+
+const missingEnterpriseRoutes = ENTERPRISE_DETAIL_ROUTE_IDS.filter((routeId) => !enterpriseDetailRenderers[routeId]);
+if (import.meta.env.DEV && missingEnterpriseRoutes.length > 0) {
+    console.warn(`[ProjectLayout] Missing enterprise route renderers: ${missingEnterpriseRoutes.join(', ')}`);
+}
 
 export default function ProjectLayout({ mode, activeL2, activeL3, onL3Change, activeL1 }) {
     const { activeDimension } = useNavigation();
@@ -31,40 +66,16 @@ export default function ProjectLayout({ mode, activeL2, activeL3, onL3Change, ac
         // Special Case: Research Object Detail View
         // Special Case: Research Object Detail View (dimension A/B/C)
         if (activeL1 === 'enterprise') {
-            switch (activeL2) {
-                case 'ent_info':
-                    // Basic Info - Reuse Create Page in Edit/View Mode or Placeholder
-                    // As per requirement, we focus on create flows, but we need a default view.
-                    // For now, render a simple placeholder or the Create page in a specific mode if needed.
-                    // Let's use a meaningful placeholder for "Service Enterprise Info"
-                    return (
-                        <div className="flex-1 flex items-center justify-center bg-white m-3 rounded-md border border-gray-100 shadow-sm">
-                            <div className="text-center text-gray-400">
-                                <p className="text-lg font-medium mb-1">服务企业信息</p>
-                                <p className="text-xs">此处展示企业基本信息与工商信息</p>
-                            </div>
-                        </div>
-                    );
-                case 'ent_products':
-                    return <ProductPage />;
-                case 'ent_locations':
-                    return <LocationPage />;
-                case 'ent_data':
-                    return <DataPage />;
-                case 'ent_datasources':
-                    return <DataSourcePage />;
-                case 'ent_docs':
-                    return <DocumentPage showAddButton={true} />;
-                default:
-                    // Fallback
-                    return (
-                        <div className="flex-1 flex items-center justify-center bg-white m-3 rounded-md border border-gray-100 shadow-sm">
-                            <div className="text-center text-gray-400">
-                                <p>未知的模块: {activeL2}</p>
-                            </div>
-                        </div>
-                    );
+            const renderer = enterpriseDetailRenderers[activeL2];
+            if (renderer) {
+                return renderer();
             }
+            return (
+                <EnterprisePlaceholderPage
+                    title={`未知的模块: ${activeL2}`}
+                    description="该路由未映射到企业详情页面。"
+                />
+            );
         }
 
         switch (effectiveDimension) {

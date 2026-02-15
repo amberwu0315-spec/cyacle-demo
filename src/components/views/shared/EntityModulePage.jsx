@@ -13,14 +13,27 @@ export default function EntityModulePage({
     createComponent: CreateComponent = null,
     showAddButton = true,
     onCreateSaved = null,
-    detailSections = null
+    detailSections = null,
+    defaultMode = 'list',
+    masterDetailOnly = false,
+    renderDetailHeader = null,
+    renderDetailContent = null,
+    listItemRenderer = null
 }) {
     const { setActions } = usePagePresentation();
     const persistKey = `cyacle:created:${title}`;
     const uiPersistKey = `cyacle:page-ui:${title}`;
     const [mode, setMode] = useState(() => {
         const saved = readStore(uiPersistKey, {});
-        return saved?.mode || 'list';
+        if (masterDetailOnly) {
+            return saved?.mode === 'create' ? 'create' : 'detail';
+        }
+        // 主从页入口规则：默认先展示列表，仅通过双击行进入详情
+        // 因此不使用持久化的 detail 作为初始态，避免刷新后直接落在详情页
+        if (saved?.mode === 'create') {
+            return 'create';
+        }
+        return defaultMode;
     }); // list | create | detail
     const [selectedId, setSelectedId] = useState(() => {
         const saved = readStore(uiPersistKey, {});
@@ -30,6 +43,18 @@ export default function EntityModulePage({
         const persisted = readStore(persistKey, []);
         return Array.isArray(persisted) ? persisted : [];
     });
+
+    useEffect(() => {
+        if (!masterDetailOnly) {
+            setMode((prev) => (prev === 'create' ? 'create' : 'list'));
+        }
+    }, [masterDetailOnly]);
+
+    useEffect(() => {
+        if (masterDetailOnly) {
+            setActions(null);
+        }
+    }, [masterDetailOnly, setActions]);
 
     useEffect(() => {
         const persisted = readStore(persistKey, []);
@@ -64,6 +89,18 @@ export default function EntityModulePage({
         }
     }, [mode, selectedId, rows]);
 
+    useEffect(() => {
+        if (masterDetailOnly && mode === 'list') {
+            setMode('detail');
+        }
+    }, [masterDetailOnly, mode]);
+
+    useEffect(() => {
+        if ((mode === 'detail' || masterDetailOnly) && selectedId === null && rows.length > 0) {
+            setSelectedId(rows[0].id);
+        }
+    }, [masterDetailOnly, mode, rows, selectedId]);
+
     if (mode === 'create' && CreateComponent) {
         return (
             <div className="h-full bg-white">
@@ -87,15 +124,20 @@ export default function EntityModulePage({
         );
     }
 
-    if (mode === 'detail') {
+    if (mode === 'detail' || masterDetailOnly) {
         return (
             <EntityMasterDetailPage
                 listTitle={title}
                 listData={rows}
                 selectedId={selectedId}
                 onSelect={setSelectedId}
-                onCollapse={() => setMode('list')}
+                onCollapse={masterDetailOnly ? null : () => setMode('list')}
                 sections={detailSections || undefined}
+                showAddButton={Boolean(CreateComponent && showAddButton)}
+                onAdd={() => setMode('create')}
+                renderDetailHeader={renderDetailHeader}
+                renderDetailContent={renderDetailContent}
+                listItemRenderer={listItemRenderer}
             />
         );
     }

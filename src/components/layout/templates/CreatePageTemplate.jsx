@@ -37,6 +37,7 @@ export const CreatePageTemplate = ({
 
     // ========== 验证状态 ==========
     isValid = true,                   // 表单是否通过验证（当前创建流程允许空表单提交）
+    disableSaveWhenInvalid = false,   // 是否在校验失败时禁用保存按钮（默认保持旧行为）
 
     // ========== 可选配置 ==========
     saveButtonText = null,            // 自定义保存按钮文案（默认"创建{entityType}"）
@@ -46,6 +47,7 @@ export const CreatePageTemplate = ({
 
     // 默认保存按钮文案
     const finalSaveButtonText = saveButtonText || `创建${entityType}`;
+    const canSave = disableSaveWhenInvalid ? isValid : true;
 
     // 获取页面表现上下文
     const { setShowHeader } = usePagePresentation() || {};
@@ -121,7 +123,11 @@ export const CreatePageTemplate = ({
                 </button>
                 <button
                     onClick={onSave}
-                    className="px-3 py-1.5 text-xs text-white rounded-md transition-colors flex items-center gap-1 bg-[#087F9C] hover:bg-[#076A82]"
+                    disabled={!canSave}
+                    className={`px-3 py-1.5 text-xs text-white rounded-md transition-colors flex items-center gap-1 ${canSave
+                        ? 'bg-[#087F9C] hover:bg-[#076A82]'
+                        : 'bg-gray-300 cursor-not-allowed'
+                        }`}
                 >
                     <IconDeviceFloppy size={14} />
                     <span>{finalSaveButtonText}</span>

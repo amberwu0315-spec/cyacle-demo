@@ -143,6 +143,7 @@ export const buildCreatedEntityRow = ({
         case 'factors_composite':
         case 'composite':
         case '复合因子': {
+            row.source = pickFirst(created.source, '自建');
             row.nameCN = pickFirst(created.nameCN, created.name, fallbackName);
             row.nameEN = pickFirst(created.nameEN, '-');
             row.refComponent = pickFirst(created.refComponent, created.components, '-');
@@ -168,7 +169,8 @@ export const buildCreatedEntityRow = ({
         case 'literature':
         case 'docs':
         case '文献':
-        case '文档': {
+        case '文档':
+        case '文档管理': {
             row.name = pickFirst(created.name, created.title, fallbackName);
             row.source = pickFirst(created.source, '自建');
             row.docType = pickFirst(created.docType, '期刊文章或杂志');

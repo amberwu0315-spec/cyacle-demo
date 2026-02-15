@@ -46,7 +46,7 @@ export const MasterDetailPageTemplate = ({
 }) => {
 
     // 获取当前选中的数据项
-    const selectedItem = listData.find(item => item.id === selectedId);
+    const selectedItem = listData.find((item) => String(item.id) === String(selectedId));
 
     // 获取页面表现上下文
     const { setShowHeader } = usePagePresentation() || {};
@@ -93,7 +93,7 @@ export const MasterDetailPageTemplate = ({
             <div className="flex-1 overflow-y-auto">
                 {listData.length > 0 ? (
                     listData.map(item => {
-                        const isSelected = item.id === selectedId;
+                        const isSelected = String(item.id) === String(selectedId);
 
                         // 使用自定义渲染器或默认渲染器
                         if (listItemRenderer) {

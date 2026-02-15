@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "check:navigation": "node scripts/check-navigation-integrity.mjs",
+    "qa:quick": "npm run check:navigation && npm run lint && npm run build"
   },
   "dependencies": {
     "@mantine/core": "^8.3.14",

@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import {
     IconCompass, IconServer, IconGitBranch, IconBox, IconCalculator, IconShield, IconLayoutGrid, IconBuilding,
-    IconMapPin, IconHexagon, IconDatabase, IconFileText, IconChevronLeft, IconChevronRight,
-    IconShare, IconStack2, IconCpu, IconFlask, IconActivity, IconBook, IconWorld
+    IconMapPin, IconHexagon, IconDatabase, IconChevronLeft, IconChevronRight,
+    IconShare, IconStack2, IconCpu, IconFlask, IconActivity, IconBook
 } from '@tabler/icons-react';
 import Tooltip from '../common/Tooltip';
 import Button from '../common/Button';
+import { ENTERPRISE_DETAIL_MENU_GROUPS } from '../../config/enterpriseDetailConfig';
 
 export default function L2Sidebar({ activeL2, onSelect, activeL1, enterpriseName = '演示门窗有限公司', isDetailView = false }) {
     const [isCollapsed, setIsCollapsed] = useState(false);
@@ -42,23 +43,7 @@ export default function L2Sidebar({ activeL2, onSelect, activeL1, enterpriseName
     // ==================== Configuration Objects ====================
 
     // 1. Enterprise Detail View Groups (Specific Company)
-    const entGroups = [
-        { title: '项目', items: [{ id: 'ent_projects', icon: IconLayoutGrid, label: '项目', desc: '管理碳核算项目及进度' }] },
-        {
-            title: '基础', items: [
-                { id: 'ent_info', icon: IconBuilding, label: '信息', desc: '管理基本信息与概况' },
-                { id: 'ent_locations', icon: IconMapPin, label: '地点', desc: '管理各生产经营场所地点' }
-            ]
-        },
-        {
-            title: '业务', items: [
-                { id: 'ent_products', icon: IconHexagon, label: '产品', desc: '录入及管理产品信息' },
-                { id: 'ent_data', icon: IconDatabase, label: '数据', desc: '录入及管理活动数据' },
-                { id: 'ent_datasources', icon: IconServer, label: '数据源', desc: '管理数据来源及属性' },
-                { id: 'ent_docs', icon: IconFileText, label: '文档', desc: '管理发票等数据支撑材料' }
-            ]
-        }
-    ];
+    const entGroups = ENTERPRISE_DETAIL_MENU_GROUPS;
 
     // 2. Business List Groups (Background, Projects, Ent List)
     const workspaceGroups = [

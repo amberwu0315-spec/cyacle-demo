@@ -89,6 +89,7 @@ export const footerEnterpriseSharedData = {
 
 export const footerBackgroundSharedData = {
   literatureFactors: [
+    { id: 'lf0', source: '自建', nameCN: '蒸汽', nameEN: 'Steam', sourceDB: 'Amber.wu的工作空间自建数据库', type: 'LCIA', time: '2024', geo: '亚洲/中国', tech: '企业工艺' },
     { id: 'lf1', source: '标准', nameCN: '猪', nameEN: 'Pig', sourceDB: 'CPCD', type: 'LCIA', time: '2010', geo: '全球', tech: '全球平均' },
     { id: 'lf2', source: '标准', nameCN: '2019年全国电网平均排放因子', nameEN: '2019 National Grid Average Emission Factor', sourceDB: 'CPCD', type: 'LCIA', time: '2019', geo: '全球', tech: '全国平均' },
     { id: 'lf3', source: '标准', nameCN: '氧化钕', nameEN: 'Neodymium oxide', sourceDB: 'CPCD', type: 'LCIA', time: '2018', geo: '全球', tech: '具体工艺' },
@@ -96,6 +97,7 @@ export const footerBackgroundSharedData = {
     { id: 'lf5', source: '标准', nameCN: '金属铜', nameEN: 'Copper metal', sourceDB: 'CPCD', type: 'LCIA', time: '2019', geo: '全球', tech: '全国平均' }
   ],
   basicFlows: [
+    { id: 'bf0', source: '自建', nameCN: 'steam, process', nameEN: 'steam, process', sourceDB: 'Amber.wu的工作空间自建数据库', type: 'LCI', time: '2026', geo: '中国', tech: '企业现场' },
     { id: 'bf1', source: '标准', nameCN: 'chloromethane', nameEN: 'chloromethane', sourceDB: 'BASIC_FLOW 2025.1', type: 'LCI', time: '2025', geo: '全球', tech: '-' },
     { id: 'bf2', source: '标准', nameCN: 'gas, natural', nameEN: 'gas, natural', sourceDB: 'BASIC_FLOW 2025.1', type: 'LCI', time: '2025', geo: '全球', tech: '-' },
     { id: 'bf3', source: '标准', nameCN: 'gas, mine, off-gas, process, coal mining', nameEN: 'gas, mine, off-gas, process, coal mining', sourceDB: 'BASIC_FLOW 2025.1', type: 'LCI', time: '2025', geo: '全球', tech: '-' },
@@ -103,12 +105,12 @@ export const footerBackgroundSharedData = {
     { id: 'bf5', source: '标准', nameCN: 'net operating surplus', nameEN: 'net operating surplus', sourceDB: 'BASIC_FLOW 2025.1', type: 'LCI', time: '2025', geo: '全球', tech: '-' }
   ],
   compositeFactors: [
-    { id: 'cf1', nameCN: '12328%氯化钙', nameEN: '12328% Calcium Chloride', refComponent: '氯化钙', sourceDB: 'Amber.wu的工作空间自建数据库', time: '-', geo: '-', tech: '-' },
-    { id: 'cf2', nameCN: '钙锌稳定剂', nameEN: 'Calcium Zinc Stabilizer', refComponent: '钙锌稳定剂', sourceDB: 'shipin_d的工作空间', time: '2024', geo: '中国', tech: '-' },
-    { id: 'cf3', nameCN: '五金', nameEN: 'Hardware', refComponent: '五金', sourceDB: 'shipin_d的工作空间', time: '2024', geo: '中国', tech: '-' },
-    { id: 'cf4', nameCN: '硬脂酸锌', nameEN: 'Zinc stearate', refComponent: '硬脂酸锌', sourceDB: 'shipin_d的工作空间', time: '2017', geo: '中国', tech: '-' },
-    { id: 'cf5', nameCN: '清洗剂', nameEN: 'Cleaning agent', refComponent: '清洗剂', sourceDB: 'shipin_d的工作空间', time: '2011', geo: '全球', tech: '3' },
-    { id: 'cf6', nameCN: '31%甲醇钠溶液（甲醇溶液）', nameEN: '31% Sodium Methoxide Solution (in Methanol)', refComponent: '甲醇钠', sourceDB: 'Amber.wu的工作空间自建数据库', time: '2024', geo: '全球', tech: '-' }
+    { id: 'cf1', source: '自建', nameCN: '12328%氯化钙', nameEN: '12328% Calcium Chloride', refComponent: '氯化钙', sourceDB: 'Amber.wu的工作空间自建数据库', time: '-', geo: '-', tech: '-' },
+    { id: 'cf2', source: '自建', nameCN: '钙锌稳定剂', nameEN: 'Calcium Zinc Stabilizer', refComponent: '钙锌稳定剂', sourceDB: 'shipin_d的工作空间', time: '2024', geo: '中国', tech: '-' },
+    { id: 'cf3', source: '自建', nameCN: '五金', nameEN: 'Hardware', refComponent: '五金', sourceDB: 'shipin_d的工作空间', time: '2024', geo: '中国', tech: '-' },
+    { id: 'cf4', source: '自建', nameCN: '硬脂酸锌', nameEN: 'Zinc stearate', refComponent: '硬脂酸锌', sourceDB: 'shipin_d的工作空间', time: '2017', geo: '中国', tech: '-' },
+    { id: 'cf5', source: '自建', nameCN: '清洗剂', nameEN: 'Cleaning agent', refComponent: '清洗剂', sourceDB: 'shipin_d的工作空间', time: '2011', geo: '全球', tech: '3' },
+    { id: 'cf6', source: '自建', nameCN: '31%甲醇钠溶液（甲醇溶液）', nameEN: '31% Sodium Methoxide Solution (in Methanol)', refComponent: '甲醇钠', sourceDB: 'Amber.wu的工作空间自建数据库', time: '2024', geo: '全球', tech: '-' }
   ],
   literature: [
     { id: 'doc1', name: '中山华明荣科技股份有限公司民众分公司技改扩建项目', source: '自建', docType: '报告', publishYear: '2017', journal: '-', creator: '-' },
@@ -118,6 +120,7 @@ export const footerBackgroundSharedData = {
     { id: 'doc5', name: '杭州之江新材料有限公司：碳足迹报告2023年度', source: '自建', docType: '期刊文章或杂志', publishYear: '2023', journal: '-', creator: '-' }
   ],
   components: [
+    { id: 'c0', name: '蒸汽', source: '自建', unitGroup: '质量', type: '原料-排放因子类', refUnit: 'kg', status: 'in_use', updateTime: '2026-02-14 12:43:41' },
     { id: 'c1', name: '粗钢-高炉/转炉直接还原法-氢气输入', source: '标准', unitGroup: '质量', type: '其他类-排放因子类', refUnit: '千克', status: 'in_use', updateTime: '2026-02-12 00:10:24' },
     { id: 'c2', name: '凳子', source: '标准', unitGroup: '单个计量单位', type: '其他类-排放因子类', refUnit: '个', status: 'in_use', updateTime: '2026-02-05 00:09:42' },
     { id: 'c3', name: '椅子', source: '标准', unitGroup: '单个计量单位', type: '其他类-排放因子类', refUnit: '个', status: 'in_use', updateTime: '2026-02-05 00:09:36' },

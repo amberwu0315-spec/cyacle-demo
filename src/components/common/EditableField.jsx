@@ -8,7 +8,7 @@
  */
 import React, { useState, useRef, useEffect } from 'react';
 import { TextInput, NumberInput, Select, Textarea, useCombobox } from '@mantine/core';
-import { IconPencil, IconCheck, IconX, IconRotate, IconTextPlus, IconInfoCircle } from '@tabler/icons-react';
+import { IconPencil, IconCheck, IconX, IconRotate, IconTextPlus, IconInfoCircle, IconAlertCircle } from '@tabler/icons-react';
 import Tag from './Tag';
 
 /**
@@ -48,6 +48,7 @@ const EditableField = ({
     labelWidth = 'w-24', // Default for flex layout
     helpIcon = false,
     helpText = '',
+    required = false,
     layout = 'flex', // 'flex' | 'table'
     children,
     ...rest
@@ -348,6 +349,33 @@ const EditableField = ({
         );
     };
 
+    const hasDisplayValue = (val) => {
+        if (val === null || val === undefined) return false;
+        if (typeof val === 'string') return val.trim() !== '';
+        if (typeof val === 'number') return true;
+        if (typeof val === 'object') {
+            if ('id' in val || 'value' in val || 'name' in val) {
+                return Boolean(val.id || val.value || val.name);
+            }
+            return Object.keys(val).length > 0;
+        }
+        return true;
+    };
+
+    const isRequiredMissing = required && !hasDisplayValue(value);
+
+    const renderRequiredBadge = () => {
+        if (!required) return null;
+        return (
+            <div className="shrink-0 flex items-center gap-1 ml-2">
+                {isRequiredMissing && !isEditing && (
+                    <IconAlertCircle size={14} className="text-red-500" />
+                )}
+                <span className="text-[12px] text-red-500 whitespace-nowrap">必填</span>
+            </div>
+        );
+    };
+
     // --- LAYOUT RENDERING ---
 
     const renderToolbar = () => (
@@ -384,7 +412,10 @@ const EditableField = ({
                     ref={valueContainerRef}
                     className="align-middle relative"
                 >
-                    <div className={children ? "px-3" : ""}>{renderValueAreaContent()}</div>
+                    <div className={`flex ${isMultiLine ? 'items-start' : 'items-center'} ${children ? "px-3" : ""}`}>
+                        <div className="flex-1 min-w-0">{renderValueAreaContent()}</div>
+                        {renderRequiredBadge()}
+                    </div>
                     {!children && isEditing && shouldShowToolbar && renderToolbar()}
                 </td>
             </tr>
@@ -403,7 +434,10 @@ const EditableField = ({
                 ref={valueContainerRef}
                 className="relative flex-1"
             >
-                {renderValueAreaContent()}
+                <div className={`flex ${isMultiLine ? 'items-start' : 'items-center'}`}>
+                    <div className="flex-1 min-w-0">{renderValueAreaContent()}</div>
+                    {renderRequiredBadge()}
+                </div>
                 {!children && isEditing && shouldShowToolbar && renderToolbar()}
             </div>
         </div>
