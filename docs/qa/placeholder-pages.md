@@ -22,4 +22,4 @@
 - 每次将占位项转为实装后，必须同步更新：
   - `docs/qa/placeholder-pages.md`
   - `docs/qa/page-inventory-55.md`
-  - 对应用例文件（`docs/qa/test-cases/`）
+  - 对应回归资产（`docs/system/rules.md`、`docs/system/regression-triggers.md`、`docs/system/regression-matrix-template.md`）

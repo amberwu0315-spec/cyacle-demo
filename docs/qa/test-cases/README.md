@@ -1,21 +1,17 @@
-# 测试用例目录说明
+# 测试用例入口（跳转目录）
 
-## 目录目的
-用于存放页面级、流程级测试用例，服务复杂交互回归测试。
+> 本目录只保留导航说明，不再存放或维护页面级 TC 文件。
 
-## 命名建议
-- 文件名：`TC-<模块>-<序号>.md`
-- 示例：
-  - `TC-DatabaseManagement-001.md`
-  - `TC-ComponentPage-001.md`
+## 当前执行依据（主）
+- `docs/system/rules.md`
+- `docs/system/regression-triggers.md`
+- `docs/system/regression-matrix-template.md`
 
-## 优先级约定
-- `P0`：主流程阻断即不可交付
-- `P1`：高频流程，影响核心体验
-- `P2`：低频或边缘流程
+## 参考目录（辅）
+- 样本：`docs/qa/test-cases-samples/`
+- 冻结历史：`docs/qa/_legacy_test-cases/`
 
-## 维护规则
-- 每次关键交互变更后，至少更新对应模块的 `P0/P1` 用例。
-- 阶段提测前，必须执行 A 类页面的 `P0` 用例。
-- 导航相关改动时，必须补跑 `TC-AppNavigation-Regression-001`（矩阵见 `docs/qa/navigation-regression-matrix.md`）。
-- 用例执行结果需同步到 `docs/qa/stage-review-log.md`。
+## 使用约束
+- 不在本目录新增 TC 文件。
+- 新增需求优先更新规则/触发器/矩阵，不新增成批 TC。
+- 结构护栏命令：`npm run check:qa-freeze`（发现误放文件会直接失败）。

@@ -1,5 +1,7 @@
 # 阶段复盘日志
 
+> 历史日志中提到的 `docs/qa/test-cases/` 用例文件已整体迁移至 `docs/qa/_legacy_test-cases/`（冻结只读）。
+
 ## 记录模板（复制使用）
 ### 阶段
 - 日期：

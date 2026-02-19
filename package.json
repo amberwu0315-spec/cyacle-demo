@@ -9,7 +9,8 @@
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "check:navigation": "node scripts/check-navigation-integrity.mjs",
-    "qa:quick": "npm run check:navigation && npm run lint && npm run build"
+    "check:qa-freeze": "node scripts/check-qa-freeze.mjs",
+    "qa:quick": "npm run check:navigation && npm run check:qa-freeze && npm run lint && npm run build"
   },
   "dependencies": {
     "@mantine/core": "^8.3.14",
