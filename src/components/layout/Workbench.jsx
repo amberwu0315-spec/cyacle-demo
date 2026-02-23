@@ -28,6 +28,8 @@ import {
     PROJECT_DETAIL_DEFAULT_L2,
     getProjectDetailRouteIdsByType
 } from '../../config/projectDetailConfig';
+import { getBusinessTargetMeta } from '../../config/businessTargetConfig';
+import { getL1SidebarHeaderMeta } from '../../config/appNavigationConfig';
 
 const FOOTER_MODAL_SESSION_KEY = 'cyacle:overlay:footer-modal';
 
@@ -142,12 +144,8 @@ const WorkbenchContent = ({
                 setSidebarTitle('工作空间');
                 return;
             }
-            const workspaceTitleMap = {
-                'workbench_home': '工作台',
-                'carbon_panorama': '碳排放全景图',
-                'carbon_asset_mgmt': '碳资产管理'
-            };
-            setHeaderTitle(workspaceTitleMap[activeL2] || '工作空间');
+            const workspaceTargetMeta = getBusinessTargetMeta(activeL2);
+            setHeaderTitle(workspaceTargetMeta?.headerTitle || '工作空间');
             setSidebarTitle('工作空间');
             return; // 结束，不执行后续逻辑
         }
@@ -190,32 +188,9 @@ const WorkbenchContent = ({
             setSidebarTitle(isDetailView ? (effectiveL1 === 'enterprise' ? enterpriseName : projectName) : projectName);
 
         } else if (isBusinessLayout) {
-            const businessTitleMap = {
-                'background_data': '数据库管理',
-                'project_mgmt': '全部项目',
-                'enterprise': '全部服务企业'
-            };
-            // Title Mapping based on Target (Priority) or L1
-            const targetTitleMap = {
-                // Background Data
-                'database_mgmt': '数据库管理',
-                'components': '元件',
-                'factors_baseflow': '基本流',
-                'factors_composite': '复合因子',
-                'factors_literature': '文献因子',
-                'literature': '文献',
-                // Projects
-                'all_projects': '全部项目',
-                'pcf': '产品碳足迹', // Specific Context
-                'ocf': '组织碳足迹', // Specific Context
-                // Enterprise
-                'all_objects': '全部服务企业' // Specific Context, distinct from 'Research Object' identity
-            };
-
-            // Logic: 
-            // 1. If businessTarget is set (clicked L2 item), use its title.
-            // 2. If no target (default view), use the L1 default title.
-            const currentTitle = targetTitleMap[businessTarget] || businessTitleMap[effectiveL1] || '';
+            const targetMeta = getBusinessTargetMeta(businessTarget);
+            const l1HeaderMeta = getL1SidebarHeaderMeta(effectiveL1);
+            const currentTitle = targetMeta?.headerTitle || l1HeaderMeta?.title || '';
             setHeaderTitle(currentTitle);
 
         } else {

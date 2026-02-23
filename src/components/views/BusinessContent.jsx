@@ -29,9 +29,9 @@ import WorkbenchHomePage from './l2/WorkbenchHomePage';
 import CarbonPanoramaPage from './l2/CarbonPanoramaPage';
 import CarbonAssetMgmtPage from './l2/CarbonAssetMgmtPage';
 import { buildUntitledName } from '../../utils/createEntityRow';
-import { BUSINESS_TARGET_ROUTE_IDS } from '../../config/businessTargetConfig';
+import { BUSINESS_TARGET_ROUTE_IDS, getBusinessTargetMeta } from '../../config/businessTargetConfig';
 
-const BUSINESS_TARGET_RENDERERS = {
+const BUSINESS_RENDERERS = {
     workbench_home: () => <WorkbenchHomePage />,
     carbon_panorama: () => <CarbonPanoramaPage />,
     carbon_asset_mgmt: () => <CarbonAssetMgmtPage />,
@@ -43,35 +43,13 @@ const BUSINESS_TARGET_RENDERERS = {
     factors_literature: () => <LiteratureFactorPage />,
     literature: () => <LiteraturePage />,
 
-    all_projects: ({ projects, researchObjects, onAddProject, onOpenTab, target }) => (
+    project_management: ({ projects, researchObjects, onAddProject, onOpenTab, target, targetMeta }) => (
         <ProjectManagementModule
             projects={projects}
             researchObjects={researchObjects}
             onAddProject={onAddProject}
             onOpenProject={(project) => onOpenTab(project)}
-            defaultType="all"
-            title="全部项目"
-            scopeKey={`project_mgmt:${target}`}
-        />
-    ),
-    pcf: ({ projects, researchObjects, onAddProject, onOpenTab, target }) => (
-        <ProjectManagementModule
-            projects={projects}
-            researchObjects={researchObjects}
-            onAddProject={onAddProject}
-            onOpenProject={(project) => onOpenTab(project)}
-            defaultType="pcf"
-            title="全部项目"
-            scopeKey={`project_mgmt:${target}`}
-        />
-    ),
-    ocf: ({ projects, researchObjects, onAddProject, onOpenTab, target }) => (
-        <ProjectManagementModule
-            projects={projects}
-            researchObjects={researchObjects}
-            onAddProject={onAddProject}
-            onOpenProject={(project) => onOpenTab(project)}
-            defaultType="ocf"
+            defaultType={targetMeta?.projectFilterType || 'all'}
             title="全部项目"
             scopeKey={`project_mgmt:${target}`}
         />
@@ -87,6 +65,7 @@ const LEGACY_TARGET_RENDERERS = {
 
 export default function BusinessContent({ activeL1, target, onOpenTab, openedTabs = [], projects = [], onAddProject, researchObjects = [], onAddResearchObject }) {
     const { setActions } = usePagePresentation();
+    const targetMeta = getBusinessTargetMeta(target);
 
     // State for Research Object View Mode
     const [objectLimitMode, setObjectLimitMode] = React.useState('list'); // 'list' | 'create'
@@ -183,6 +162,7 @@ export default function BusinessContent({ activeL1, target, onOpenTab, openedTab
 
     const rendererContext = {
         target,
+        targetMeta,
         projects,
         researchObjects,
         onAddProject,
@@ -190,7 +170,9 @@ export default function BusinessContent({ activeL1, target, onOpenTab, openedTab
         renderResearchObjects
     };
 
-    const renderer = BUSINESS_TARGET_RENDERERS[target];
+    const renderer = targetMeta?.rendererKey
+        ? BUSINESS_RENDERERS[targetMeta.rendererKey]
+        : null;
     if (renderer) {
         return renderer(rendererContext);
     }

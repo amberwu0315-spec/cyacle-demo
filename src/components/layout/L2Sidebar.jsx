@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import {
-    IconCompass, IconShield, IconLayoutGrid, IconBuilding,
-    IconMapPin, IconHexagon, IconDatabase, IconChevronLeft, IconChevronRight,
-    IconShare, IconStack2, IconCpu, IconFlask, IconActivity, IconBook
+    IconCompass, IconShield, IconChevronLeft, IconChevronRight
 } from '@tabler/icons-react';
 import Tooltip from '../common/Tooltip';
 import Button from '../common/Button';
 import { ENTERPRISE_DETAIL_MENU_GROUPS } from '../../config/enterpriseDetailConfig';
 import { getProjectDetailMenuGroupsByType } from '../../config/projectDetailConfig';
 import { useUser } from '../../context/UserContext';
+import { getL1SidebarHeaderMeta } from '../../config/appNavigationConfig';
+import { buildBusinessSidebarGroups } from '../../config/businessTargetConfig';
+import { resolveIconComponent } from '../../config/iconRegistry';
 
 export default function L2Sidebar({
     activeL2,
@@ -46,58 +47,15 @@ export default function L2Sidebar({
     // 1. Enterprise Detail View Groups (Specific Company)
     const entGroups = ENTERPRISE_DETAIL_MENU_GROUPS;
 
-    // 2. Business List Groups (Background, Projects, Ent List)
-    const workspaceGroups = [
-        { title: null, items: [{ id: 'workbench_home', icon: IconCompass, label: '工作台', desc: '个人工作总览与快捷入口' }] }, // Using Compass as placeholder if Dashboard not imported
-        {
-            title: '碳排放&碳资产', items: [
-                { id: 'carbon_panorama', icon: IconMapPin, label: '碳排放全景图', desc: '企业碳排放宏观分布展示' },
-                { id: 'carbon_asset_mgmt', icon: IconDatabase, label: '碳资产管理', desc: '管理配额、CCER等碳资产' }
-            ]
-        }
-    ];
-    const workspaceGroupsByRole = workspaceGroups
-        .map((group) => ({
-            ...group,
-            items: group.items.filter((item) => isWorkspaceTargetAllowed(item.id))
-        }))
-        .filter((group) => group.items.length > 0);
-
-    const businessGroups = {
-        'workspace': workspaceGroupsByRole,
-        'background_data': [
-            { title: '数据库', items: [{ id: 'database_mgmt', icon: IconStack2, label: '数据库管理', desc: '管理背景数据库全集' }] },
-            { title: '元件', items: [{ id: 'components', icon: IconCpu, label: '元件', desc: '相同物质/活动的因子组' }] },
-            {
-                title: '因子', items: [
-                    { id: 'factors_literature', icon: IconFlask, label: '文献因子', desc: '来源于文献的因子数据' },
-                    { id: 'factors_baseflow', icon: IconActivity, label: '基本流', desc: '基本物质流动的因子数据' },
-                    { id: 'factors_composite', icon: IconStack2, label: '复合因子', desc: '建模计算获得的因子数据' }
-                ]
-            },
-            { title: '文献', items: [{ id: 'literature', icon: IconBook, label: '文献', desc: '因子来源的相关文件' }] }
-        ],
-        'project_mgmt': [
-            { title: '列表', items: [{ id: 'all_projects', icon: IconLayoutGrid, label: '全部项目', desc: '查看所有碳核算项目' }] },
-            {
-                title: '需求类型', items: [
-                    { id: 'pcf', icon: IconHexagon, label: '产品碳足迹', desc: 'Product Carbon Footprint' },
-                    { id: 'ocf', icon: IconBuilding, label: '组织碳足迹', desc: 'Org. Carbon Footprint' }
-                ]
-            }
-        ],
-        'enterprise': [ // ActiveL1=enterprise but NOT detail view
-            { title: '列表', items: [{ id: 'all_objects', icon: IconShield, label: '全部', desc: '所有服务企业主体' }] }
-        ]
-    };
+    // 2. Business List Groups (workspace/background_data/project_mgmt/enterprise)
+    const businessListGroups = buildBusinessSidebarGroups(activeL1, {
+        predicate: (entry) => (
+            activeL1 !== 'workspace' || isWorkspaceTargetAllowed(entry.id)
+        )
+    });
 
     // 3. Header Config (Blue Gradient Card)
-    const headerConfig = {
-        'workspace': { title: '工作空间', icon: IconCompass, desc: '您的个人工作中心，概览核心指标与待办事项。' },
-        'background_data': { title: '背景数据', icon: IconShare, desc: '聚焦排放因子与文献数据，为碳足迹核算提供权威依据。' },
-        'project_mgmt': { title: '项目', icon: IconLayoutGrid, desc: '管理覆盖碳核算全生命周期，涵盖核算、建模及执行。' },
-        'enterprise': { title: '服务企业', icon: IconShield, desc: '围绕服务企业构建数据管理体系，提供清晰的数据信息。' }
-    };
+    const headerMeta = getL1SidebarHeaderMeta(activeL1);
 
     // ==================== Logic Determination ====================
     const isEnterpriseDetail = activeL1 === 'enterprise' && isDetailView;
@@ -111,7 +69,7 @@ export default function L2Sidebar({
         if (isEnterpriseDetail) {
             displayGroups = entGroups;
         } else if (isBusinessList) {
-            displayGroups = businessGroups[activeL1] || [];
+            displayGroups = businessListGroups;
         }
 
         return (
@@ -122,13 +80,13 @@ export default function L2Sidebar({
                         <Tooltip
                             content={
                                 isEnterpriseDetail ? enterpriseName :
-                                    (isBusinessList ? headerConfig[activeL1]?.title : '导航')
+                                    (isBusinessList ? headerMeta?.title : '导航')
                             }
                             placement="right"
                         >
                             <div className="bg-gradient-to-br from-[#0EA5B7] to-[#0B7285] rounded-md p-2 text-white shadow-md flex items-center justify-center cursor-default">
                                 {isEnterpriseDetail ? <IconShield size={20} stroke={1.5} /> :
-                                    (isBusinessList && headerConfig[activeL1]) ? (() => { const Icon = headerConfig[activeL1].icon; return <Icon size={20} stroke={1.5} />; })() :
+                                    (isBusinessList && headerMeta) ? (() => { const Icon = resolveIconComponent(headerMeta.iconKey); return <Icon size={20} stroke={1.5} />; })() :
                                         <IconCompass size={20} stroke={1.5} />
                                 }
                             </div>
@@ -142,14 +100,14 @@ export default function L2Sidebar({
                                 </div>
                                 <div className="font-medium text-[13px] leading-tight w-full break-words px-1 truncate">{enterpriseName}</div>
                             </div>
-                        ) : (isBusinessList && headerConfig[activeL1]) ? (
+                        ) : (isBusinessList && headerMeta) ? (
                             <div className="bg-gradient-to-br from-[#0EA5B7] to-[#0B7285] rounded-md p-3 text-white shadow-md flex flex-col items-center justify-center text-center mb-1 overflow-hidden">
                                 <div className="w-8 h-8 mb-1.5 opacity-90 flex items-center justify-center">
-                                    {(() => { const Icon = headerConfig[activeL1].icon; return <Icon size={28} stroke={1.5} />; })()}
+                                    {(() => { const Icon = resolveIconComponent(headerMeta.iconKey); return <Icon size={28} stroke={1.5} />; })()}
                                 </div>
-                                <div className="font-medium text-[14px] leading-tight w-full mb-2">{headerConfig[activeL1].title}</div>
+                                <div className="font-medium text-[14px] leading-tight w-full mb-2">{headerMeta.title}</div>
                                 <div className="text-[10px] text-white/80 leading-relaxed text-left px-1 opacity-90 font-light line-clamp-3">
-                                    {headerConfig[activeL1].desc}
+                                    {headerMeta.desc}
                                 </div>
                             </div>
                         ) : null
@@ -167,6 +125,7 @@ export default function L2Sidebar({
                             <div className="space-y-1 flex flex-col items-center">
                                 {group.items.map(item => {
                                     const isActive = activeL2 === item.id;
+                                    const ItemIcon = resolveIconComponent(item.iconKey);
                                     // Strategy: Keep semantic button for complex layout, but enforce strict sizing
                                     const ButtonContent = (
                                         <button
@@ -179,7 +138,7 @@ export default function L2Sidebar({
                                             `}
                                         >
                                             {isActive && !isCollapsed && <span className="absolute left-0.5 top-1/2 -translate-y-1/2 h-5 w-0.5 rounded-full bg-[#0EA5B7]" />}
-                                            <item.icon
+                                            <ItemIcon
                                                 className={`
                                                     shrink-0 transition-colors 
                                                     ${isCollapsed ? 'w-5 h-5' : 'w-4 h-4 mt-0.5'}

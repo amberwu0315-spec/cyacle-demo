@@ -24,7 +24,7 @@ import {
     shouldDeletePhysically
 } from './modelRules';
 
-export default function AccountingModelConfig({ menuMode = 'config' }) {
+export default function AccountingModelConfig({ menuMode = 'config', onSnapshotChange = null }) {
     const { addNotification } = useNotification();
     const initialTree = menuMode === 'compare' ? ACCOUNTING_COMPARE_TREE_MOCK : ACCOUNTING_CONFIG_TREE_MOCK;
     const [treeData, setTreeData] = useState(initialTree);
@@ -228,6 +228,17 @@ export default function AccountingModelConfig({ menuMode = 'config' }) {
         };
         return findNode(treeData);
     }, [treeData, selectedId]);
+
+    useEffect(() => {
+        if (!onSnapshotChange) {
+            return;
+        }
+        onSnapshotChange({
+            menuMode,
+            selectedId,
+            treeData: JSON.parse(JSON.stringify(treeData))
+        });
+    }, [menuMode, selectedId, treeData, onSnapshotChange]);
 
     return (
         <div className="flex flex-col h-full bg-[#f8fafc]">

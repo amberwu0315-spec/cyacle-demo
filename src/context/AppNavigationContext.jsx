@@ -8,6 +8,7 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { readStore, writeStore } from '../utils/persistStore';
 import { ENTERPRISE_DETAIL_DEFAULT_L2 } from '../config/enterpriseDetailConfig';
+import { APP_NAV_L1_IDS, getL1Defaults } from '../config/appNavigationConfig';
 import { useData } from './DataContext';
 
 // Modes
@@ -19,16 +20,25 @@ export const MODES = {
 
 const AppNavigationContext = createContext(null);
 const NAV_SESSION_KEY = 'cyacle:nav:session';
+const DEFAULT_L1 = 'workspace';
 
-const DEFAULT_TARGET_MAP = {
-    background_data: 'database_mgmt',
-    project_mgmt: 'all_projects',
-    enterprise: 'all_objects',
-    workspace: 'workbench_home',
-    project_tag: 'all_projects'
+const resolveDefaultBusinessTarget = (l1) => {
+    const target = getL1Defaults(l1).defaultTarget;
+    if (target) {
+        return target;
+    }
+    return getL1Defaults(DEFAULT_L1).defaultTarget || 'workbench_home';
 };
 
-const resolveDefaultBusinessTarget = (l1) => DEFAULT_TARGET_MAP[l1] || 'database_mgmt';
+const resolveDefaultL2 = (l1) => {
+    const l2 = getL1Defaults(l1).defaultL2;
+    return l2 ?? null;
+};
+
+const resolveDefaultL3 = (l1) => {
+    const l3 = getL1Defaults(l1).defaultL3;
+    return l3 ?? null;
+};
 const buildDetailTabId = (l1Context, itemId) => `detail_${l1Context}_${itemId}`;
 const isSameDetailTab = (tab, item, l1Context) => (
     tab?.type === 'detail'
@@ -36,27 +46,70 @@ const isSameDetailTab = (tab, item, l1Context) => (
     && String(tab?.data?.id) === String(item?.id)
 );
 const isSameSnapshot = (a, b) => JSON.stringify(a || null) === JSON.stringify(b || null);
+const resolveNavigationSnapshot = (existingTabs = []) => {
+    const params = typeof window !== 'undefined'
+        ? new URLSearchParams(window.location.search)
+        : new URLSearchParams('');
+    const persisted = readStore(NAV_SESSION_KEY, {});
+    const validL1 = APP_NAV_L1_IDS;
+    const rawL1 = params.get('l1');
+    const l1 = validL1.includes(rawL1)
+        ? rawL1
+        : (validL1.includes(persisted?.activeL1) ? persisted.activeL1 : DEFAULT_L1);
+    const l2 = params.get('l2') || persisted?.activeL2 || resolveDefaultL2(l1);
+    const l3 = params.get('l3') || persisted?.activeL3 || resolveDefaultL3(l1);
+
+    const persistedTabs = Array.isArray(persisted?.openedTabs) ? persisted.openedTabs : [];
+    const knownTabs = [...persistedTabs, ...(Array.isArray(existingTabs) ? existingTabs : [])];
+    const targetFromUrl = params.get('target');
+    const fallbackTarget = resolveDefaultBusinessTarget(l1);
+    let businessTarget = targetFromUrl || persisted?.businessTarget || fallbackTarget;
+
+    if (businessTarget?.startsWith('detail_')) {
+        const hasTargetTab = knownTabs.some((tab) => tab?.id === businessTarget);
+        if (!hasTargetTab) {
+            businessTarget = fallbackTarget;
+        }
+    }
+
+    return {
+        activeL1: l1,
+        activeL2: l2,
+        activeL3: l3,
+        businessTarget,
+        openedTabs: persistedTabs,
+        projHistory: Array.isArray(persisted?.projHistory) ? persisted.projHistory : [],
+        historyIndex: Number.isInteger(persisted?.historyIndex) ? persisted.historyIndex : -1
+    };
+};
 
 export const AppNavigationProvider = ({ children }) => {
     const { projects, researchObjects } = useData();
+    const initialSnapshotRef = useRef(null);
+    if (!initialSnapshotRef.current) {
+        initialSnapshotRef.current = resolveNavigationSnapshot();
+    }
+    const initialSnapshot = initialSnapshotRef.current;
+
     // App State
-    const [activeL1, setActiveL1] = useState('workspace');
-    const [activeL2, setActiveL2] = useState('workbench_home');
-    const [activeL3, setActiveL3] = useState(null);
+    const [activeL1, setActiveL1] = useState(initialSnapshot.activeL1);
+    const [activeL2, setActiveL2] = useState(initialSnapshot.activeL2);
+    const [activeL3, setActiveL3] = useState(initialSnapshot.activeL3);
     const [mode, setMode] = useState(MODES.HOME);
 
     // Business Navigation
-    const [businessTarget, setBusinessTarget] = useState('database_mgmt');
-    const [openedTabs, setOpenedTabs] = useState([]);
+    const [businessTarget, setBusinessTarget] = useState(initialSnapshot.businessTarget);
+    const [openedTabs, setOpenedTabs] = useState(initialSnapshot.openedTabs);
 
     // Scoped History
-    const [projHistory, setProjHistory] = useState([]);
-    const [historyIndex, setHistoryIndex] = useState(-1);
+    const [projHistory, setProjHistory] = useState(initialSnapshot.projHistory);
+    const [historyIndex, setHistoryIndex] = useState(initialSnapshot.historyIndex);
     const [isHydrated, setIsHydrated] = useState(false);
 
     const activeL1Ref = useRef(activeL1);
     const activeL2Ref = useRef(activeL2);
     const activeL3Ref = useRef(activeL3);
+    const businessTargetRef = useRef(businessTarget);
     const openedTabsRef = useRef(openedTabs);
     useEffect(() => {
         activeL1Ref.current = activeL1;
@@ -67,6 +120,9 @@ export const AppNavigationProvider = ({ children }) => {
     useEffect(() => {
         activeL3Ref.current = activeL3;
     }, [activeL3]);
+    useEffect(() => {
+        businessTargetRef.current = businessTarget;
+    }, [businessTarget]);
     useEffect(() => {
         openedTabsRef.current = openedTabs;
     }, [openedTabs]);
@@ -215,12 +271,8 @@ export const AppNavigationProvider = ({ children }) => {
     };
 
     const handleL1Change = (val) => {
-        const nextL2 = val === 'project_tag'
-            ? 'navigation'
-            : val === 'workspace'
-                ? 'workbench_home'
-                : null;
-        const nextL3 = val === 'project_tag' ? 'acct_basic' : null;
+        const nextL2 = resolveDefaultL2(val);
+        const nextL3 = resolveDefaultL3(val);
         const nextTarget = resolveDefaultBusinessTarget(val);
 
         setActiveL1(val);
@@ -327,54 +379,25 @@ export const AppNavigationProvider = ({ children }) => {
 
     // Initialization & Event Listeners
     useEffect(() => {
-        const syncStateFromUrl = (isPopState = false) => {
-            const params = new URLSearchParams(window.location.search);
-            const persisted = readStore(NAV_SESSION_KEY, {});
-            const rawL1 = params.get('l1');
-            const validL1 = ['workspace', 'background_data', 'project_mgmt', 'enterprise', 'project_tag'];
-            const l1 = validL1.includes(rawL1)
-                ? rawL1
-                : (validL1.includes(persisted?.activeL1) ? persisted.activeL1 : 'workspace');
-            const l2 = params.get('l2') || persisted?.activeL2 || (
-                l1 === 'project_tag'
-                    ? 'navigation'
-                    : l1 === 'workspace'
-                        ? 'workbench_home'
-                        : null
-            );
-            const l3 = params.get('l3') || persisted?.activeL3 || (l1 === 'project_tag' ? 'acct_basic' : null);
+        updateUrl(
+            activeL1Ref.current,
+            activeL2Ref.current,
+            activeL3Ref.current,
+            businessTargetRef.current,
+            true
+        );
+        setIsHydrated(true);
 
-            const persistedTabs = Array.isArray(persisted?.openedTabs) ? persisted.openedTabs : [];
-            const targetFromUrl = params.get('target');
-            const fallbackTarget = resolveDefaultBusinessTarget(l1);
-            let target = targetFromUrl || persisted?.businessTarget || fallbackTarget;
-
-            if (target?.startsWith('detail_')) {
-                const hasTargetTab = persistedTabs.some((tab) => tab.id === target)
-                    || openedTabsRef.current.some((tab) => tab.id === target);
-                if (!hasTargetTab) {
-                    target = fallbackTarget;
-                }
-            }
-
-            setActiveL1(l1);
-            setActiveL2(l2);
-            setActiveL3(l3);
-            setBusinessTarget(target);
-
-            if (!isPopState) {
-                setOpenedTabs(persistedTabs);
-                setProjHistory(Array.isArray(persisted?.projHistory) ? persisted.projHistory : []);
-                setHistoryIndex(Number.isInteger(persisted?.historyIndex) ? persisted.historyIndex : -1);
-                setIsHydrated(true);
-            }
-
-            updateUrl(l1, l2, l3, target, true);
+        const syncStateFromUrl = () => {
+            const next = resolveNavigationSnapshot(openedTabsRef.current);
+            setActiveL1(next.activeL1);
+            setActiveL2(next.activeL2);
+            setActiveL3(next.activeL3);
+            setBusinessTarget(next.businessTarget);
+            updateUrl(next.activeL1, next.activeL2, next.activeL3, next.businessTarget, true);
         };
 
-        syncStateFromUrl(false);
-
-        const handlePopState = () => syncStateFromUrl(true);
+        const handlePopState = () => syncStateFromUrl();
         window.addEventListener('popstate', handlePopState);
         return () => window.removeEventListener('popstate', handlePopState);
     }, []);

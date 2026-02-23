@@ -9,6 +9,7 @@
  */
 import React, { useEffect, useState, useMemo } from 'react';
 import { usePagePresentation } from '../../../context/PagePresentationContext';
+import { useNotification } from '../../../context/NotificationContext';
 import {
     IconPlus,
     IconFilter,
@@ -19,7 +20,8 @@ import {
     IconChartBar,
     IconDots,
     IconArrowRight,
-    IconInfoCircle // Imported correctly
+    IconInfoCircle,
+    IconSparkles
 } from '@tabler/icons-react';
 import { ContentModule, ModuleHeader } from '../../common/ContentModule';
 import StatusChip from '../../common/StatusChip';
@@ -61,7 +63,8 @@ const MOCK_MODEL_GROUPS = [
 ];
 
 const ModelPage = () => {
-    const { setActions, setLayoutConfig } = usePagePresentation();
+    const { setActions } = usePagePresentation();
+    const { addNotification } = useNotification();
 
     // UI State
     const [activeTab, setActiveTab] = useState('overview'); // overview | reference | inheritance
@@ -70,12 +73,23 @@ const ModelPage = () => {
     // Memoize Header Actions to prevent infinite loops
     const headerActions = useMemo(() => (
         <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1 px-3 py-1.5 bg-[#087F9C] text-white text-sm font-medium rounded hover:bg-[#076F8A] transition-colors shadow-sm">
+            <button
+                type="button"
+                className="flex items-center gap-1 px-3 py-1.5 bg-[#087F9C] text-white text-sm font-medium rounded hover:bg-[#076F8A] transition-colors shadow-sm"
+            >
                 <IconPlus size={16} />
                 <span>新建模型</span>
             </button>
+            <button
+                type="button"
+                onClick={() => addNotification('AI 生成模型功能建设中', 'info')}
+                className="flex items-center gap-1 px-3 py-1.5 bg-white border border-slate-200 text-slate-600 text-sm font-medium rounded hover:border-[#087F9C] hover:text-[#087F9C] hover:bg-cyan-50/40 transition-colors"
+            >
+                <IconSparkles size={16} />
+                <span>AI生成</span>
+            </button>
         </div>
-    ), []);
+    ), [addNotification]);
 
     // Header Actions Effect
     useEffect(() => {

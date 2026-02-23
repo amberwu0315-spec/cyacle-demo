@@ -83,7 +83,7 @@ export const NAV_SCHEME = {
     accounting: {
         modes: {
             config: {
-                headerWidgets: ['breadcrumb', 'methodology', 'overview', 'mode_switch', 'view_actions'],
+                headerWidgets: ['breadcrumb', 'methodology', 'overview', 'business_actions', 'mode_switch', 'view_actions'],
                 sidebarGroups: ['acct_group', 'acct_perspective_group', 'output_group', 'additional_group']
             },
             version: {

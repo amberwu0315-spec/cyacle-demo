@@ -15,14 +15,22 @@ const DataContext = createContext(null);
 const DEFAULT_ROLE_KEY = 'enterprise';
 const buildProjectsKey = (roleKey = DEFAULT_ROLE_KEY) => `cyacle:data:${roleKey}:projects`;
 const buildResearchObjectsKey = (roleKey = DEFAULT_ROLE_KEY) => `cyacle:data:${roleKey}:researchObjects`;
+const buildAccountingVersionsKey = (roleKey = DEFAULT_ROLE_KEY) => `cyacle:data:${roleKey}:accountingVersions`;
 
 const normalizeId = (val) => String(val ?? '').trim();
 const ensureArray = (val, fallback) => (Array.isArray(val) ? val : fallback);
+const ensureObject = (val, fallback = {}) => (
+    val && typeof val === 'object' && !Array.isArray(val) ? val : fallback
+);
 
 const readRoleState = (roleKey) => {
     const projects = ensureArray(readStore(buildProjectsKey(roleKey), projectData), projectData);
     const researchObjects = ensureArray(readStore(buildResearchObjectsKey(roleKey), researchObjectData), researchObjectData);
-    return { projects, researchObjects };
+    const accountingVersionsByProject = ensureObject(
+        readStore(buildAccountingVersionsKey(roleKey), {}),
+        {}
+    );
+    return { projects, researchObjects, accountingVersionsByProject };
 };
 
 const withEntityId = (entity) => {
@@ -56,6 +64,7 @@ export const DataProvider = ({ children }) => {
     const { roleKey = DEFAULT_ROLE_KEY } = useUser();
     const [projects, setProjects] = useState(projectData);
     const [researchObjects, setResearchObjects] = useState(researchObjectData);
+    const [accountingVersionsByProject, setAccountingVersionsByProject] = useState({});
     const [isRoleHydrated, setIsRoleHydrated] = useState(false);
     const [hydratedRoleKey, setHydratedRoleKey] = useState(null);
 
@@ -64,6 +73,7 @@ export const DataProvider = ({ children }) => {
         const roleState = readRoleState(roleKey);
         setProjects(roleState.projects);
         setResearchObjects(roleState.researchObjects);
+        setAccountingVersionsByProject(roleState.accountingVersionsByProject);
         setHydratedRoleKey(roleKey);
         setIsRoleHydrated(true);
     }, [roleKey]);
@@ -81,6 +91,13 @@ export const DataProvider = ({ children }) => {
         }
         writeStore(buildResearchObjectsKey(roleKey), researchObjects);
     }, [researchObjects, roleKey, hydratedRoleKey, isRoleHydrated]);
+
+    useEffect(() => {
+        if (!isRoleHydrated || hydratedRoleKey !== roleKey) {
+            return;
+        }
+        writeStore(buildAccountingVersionsKey(roleKey), accountingVersionsByProject);
+    }, [accountingVersionsByProject, roleKey, hydratedRoleKey, isRoleHydrated]);
 
     const addProject = useCallback((newProject) => {
         setProjects((prev) => [withEntityId(newProject), ...prev]);
@@ -180,9 +197,53 @@ export const DataProvider = ({ children }) => {
         });
     }, [projects]);
 
+    const getAccountingVersions = useCallback((projectId) => {
+        const targetId = normalizeId(projectId);
+        if (!targetId) {
+            return [];
+        }
+        const versions = accountingVersionsByProject[targetId];
+        return Array.isArray(versions) ? versions : [];
+    }, [accountingVersionsByProject]);
+
+    const saveAccountingVersion = useCallback((projectId, payload = {}) => {
+        const targetId = normalizeId(projectId);
+        if (!targetId) {
+            return;
+        }
+
+        setAccountingVersionsByProject((prev) => {
+            const currentVersions = Array.isArray(prev[targetId]) ? prev[targetId] : [];
+            const nextNumber = currentVersions.length + 1;
+            const now = new Date();
+            const nextId = `acct_ver_${now.getTime()}_${Math.floor(Math.random() * 1000)}`;
+            const snapshot = payload?.snapshot
+                ? JSON.parse(JSON.stringify(payload.snapshot))
+                : null;
+
+            const nextVersion = {
+                id: nextId,
+                number: nextNumber,
+                versionCode: payload?.versionCode || `V${String(nextNumber).padStart(3, '0')}`,
+                name: payload?.name || `版本 ${nextNumber}`,
+                creator: payload?.creator || 'Current User',
+                sourceL3: payload?.sourceL3 || 'acct_model_config',
+                createTime: now.toISOString(),
+                snapshot,
+                summary: payload?.summary || null
+            };
+
+            return {
+                ...prev,
+                [targetId]: [nextVersion, ...currentVersions]
+            };
+        });
+    }, []);
+
     const resetRoleData = useCallback(() => {
         setProjects(projectData);
         setResearchObjects(researchObjectData);
+        setAccountingVersionsByProject({});
     }, []);
 
     const value = useMemo(() => ({
@@ -202,6 +263,9 @@ export const DataProvider = ({ children }) => {
         updateResearchObject,
         removeResearchObject,
         getResearchObjectById,
+        accountingVersionsByProject,
+        getAccountingVersions,
+        saveAccountingVersion,
         resetRoleData
     }), [
         roleKey,
@@ -220,6 +284,9 @@ export const DataProvider = ({ children }) => {
         updateResearchObject,
         removeResearchObject,
         getResearchObjectById,
+        accountingVersionsByProject,
+        getAccountingVersions,
+        saveAccountingVersion,
         resetRoleData
     ]);
 

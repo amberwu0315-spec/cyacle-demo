@@ -9,6 +9,9 @@
  */
 import React, { useEffect, useState } from 'react';
 import { usePagePresentation } from '../../../context/PagePresentationContext';
+import { useData } from '../../../context/DataContext';
+import { useAppNavigation } from '../../../context/AppNavigationContext';
+import { useNotification } from '../../../context/NotificationContext';
 import StatusChip from '../../common/StatusChip';
 import {
     IconChartPie,
@@ -16,7 +19,9 @@ import {
     IconInfoCircle,
     IconHistory,
     IconArrowRight,
-    IconLoader2
+    IconLoader2,
+    IconStar,
+    IconTrash
 } from '@tabler/icons-react';
 
 // Mock Data for Demo
@@ -44,7 +49,18 @@ const MOCK_LOGS = [
 ];
 
 const NavigationPage = () => {
-    const { setActions, setLayoutConfig } = usePagePresentation();
+    const { setActions } = usePagePresentation();
+    const { projects, getProjectById, updateProject, removeProject } = useData();
+    const { businessTarget, openedTabs, closeTab } = useAppNavigation();
+    const { addNotification } = useNotification();
+
+    const activeProjectTab = openedTabs.find(
+        (tab) => tab.id === businessTarget && tab.type === 'detail' && tab.l1Context === 'project_mgmt'
+    );
+    const fallbackProject = projects?.[0] || null;
+    const activeProjectId = activeProjectTab?.data?.id || fallbackProject?.id || null;
+    const activeProject = getProjectById(activeProjectId) || activeProjectTab?.data || fallbackProject;
+    const isFollowed = Boolean(activeProject?.isFollowed);
 
     // 模拟加载效果
     const [loading, setLoading] = useState(true);
@@ -55,8 +71,62 @@ const NavigationPage = () => {
 
     // 头部配置
     useEffect(() => {
-        setActions(null);
-    }, [setActions]);
+        if (!activeProject?.id) {
+            setActions(null);
+            return () => setActions(null);
+        }
+
+        const handleToggleFollow = () => {
+            const nextFollowState = !isFollowed;
+            updateProject(activeProject.id, {
+                isFollowed: nextFollowState
+            });
+            addNotification(
+                `${activeProject.name || '当前项目'}已${nextFollowState ? '关注' : '取消关注'}`,
+                'success'
+            );
+        };
+
+        const handleDelete = () => {
+            const projectName = activeProject.name || '当前项目';
+            const shouldDelete = window.confirm(`确认删除项目「${projectName}」吗？`);
+            if (!shouldDelete) {
+                return;
+            }
+
+            removeProject(activeProject.id);
+            if (activeProjectTab?.id) {
+                closeTab(activeProjectTab.id);
+            }
+            addNotification(`项目「${projectName}」已删除（演示）`, 'success');
+        };
+
+        setActions(
+            <div className="flex items-center gap-2">
+                <button
+                    type="button"
+                    onClick={handleToggleFollow}
+                    className={`flex items-center gap-1.5 h-btn-md px-btn-x-md rounded-sm border text-[13px] font-medium transition-colors ${isFollowed
+                            ? 'bg-cyan-50 border-cyan-200 text-[#087F9C] hover:bg-cyan-100'
+                            : 'bg-white border-slate-200 text-slate-600 hover:border-[#087F9C] hover:text-[#087F9C]'
+                        }`}
+                >
+                    <IconStar size={14} className={isFollowed ? 'fill-current' : ''} />
+                    <span>{isFollowed ? '取消关注' : '关注'}</span>
+                </button>
+                <button
+                    type="button"
+                    onClick={handleDelete}
+                    className="flex items-center gap-1.5 h-btn-md px-btn-x-md rounded-sm border border-red-200 text-[13px] font-medium text-red-600 hover:bg-red-50 transition-colors"
+                >
+                    <IconTrash size={14} />
+                    <span>删除</span>
+                </button>
+            </div>
+        );
+
+        return () => setActions(null);
+    }, [setActions, activeProject, activeProjectTab, closeTab, isFollowed, updateProject, removeProject, addNotification]);
 
     // 组件：进度条
     const ProgressBar = ({ value, color = 'bg-[#087F9C]' }) => (
